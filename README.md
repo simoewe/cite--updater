@@ -1,67 +1,75 @@
-# Citation Author Matcher
+# Academic Citation Author Matcher
 
-This tool processes academic papers from GROBID-parsed XML files and matches them against arXiv and DBLP databases to verify and normalize author information.
+A tool for validating and normalizing author information in academic papers by cross-referencing multiple scholarly databases (arXiv, DBLP, and Semantic Scholar).
 
-## Features
+## Objective
 
-- Parses GROBID-generated XML files containing academic paper metadata
-- Matches papers against arXiv and DBLP using fuzzy title matching
-- Normalizes author names across different sources
-- Handles rate limiting and retries for API calls
-- Outputs results in JSON format with detailed author information
+This tool helps researchers and publishers by:
+1. Extracting citations and author information from academic PDFs using GROBID
+2. Cross-referencing papers against multiple scholarly databases
+3. Normalizing author names across different citation formats
+4. Detecting and reporting potential author name mismatches
+5. Providing confidence scores for paper matches
+
+## Prerequisites
+
+- Python 3.8+
+- Docker for running GROBID
+- NVIDIA GPU (optional, but recommended for better GROBID performance)
 
 ## Installation
 
 1. Clone this repository
-2. Install the required packages:
+2. Create and activate a virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+3. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Set up GROBID using Docker:
+4. Start GROBID server:
 
 ```bash
-# Pull the GROBID image
-docker pull lfoppiano/grobid:0.7.3
-
-# Run GROBID container
-docker run -t --rm -p 8070:8070 lfoppiano/grobid:0.7.3
+# Pull and run GROBID with GPU support
+sudo docker run --rm --gpus all --init --ulimit core=0 -p 8070:8070 grobid/grobid:0.8.0
 ```
 
 ## Usage
 
-### 1. Process PDFs with GROBID
+### 1. Prepare Your PDFs
+Place your academic PDFs in the `pdfs/` directory.
 
-First, process your PDF files using GROBID to extract references:
+### 2. Process PDFs with GROBID
 
 ```python
 from grobid_client.grobid_client import GrobidClient
 
 client = GrobidClient(config_path="./config.json")
-# Process references in pdfs folder, saving the output in the output folder
 client.process('processReferences', 'pdfs', output='output', consolidate_citations=False, verbose=True)
 ```
 
-### 2. Run the Citation Pipeline
-
-The pipeline consists of two main scripts:
-
-#### citation_pipeline.py
-This script processes the GROBID-parsed XML files and attempts to match papers with arXiv and DBLP:
+### 3. Run the Citation Pipeline
 
 ```bash
-python citation_pipeline.py
+python citation_pipeline.py [options]
+
+Options:
+  --dry-run          Run with a random sample of papers
+  --sample N         Number of papers to sample in dry run (default: 5)
+  --input FILE       Input XML file path
+  --output FILE      Output JSON file path
+  --threshold N      Title match threshold (default: 80)
+  --dblp-delay N     Delay between DBLP API calls in seconds (default: 1)
+  --arxiv-delay N    Delay between arXiv API calls in seconds (default: 0.5)
 ```
 
-The script will:
-1. Parse author information from the XML
-2. Try to match each paper with arXiv first
-3. If no match is found in arXiv, try DBLP
-4. Save the results in `author_matches.json`
-
-#### analyze_matches.py
-This script analyzes the matching results and provides statistics:
+### 4. Analyze Results
 
 ```bash
 python analyze_matches.py
@@ -69,17 +77,22 @@ python analyze_matches.py
 
 ## Configuration
 
-The following parameters can be adjusted in `citation_pipeline.py`:
+### GROBID Configuration
+Edit `config.json` to configure GROBID settings:
 
-- `TITLE_MATCH_THRESHOLD`: Minimum fuzzy match score (default: 80)
-- `XML_FILE_PATH`: Path to the GROBID XML file
-- `OUTPUT_FILE`: Path for the output JSON file
-- `DBLP_RATE_LIMIT_DELAY`: Delay between DBLP API calls (default: 1s)
-- `ARXIV_RATE_LIMIT_DELAY`: Delay between arXiv API calls (default: 0.5s)
+```json
+{
+    "grobid_server": "http://localhost:8070",
+    "batch_size": 1000,
+    "sleep_time": 5,
+    "timeout": 60,
+    "coordinates": ["persName", "figure", "ref", "biblStruct", "formula", "s"]
+}
+```
 
 ## Output Format
 
-The output JSON file contains an array of paper entries, each with:
+The tool generates a JSON file containing:
 
 ```json
 {
@@ -94,19 +107,11 @@ The output JSON file contains an array of paper entries, each with:
       "original": "Original Full Name"
     }
   ],
-  "matched_authors": [...],  // Same format as parsed_authors
-  "source": "arxiv|dblp|null"
+  "matched_authors": [],
+  "source": "arxiv|dblp|semantic_scholar",
+  "mismatches": ["List of detected mismatches"]
 }
 ```
-
-## Dependencies
-
-- arxiv: For querying arXiv database
-- nameparser: For consistent author name parsing
-- fuzzywuzzy: For fuzzy string matching
-- requests: For DBLP API calls
-- backoff: For API retry logic
-- python-Levenshtein: For improved fuzzy matching performance
 
 ## Error Handling
 
@@ -116,8 +121,28 @@ The pipeline includes:
 - Comprehensive error logging
 - Graceful handling of missing or malformed data
 
+## Name Parsing Logic
+
+The tool uses the `nameparser` library to handle complex author names, including:
+- Multiple given names
+- Compound surnames
+- Academic titles
+- Suffixes and honorifics
+
 ## Limitations
 
-- Relies on fuzzy matching for titles, which may occasionally produce false positives/negatives
-- Dependent on external API availability (arXiv and DBLP)
-- Processing speed limited by API rate limits
+1. Fuzzy matching accuracy depends on title similarity threshold
+2. API rate limits affect processing speed
+3. Requires active internet connection for database queries
+4. GROBID parsing quality affects overall results
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Submit a pull request
+
+## License
+
+MIT License

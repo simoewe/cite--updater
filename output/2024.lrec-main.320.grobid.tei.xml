@@ -2133,194 +2133,102 @@
 			<persName><forename type="first">Xun</forename><surname>Jian</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">Hao</forename><surname>Xin</surname></persName>
+			<persName><forename type="first">Yangqiu</forename><surname>Hao Xin</surname></persName>
 		</author>
 		<author>
-			<persName><forename type="first">Yangqiu</forename><surname>Song</surname></persName>
+			<persName><surname>Song</surname></persName>
 		</author>
-		<idno type="DOI">10.18653/v1/d17-1027</idno>
 	</analytic>
 	<monogr>
-		<title level="m">Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing</title>
-		<meeting>the 2017 Conference on Empirical Methods in Natural Language Processing</meeting>
+		<title level="m">Proceedings of EMNLP</title>
+		<meeting>EMNLP</meeting>
 		<imprint>
-			<publisher>Association for Computational Linguistics</publisher>
 			<date type="published" when="2017">2017</date>
 		</imprint>
 	</monogr>
 </biblStruct>
 
 <biblStruct xml:id="b91">
-	<analytic>
-		<title level="a" type="main">Cohort Profile: The Tongji Maternal and Child Health Cohort (TMCHC)</title>
-		<author>
-			<persName><forename type="first">Chunrong</forename><surname>Zhong</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Renjuan</forename><surname>Chen</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xuezhen</forename><surname>Zhou</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Yu</forename><surname>Zhang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Chaoqun</forename><surname>Liu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Li</forename><surname>Huang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Qian</forename><surname>Li</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Shangzhi</forename><surname>Xu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xi</forename><surname>Chen</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Ting</forename><surname>Xiong</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Weiye</forename><surname>Wang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Qin</forename><surname>Gao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Hongmin</forename><surname>Zhang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Yuanjue</forename><surname>Wu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Miao</forename><surname>Hong</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Jiangyue</forename><surname>Wu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Wenli</forename><surname>Cui</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xiating</forename><surname>Li</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Weiming</forename><surname>Wang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Lixia</forename><surname>Lin</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Huanzhuo</forename><surname>Wang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Duan</forename><surname>Gao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Nan</forename><surname>Li</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">De</forename><surname>Li</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Guofu</forename><surname>Zhang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xiaoyi</forename><surname>Wang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xu</forename><surname>Zhang</surname></persName>
-			<idno type="ORCID">0000-0002-7017-5469</idno>
-		</author>
-		<author>
-			<persName><forename type="first">Meng</forename><surname>Wu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Sen</forename><surname>Yang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xiyu</forename><surname>Cao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Tianqi</forename><surname>Tan</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Menghan</forename><surname>Tu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Jingrong</forename><surname>Guo</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Wenqi</forename><surname>Hu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Wenwen</forename><surname>Zhu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Daxiang</forename><surname>Xiao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Lin</forename><surname>Gong</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Huaqi</forename><surname>Zhang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Jin</forename><surname>Liu</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Siyu</forename><surname>Yang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Sheng</forename><surname>Wei</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Mei</forename><surname>Xiao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Guoqiang</forename><surname>Sun</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Guoping</forename><surname>Xiong</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Zemin</forename><surname>Ni</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Jing</forename><surname>Wang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Zhichun</forename><surname>Jin</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Xuefeng</forename><surname>Yang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Liping</forename><surname>Hao</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Hongying</forename><surname>Yang</surname></persName>
-		</author>
-		<author>
-			<persName><forename type="first">Nianhong</forename><surname>Yang</surname></persName>
-			<idno type="ORCID">0000-0003-1671-8028</idno>
-		</author>
-		<idno type="DOI">10.1093/ije/dyac209</idno>
-		<idno>CoRR, abs/2209.02970</idno>
-	</analytic>
 	<monogr>
-		<title level="j">International Journal of Epidemiology</title>
-		<idno type="ISSN">0300-5771</idno>
-		<idno type="ISSNe">1464-3685</idno>
+		<title level="m" type="main">Fengshenbang 1.0: Being the Foundation of Chinese Cognitive Intelligence</title>
+		<author>
+			<persName><forename type="first">Jiaxing</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ruyi</forename><surname>Gan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junjie</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yuxiang</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Lin</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ping</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ziwei</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaoqun</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junqing</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jianheng</forename><surname>Zhuo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Qi</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yongfeng</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiayu</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yanghan</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Junyu</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xinyu</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Weifeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ting</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kunhao</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rui</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hao</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Xiaojun</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Zhongshen</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Chongpei</forename><surname>Chen</surname></persName>
+		</author>
+		<idno>CoRR, abs/2209.02970</idno>
 		<imprint>
-			<biblScope unit="volume">52</biblScope>
-			<biblScope unit="issue">2</biblScope>
-			<biblScope unit="page" from="e152" to="e161" />
-			<date type="published" when="2022-11-07">2022</date>
-			<publisher>Oxford University Press (OUP)</publisher>
+			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
 </biblStruct>
@@ -2358,13 +2266,11 @@
 		<author>
 			<persName><forename type="first">Xiaoyong</forename><surname>Du</surname></persName>
 		</author>
-		<idno type="DOI">10.18653/v1/d19-3041</idno>
 	</analytic>
 	<monogr>
-		<title level="m">Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP): System Demonstrations</title>
-		<meeting>the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP): System Demonstrations</meeting>
+		<title level="m">Proceedings of EMNLP-IJCNLP</title>
+		<meeting>EMNLP-IJCNLP</meeting>
 		<imprint>
-			<publisher>Association for Computational Linguistics</publisher>
 			<date type="published" when="2019">2019</date>
 		</imprint>
 	</monogr>
@@ -2397,36 +2303,27 @@
 
 <biblStruct xml:id="b94">
 	<analytic>
-		<title level="a" type="main">Sensorimotor norms for Chinese nouns and their relationship with orthographic and semantic variables</title>
+		<title level="a" type="main">Sensorimotor Norms for Chinese nouns and their Relationship with Orthographic and Semantic Variables</title>
 		<author>
 			<persName><forename type="first">Yin</forename><surname>Zhong</surname></persName>
-			<idno type="ORCID">0000-0003-1366-3324</idno>
 		</author>
 		<author>
 			<persName><forename type="first">Mingyu</forename><surname>Wan</surname></persName>
-			<idno type="ORCID">0000-0003-0083-5895</idno>
 		</author>
 		<author>
 			<persName><forename type="first">Kathleen</forename><surname>Ahrens</surname></persName>
-			<idno type="ORCID">0000-0002-7863-3655</idno>
 		</author>
 		<author>
 			<persName><forename type="first">Chu-Ren</forename><surname>Huang</surname></persName>
-			<idno type="ORCID">0000-0002-8526-5520</idno>
 		</author>
-		<idno type="DOI">10.1080/23273798.2022.2035416</idno>
 	</analytic>
 	<monogr>
 		<title level="j">Language, Cognition and Neuroscience</title>
-		<title level="j" type="abbrev">Language, Cognition and Neuroscience</title>
-		<idno type="ISSN">2327-3798</idno>
-		<idno type="ISSNe">2327-3801</idno>
 		<imprint>
 			<biblScope unit="volume">37</biblScope>
 			<biblScope unit="issue">8</biblScope>
 			<biblScope unit="page" from="1000" to="1022" />
-			<date type="published" when="2022-02-07">2022</date>
-			<publisher>Informa UK Limited</publisher>
+			<date type="published" when="2022">2022</date>
 		</imprint>
 	</monogr>
 </biblStruct>
