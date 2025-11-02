@@ -1,0 +1,358 @@
+{
+  "1602.07844v1": {
+    "arxiv_id": "1602.07844v1",
+    "title": "Fast Nonsmooth Regularized Risk Minimization with Continuation",
+    "authors": [
+      "Shuai Zheng",
+      "Ruiliang Zhang",
+      "James Kwok"
+    ],
+    "conference": "AAAI",
+    "year": 2016,
+    "file_path": "aaai/2016/1602.07844v1.pdf",
+    "download_date": "2025-11-02T18:22:04.153508",
+    "match_score": 99
+  },
+  "1904.13080v1": {
+    "arxiv_id": "1904.13080v1",
+    "title": "Memory-Augmented Temporal Dynamic Learning for Action Recognition",
+    "authors": [
+      "Yuan Yuan",
+      "Dong Wang",
+      "Qi Wang"
+    ],
+    "conference": "AAAI",
+    "year": 2019,
+    "file_path": "aaai/2019/1904.13080v1.pdf",
+    "download_date": "2025-11-02T18:22:04.402327",
+    "match_score": 99
+  },
+  "2306.16738v1": {
+    "arxiv_id": "2306.16738v1",
+    "title": "Towards Optimal Randomized Strategies in Adversarial Example Game",
+    "authors": [
+      "Jiahao Xie",
+      "Chao Zhang",
+      "Weijie Liu",
+      "Wensong Bai",
+      "Hui Qian"
+    ],
+    "conference": "AAAI",
+    "year": 2023,
+    "file_path": "aaai/2023/2306.16738v1.pdf",
+    "download_date": "2025-11-02T18:22:04.958489",
+    "match_score": 99
+  },
+  "2412.13333v2": {
+    "arxiv_id": "2412.13333v2",
+    "title": "Beyond Accuracy: On the Effects of Fine-tuning Towards Vision-Language Model's Prediction Rationality",
+    "authors": [
+      "Qitong Wang",
+      "Tang Li",
+      "Kien Nguyen",
+      "Xi Peng"
+    ],
+    "conference": "AAAI",
+    "year": 2025,
+    "file_path": "aaai/2025/2412.13333v2.pdf",
+    "download_date": "2025-11-02T18:22:05.114205",
+    "match_score": 96
+  },
+  "2010.13266v2": {
+    "arxiv_id": "2010.13266v2",
+    "title": "Biases in Generative Art -- A Causal Look from the Lens of Art History",
+    "authors": [
+      "Ramya Srinivasan",
+      "Kanji Uchino"
+    ],
+    "conference": "FACCT",
+    "year": 2021,
+    "file_path": "facct/2021/2010.13266v2.pdf",
+    "download_date": "2025-11-02T18:22:05.227185",
+    "match_score": 96
+  },
+  "2206.09305v2": {
+    "arxiv_id": "2206.09305v2",
+    "title": "Adversarial Scrutiny of Evidentiary Statistical Software",
+    "authors": [
+      "Rediet Abebe",
+      "Moritz Hardt",
+      "Angela Jin",
+      "John Miller",
+      "Ludwig Schmidt",
+      "Rebecca Wexler"
+    ],
+    "conference": "FACCT",
+    "year": 2022,
+    "file_path": "facct/2022/2206.09305v2.pdf",
+    "download_date": "2025-11-02T18:22:05.292926",
+    "match_score": 99
+  },
+  "2503.23056v2": {
+    "arxiv_id": "2503.23056v2",
+    "title": "Achieving Socio-Economic Parity through the Lens of EU AI Act",
+    "authors": [
+      "Arjun Roy",
+      "Stavroula Rizou",
+      "Symeon Papadopoulos",
+      "Eirini Ntoutsi"
+    ],
+    "conference": "FACCT",
+    "year": 2025,
+    "file_path": "facct/2025/2503.23056v2.pdf",
+    "download_date": "2025-11-02T18:22:05.515495",
+    "match_score": 99
+  },
+  "1511.07069v2": {
+    "arxiv_id": "1511.07069v2",
+    "title": "Auxiliary Image Regularization for Deep CNNs with Noisy Labels",
+    "authors": [
+      "Samaneh Azadi",
+      "Jiashi Feng",
+      "Stefanie Jegelka",
+      "Trevor Darrell"
+    ],
+    "conference": "ICLR",
+    "year": 2016,
+    "file_path": "iclr/2016/1511.07069v2.pdf",
+    "download_date": "2025-11-02T18:22:05.676195",
+    "match_score": 99
+  },
+  "1612.06212v1": {
+    "arxiv_id": "1612.06212v1",
+    "title": "A recurrent neural network without chaos",
+    "authors": [
+      "Thomas Laurent",
+      "James von Brecht"
+    ],
+    "conference": "ICLR",
+    "year": 2017,
+    "file_path": "iclr/2017/1612.06212v1.pdf",
+    "download_date": "2025-11-02T18:22:05.742371",
+    "match_score": 99
+  },
+  "1711.08856v3": {
+    "arxiv_id": "1711.08856v3",
+    "title": "Critical Learning Periods in Deep Neural Networks",
+    "authors": [
+      "Alessandro Achille",
+      "Matteo Rovere",
+      "Stefano Soatto"
+    ],
+    "conference": "ICLR",
+    "year": 2019,
+    "file_path": "iclr/2019/1711.08856v3.pdf",
+    "download_date": "2025-11-02T18:22:05.868221",
+    "match_score": 91
+  },
+  "2203.10299v1": {
+    "arxiv_id": "2203.10299v1",
+    "title": "Neural Machine Translation with Phrase-Level Universal Visual Representations",
+    "authors": [
+      "Qingkai Fang",
+      "Yang Feng"
+    ],
+    "conference": "ICLR",
+    "year": 2020,
+    "file_path": "iclr/2020/2203.10299v1.pdf",
+    "download_date": "2025-11-02T18:22:05.954455",
+    "match_score": 89
+  },
+  "2106.02886v3": {
+    "arxiv_id": "2106.02886v3",
+    "title": "Context-Aware Sparse Deep Coordination Graphs",
+    "authors": [
+      "Tonghan Wang",
+      "Liang Zeng",
+      "Weijun Dong",
+      "Qianlan Yang",
+      "Yang Yu",
+      "Chongjie Zhang"
+    ],
+    "conference": "ICLR",
+    "year": 2022,
+    "file_path": "iclr/2022/2106.02886v3.pdf",
+    "download_date": "2025-11-02T18:22:06.157127",
+    "match_score": 99
+  },
+  "2210.00312v4": {
+    "arxiv_id": "2210.00312v4",
+    "title": "Multimodal Analogical Reasoning over Knowledge Graphs",
+    "authors": [
+      "Ningyu Zhang",
+      "Lei Li",
+      "Xiang Chen",
+      "Xiaozhuan Liang",
+      "Shumin Deng",
+      "Huajun Chen"
+    ],
+    "conference": "ICLR",
+    "year": 2023,
+    "file_path": "iclr/2023/2210.00312v4.pdf",
+    "download_date": "2025-11-02T18:22:06.265808",
+    "match_score": 99
+  },
+  "1506.02632v3": {
+    "arxiv_id": "1506.02632v3",
+    "title": "Cumulative Prospect Theory Meets Reinforcement Learning: Prediction and Control",
+    "authors": [
+      "Prashanth A.",
+      "Cheng Jie",
+      "Michael Fu",
+      "Steve Marcus",
+      "Csaba Szepesvári"
+    ],
+    "conference": "ICML",
+    "year": 2016,
+    "file_path": "icml/2016/1506.02632v3.pdf",
+    "download_date": "2025-11-02T18:22:06.567223",
+    "match_score": 99
+  },
+  "1704.00708v1": {
+    "arxiv_id": "1704.00708v1",
+    "title": "No Spurious Local Minima in Nonconvex Low Rank Problems: A Unified Geometric Analysis",
+    "authors": [
+      "Rong Ge",
+      "Chi Jin",
+      "Yi Zheng"
+    ],
+    "conference": "ICML",
+    "year": 2017,
+    "file_path": "icml/2017/1704.00708v1.pdf",
+    "download_date": "2025-11-02T18:22:06.690444",
+    "match_score": 99
+  },
+  "1803.00590v2": {
+    "arxiv_id": "1803.00590v2",
+    "title": "Hierarchical Imitation and Reinforcement Learning",
+    "authors": [
+      "Hoang Le",
+      "Nan Jiang",
+      "Alekh Agarwal",
+      "Miroslav Dudík",
+      "Yisong Yue",
+      "Hal Daumé"
+    ],
+    "conference": "ICML",
+    "year": 2018,
+    "file_path": "icml/2018/1803.00590v2.pdf",
+    "download_date": "2025-11-02T18:22:06.789239",
+    "match_score": 99
+  },
+  "2010.04879v3": {
+    "arxiv_id": "2010.04879v3",
+    "title": "Accelerate CNNs from Three Dimensions: A Comprehensive Pruning Framework",
+    "authors": [
+      "Wenxiao Wang",
+      "Minghao Chen",
+      "Shuai Zhao",
+      "Long Chen",
+      "Jinming Hu",
+      "Haifeng Liu",
+      "Deng Cai",
+      "Xiaofei He",
+      "Wei Liu"
+    ],
+    "conference": "ICML",
+    "year": 2021,
+    "file_path": "icml/2021/2010.04879v3.pdf",
+    "download_date": "2025-11-02T18:22:10.096275",
+    "match_score": 99
+  },
+  "2304.01203v7": {
+    "arxiv_id": "2304.01203v7",
+    "title": "Optimal Goal-Reaching Reinforcement Learning via Quasimetric Learning",
+    "authors": [
+      "Tongzhou Wang",
+      "Antonio Torralba",
+      "Phillip Isola",
+      "Amy Zhang"
+    ],
+    "conference": "ICML",
+    "year": 2023,
+    "file_path": "icml/2023/2304.01203v7.pdf",
+    "download_date": "2025-11-02T18:22:10.302258",
+    "match_score": 99
+  },
+  "2007.14513v4": {
+    "arxiv_id": "2007.14513v4",
+    "title": "Group Knowledge Transfer: Federated Learning of Large CNNs at the Edge",
+    "authors": [
+      "Chaoyang He",
+      "Murali Annavaram",
+      "Salman Avestimehr"
+    ],
+    "conference": "NEURIPS",
+    "year": 2020,
+    "file_path": "neurips/2020/2007.14513v4.pdf",
+    "download_date": "2025-11-02T18:22:10.490840",
+    "match_score": 99
+  },
+  "2106.03188v3": {
+    "arxiv_id": "2106.03188v3",
+    "title": "Combinatorial Optimization for Panoptic Segmentation: A Fully Differentiable Approach",
+    "authors": [
+      "Ahmed Abbas",
+      "Paul Swoboda"
+    ],
+    "conference": "NEURIPS",
+    "year": 2021,
+    "file_path": "neurips/2021/2106.03188v3.pdf",
+    "download_date": "2025-11-02T18:22:10.570031",
+    "match_score": 99
+  },
+  "2207.06405v3": {
+    "arxiv_id": "2207.06405v3",
+    "title": "Masked Autoencoders that Listen",
+    "authors": [
+      "Po-Yao Huang",
+      "Hu Xu",
+      "Juncheng Li",
+      "Alexei Baevski",
+      "Michael Auli",
+      "Wojciech Galuba",
+      "Florian Metze",
+      "Christoph Feichtenhofer"
+    ],
+    "conference": "NEURIPS",
+    "year": 2022,
+    "file_path": "neurips/2022/2207.06405v3.pdf",
+    "download_date": "2025-11-02T18:22:13.698863",
+    "match_score": 98
+  },
+  "2212.00616v2": {
+    "arxiv_id": "2212.00616v2",
+    "title": "Extensible Prompts for Language Models on Zero-shot Language Style Customization",
+    "authors": [
+      "Tao Ge",
+      "Jing Hu",
+      "Li Dong",
+      "Shaoguang Mao",
+      "Yan Xia",
+      "Xun Wang",
+      "Si-Qing Chen",
+      "Furu Wei"
+    ],
+    "conference": "NEURIPS",
+    "year": 2023,
+    "file_path": "neurips/2023/2212.00616v2.pdf",
+    "download_date": "2025-11-02T18:22:16.839646",
+    "match_score": 99
+  },
+  "2311.15864v4": {
+    "arxiv_id": "2311.15864v4",
+    "title": "InterControl: Zero-shot Human Interaction Generation by Controlling Every Joint",
+    "authors": [
+      "Zhenzhi Wang",
+      "Jingbo Wang",
+      "Yixuan Li",
+      "Dahua Lin",
+      "Bo Dai"
+    ],
+    "conference": "NEURIPS",
+    "year": 2024,
+    "file_path": "neurips/2024/2311.15864v4.pdf",
+    "download_date": "2025-11-02T18:22:16.925111",
+    "match_score": 99
+  }
+}

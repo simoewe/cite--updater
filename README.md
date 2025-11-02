@@ -1,21 +1,25 @@
-# Academic Citation Author Matcher
+# Academic Citation Author Matcher & arXiv PDF Downloader
 
-A tool for validating and normalizing author information in academic papers by cross-referencing multiple scholarly databases (arXiv, DBLP, and Semantic Scholar).
+A comprehensive toolkit for academic paper processing that includes:
+- **Citation Author Matching**: Validate and normalize author information across multiple scholarly databases
+- **arXiv PDF Downloader**: Automatically download PDFs from arXiv using DBLP conference data
 
 ## Objective
 
 This tool helps researchers and publishers by:
-1. Extracting citations and author information from academic PDFs using GROBID
-2. Cross-referencing papers against multiple scholarly databases
-3. Normalizing author names across different citation formats
-4. Detecting and reporting potential author name mismatches
-5. Providing confidence scores for paper matches
+1. **Citation Processing**: Extracting citations and author information from academic PDFs using GROBID
+2. **Author Validation**: Cross-referencing papers against multiple scholarly databases (arXiv, DBLP, Semantic Scholar)
+3. **Name Normalization**: Normalizing author names across different citation formats
+4. **PDF Collection**: Automatically downloading conference papers from arXiv based on DBLP data
+5. **Metadata Management**: Creating comprehensive metadata with cleaned author names and file organization
+6. **Quality Assurance**: Detecting and reporting potential author name mismatches with confidence scores
 
 ## Prerequisites
 
 - Python 3.8+
-- Docker for running GROBID
+- Docker for running GROBID (for citation processing)
 - NVIDIA GPU (optional, but recommended for better GROBID performance)
+- Internet connection (for arXiv API access)
 
 ## Installation
 
@@ -33,14 +37,36 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Start GROBID server:
+4. Start GROBID server (for citation processing):
 
 ```bash
 # Pull and run GROBID with GPU support
 sudo docker run --rm --gpus all --init --ulimit core=0 -p 8070:8070 grobid/grobid:0.8.0
 ```
 
-## Usage
+## Quick Start
+
+### Download Conference PDFs from arXiv
+
+```bash
+# Activate environment
+source .venv/bin/activate
+
+# Download all conference papers from arXiv (2-3 hours)
+python3 src/download_arxiv_pdfs.py
+```
+
+### Process Citations from PDFs
+
+```bash
+# Process PDFs with GROBID (requires Docker)
+python src/run_grobid.py
+
+# Run citation author matching
+python src/citation_pipeline.py --input data/outputs/processed.xml
+```
+
+## Detailed Usage
 
 ### 1. Prepare Your PDFs
 Place your academic PDFs in the `data/pdfs/` directory.
@@ -74,6 +100,98 @@ Options:
 ```bash
 python analyze_matches.py
 ```
+
+## arXiv PDF Downloader
+
+Automatically download conference papers from arXiv using DBLP conference data with intelligent matching and metadata creation.
+
+### Features
+
+- **Multi-Conference Support**: Processes AAAI, ICML, ICLR, FACCT, and NEURIPS conferences
+- **Intelligent Matching**: Fuzzy title matching with configurable similarity thresholds
+- **Organized Storage**: PDFs organized in `conference/year/` folder structure
+- **Clean Metadata**: Comprehensive metadata with cleaned author names (removes "0001" suffixes)
+- **Resume Capability**: Automatically resumes from interruptions
+- **Progress Tracking**: Real-time progress bars and detailed logging
+
+### Quick Start
+
+```bash
+# Activate virtual environment
+source .venv/bin/activate
+
+# Download PDFs from all conferences
+python3 src/download_arxiv_pdfs.py
+```
+
+### Advanced Usage
+
+```bash
+# Process all conferences (default behavior)
+python3 src/download_arxiv_pdfs.py
+
+# Limit papers per conference for testing
+python3 src/download_arxiv_pdfs.py --max-papers 10
+
+# Start fresh (don't resume from previous run)
+python3 src/download_arxiv_pdfs.py --no-resume
+
+# Custom matching and timing
+python3 src/download_arxiv_pdfs.py --match-threshold 90 --delay 5
+
+# Custom metadata file location
+python3 src/download_arxiv_pdfs.py --metadata-file my_papers_metadata.json
+```
+
+### Output Structure
+
+```
+data/arxiv_pdfs/
+├── aaai/
+│   ├── 2024/
+│   │   └── 2306.15222v2.pdf
+│   └── 2025/
+│       └── 2412.13333v2.pdf
+├── icml/
+│   └── 2023/
+│       └── 2304.01203v7.pdf
+└── neurips/
+    └── 2024/
+        └── 2311.15864v4.pdf
+```
+
+### Metadata Format
+
+The tool creates `arxiv_papers_metadata.json` with detailed information:
+
+```json
+{
+  "2306.15222v2": {
+    "arxiv_id": "2306.15222v2",
+    "title": "Learning to Rank in Generative Retrieval",
+    "authors": ["Hansi Zeng", "Hamed Zamani", "Donald Metzler"],
+    "conference": "AAAI",
+    "year": 2024,
+    "file_path": "aaai/2024/2306.15222v2.pdf",
+    "download_date": "2025-11-02T18:22:04.153508",
+    "match_score": 99
+  }
+}
+```
+
+### Author Name Cleaning
+
+The tool automatically cleans author names by removing DBLP-style numeric suffixes:
+- `"John Doe 0001"` → `"John Doe"`
+- `"Jane Smith 1234"` → `"Jane Smith"`
+
+### Supported Conferences
+
+- **AAAI** (2015-2025): Association for the Advancement of Artificial Intelligence
+- **ICML** (2015-2024): International Conference on Machine Learning
+- **ICLR** (2015-2025): International Conference on Learning Representations
+- **FACCT** (2021-2025): ACM Conference on Fairness, Accountability, and Transparency
+- **NEURIPS** (2020-2024): Neural Information Processing Systems
 
 ## Configuration
 
@@ -113,13 +231,32 @@ The tool generates a JSON file containing:
 }
 ```
 
+## Output Files
+
+### Citation Pipeline
+- **`author_matches.json`**: Citation validation results with author matching information
+- **`citation_pipeline.log`**: Detailed processing logs
+
+### arXiv PDF Downloader
+- **`data/arxiv_pdfs/conference/year/`**: Organized PDF files by conference and year
+- **`arxiv_papers_metadata.json`**: Comprehensive metadata with cleaned author information
+- **`arxiv_download_summary.json`**: Processing statistics and summary
+- **`arxiv_download_progress.log`**: Detailed download progress and error logs
+
 ## Error Handling
 
-The pipeline includes:
+### Citation Pipeline
 - Exponential backoff for API failures
 - Rate limiting to respect API constraints
 - Comprehensive error logging
 - Graceful handling of missing or malformed data
+
+### arXiv PDF Downloader
+- Intelligent retry logic for failed downloads
+- Rate limiting with configurable delays (default 3 seconds)
+- Resume capability from any interruption point
+- Detailed error logging with progress tracking
+- Graceful handling of API timeouts and network issues
 
 ## Name Parsing Logic
 
@@ -131,10 +268,18 @@ The tool uses the `nameparser` library to handle complex author names, including
 
 ## Limitations
 
+### Citation Processing
 1. Fuzzy matching accuracy depends on title similarity threshold
 2. API rate limits affect processing speed
 3. Requires active internet connection for database queries
 4. GROBID parsing quality affects overall results
+
+### arXiv PDF Downloader
+1. **Matching Accuracy**: Success depends on title similarity (default 85% threshold)
+2. **API Rate Limits**: arXiv API has request limits (3-second delays implemented)
+3. **Coverage**: Only downloads papers that have arXiv versions (typically ~50-60% match rate)
+4. **File Organization**: Requires sufficient disk space for large PDF collections
+5. **Resume Capability**: Large interruptions may require manual intervention for very long runs
 
 ## Contributing
 
