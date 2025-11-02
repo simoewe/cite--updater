@@ -43,15 +43,15 @@ sudo docker run --rm --gpus all --init --ulimit core=0 -p 8070:8070 grobid/grobi
 ## Usage
 
 ### 1. Prepare Your PDFs
-Place your academic PDFs in the `pdfs/` directory.
+Place your academic PDFs in the `data/pdfs/` directory.
 
 ### 2. Process PDFs with GROBID
 
 ```python
 from grobid_client.grobid_client import GrobidClient
 
-client = GrobidClient(config_path="./config.json")
-client.process('processReferences', 'pdfs', output='output', consolidate_citations=False, verbose=True)
+client = GrobidClient(config_path="./config/config.json")
+client.process('processReferences', 'data/pdfs', output='data/outputs', consolidate_citations=False, verbose=True)
 ```
 
 ### 3. Run the Citation Pipeline
@@ -78,7 +78,7 @@ python analyze_matches.py
 ## Configuration
 
 ### GROBID Configuration
-Edit `config.json` to configure GROBID settings:
+Edit `config/config.json` to configure GROBID settings:
 
 ```json
 {

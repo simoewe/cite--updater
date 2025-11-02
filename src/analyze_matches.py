@@ -1,28 +1,81 @@
+"""
+Author name matching and analysis tool.
+
+This script analyzes differences between parsed and matched author names in academic papers,
+focusing on detecting parsing errors, name mismatches, and first name variations.
+It handles various name formats including initials, compound names, and reversed name orders.
+"""
+
 import json
+import os
+import logging
 from typing import List, Dict, Set, Optional
 from difflib import get_close_matches
+from rapidfuzz.distance import DamerauLevenshtein
+import argparse
+from unidecode import unidecode
+
+def setup_logging(output_dir: str) -> None:
+    """
+    Configure logging to write to both file and console.
+    
+    Args:
+        output_dir: Directory where log file will be stored
+    """
+    log_file = os.path.join(output_dir, 'author_analysis.log')
+    
+    # Create formatter
+    formatter = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    
+    # Setup file handler
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+    
+    # Setup console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.ERROR)
+    console_handler.setFormatter(formatter)
+    
+    # Setup root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    root_logger.addHandler(file_handler)
+    root_logger.addHandler(console_handler)
 
 def detect_parsing_error(name: Dict[str, str], paper_title: str) -> Optional[str]:
     """
-    Check for common parsing errors in author names.
-    Include paper title for context in error messages.
+    Check for critical parsing errors in author names.
+    Only detects serious issues like duplicate first/last names.
+    
+    Args:
+        name: Dictionary containing author name components
+        paper_title: Title of the paper for context in error messages
+        
+    Returns:
+        str: Error message if critical parsing error detected, None otherwise
     """
-    orig = name['original'].lower()
-    parsed = f"{name['first_name']} {name['last_name']}".lower()
-    
-    # Check for obviously wrong name splits
+    # Only check for duplicate first/last name as it indicates a serious parsing issue
     if name['first_name'].lower() == name['last_name'].lower():
-        return f"Duplicate first/last name: {name['original']}"
-    
-    # Check if parsed name differs significantly from original
-    if orig != parsed and orig != parsed.strip():
-        return f"Name parsing mismatch: original '{name['original']}' parsed as '{name['first_name']} {name['last_name']}'"
+        return f"Duplicate first/last name: {name['first_name']}"
     
     return None
 
 def normalize_name(name: Dict[str, str]) -> str:
-    """Convert author dict to normalized string for comparison using original field."""
-    return name['original'].lower()
+    """
+    Convert author dict to normalized string for comparison.
+    Uses first and last name only, ignoring the original field.
+    
+    Args:
+        name: Dictionary containing author name components
+        
+    Returns:
+        str: Normalized name string in lowercase
+    """
+    return f"{name['first_name']} {name['last_name']}".lower()
 
 def find_closest_match(name: str, name_list: List[str]) -> Optional[tuple[str, float]]:
     """Find closest matching name from a list using difflib."""
@@ -48,6 +101,13 @@ def normalize_compound_name(name: str) -> str:
     """Normalize compound names by removing spaces and hyphens."""
     return ''.join(c.lower() for c in name if c.isalnum())
 
+def initial_matches(name1: str, name2: str) -> bool:
+    """Check if names match by initials, handling multiple words."""
+    init1 = get_initials(name1)
+    init2 = get_initials(name2)
+    return (init1 and init2 and 
+            (init1.startswith(init2) or init2.startswith(init1)))
+
 def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
     """
     Enhanced name matching that handles:
@@ -57,7 +117,7 @@ def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
     - Combined first names
     """
     def normalize_component(text: str) -> str:
-        return text.lower().replace('.', '').strip()
+        return text.lower().replace('.', '').replace('-', '').strip()
     
     # Get all name components
     n1_first = normalize_component(name1['first_name'])
@@ -73,14 +133,6 @@ def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
     
     # Check for exact last name match
     last_match = n1_last == n2_last
-    
-    # Handle initials in first/middle names
-    def initial_matches(name1: str, name2: str) -> bool:
-        """Check if names match by initials, handling multiple words."""
-        init1 = get_initials(name1)
-        init2 = get_initials(name2)
-        return (init1 and init2 and 
-                (init1.startswith(init2) or init2.startswith(init1)))
     
     # Improve reversed name detection
     def get_all_name_parts(name: Dict[str, str]) -> List[str]:
@@ -113,8 +165,10 @@ def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
         if n2_middle and n1_first == n2_middle:
             return True
             
-        # Case 4: One name is part of the other
-        if n1_first in n2_first or n2_first in n1_first:
+        # Case 4: See if full names are same without spaces
+        full_name1 = ''.join(n1_parts)
+        full_name2 = ''.join(n2_parts)
+        if full_name1 == full_name2:
             return True
     
     # Check reversed full names
@@ -141,10 +195,11 @@ def check_author_lists(parsed_authors: List[Dict[str, str]],
                       paper_title: str) -> List[str]:
     """
     Check author lists with enhanced name matching.
+    Focuses on actual name differences rather than parsing variations.
     """
     mismatches = []
     
-    # First check for parsing errors
+    # First check for critical parsing errors only
     parsing_errors = []
     for author in parsed_authors:
         if error := detect_parsing_error(author, paper_title):
@@ -154,7 +209,7 @@ def check_author_lists(parsed_authors: List[Dict[str, str]],
             parsing_errors.append(error)
             
     if parsing_errors:
-        mismatches.append("Parsing errors detected:")
+        mismatches.append("Critical parsing errors detected:")
         mismatches.extend(f"  {error}" for error in parsing_errors)
     
     # Try to match each parsed author with a matched author
@@ -190,36 +245,198 @@ def check_author_lists(parsed_authors: List[Dict[str, str]],
                     break
             
             if closest:
-                mismatches.append(f"  Parsed: {author['original']} ≈ Matched: {closest['original']} ({match_reason})")
+                mismatches.append(
+                    f"  Parsed: {author['first_name']} {author['last_name']} ≈ "
+                    f"Matched: {closest['first_name']} {closest['last_name']} ({match_reason})"
+                )
                 unmatched_matched.remove(closest)
             else:
-                mismatches.append(f"  Only in parsed: {author['original']}")
+                mismatches.append(f"  Only in parsed: {author['first_name']} {author['last_name']}")
         
         # Report remaining unmatched matched authors
         for author in unmatched_matched:
-            mismatches.append(f"  Only in matched: {author['original']}")
+            mismatches.append(f"  Only in matched: {author['first_name']} {author['last_name']}")
     
     return mismatches
 
-# Load the existing JSON file
-with open('author_matches.json', 'r', encoding='utf-8') as f:
-    data = json.load(f)
+def normalize_text(text: str) -> str:
+    """
+    Normalize text by:
+    1. Converting to lowercase
+    2. Removing diacritics
+    3. Keeping only alphabetic characters
+    4. Splitting hyphenated parts for comparison
+    """
+    # Convert to lowercase and normalize unicode
+    text = text.lower()
+    text = unidecode(text)
+    # Split by hyphen and compare parts
+    parts = text.replace('-', ' ').split()
+    # Keep only alphabetic characters in each part
+    return [''.join(c for c in part if c.isalpha()) for part in parts]
 
-# Process each entry
-for entry in data:
-    if entry['matched_authors']:
-        entry['mismatches'] = check_author_lists(entry['parsed_authors'], 
-                                               entry['matched_authors'],
-                                               entry['title'])
+def parts_are_similar(part1: str, part2: str, max_distance: int = 1) -> bool:
+    """
+    Check if two name parts are similar using DamerauLevenshtein distance.
+    
+    Args:
+        part1: First name part
+        part2: Second name part
+        max_distance: Maximum edit distance to consider parts similar
+        
+    Returns:
+        bool: True if parts are similar enough
+    """
+    # Skip very short names or names with big length difference
+    if len(part1) <= 1 or len(part2) <= 1:
+        return part1 == part2
+    if abs(len(part1) - len(part2)) > max_distance:
+        return False
+    
+    return DamerauLevenshtein.distance(part1, part2) <= max_distance
 
-# Write back the updated JSON
-with open('author_matches_with_mismatches.json', 'w', encoding='utf-8') as f:
-    json.dump(data, f, indent=2, ensure_ascii=False)
+def analyze_first_name_differences(parsed_authors: List[Dict[str, str]], 
+                                 matched_authors: List[Dict[str, str]],
+                                 paper_title: str) -> List[str]:
+    """
+    Analyze differences in first names that:
+    1. Are actually different names (not just variations caught by is_name_match)
+    2. Have meaningful differences (not just diacritics/hyphenation/minor misspellings)
+    3. Only compare first names when last names match
+    """
+    mismatches = []
 
-# Print summary of mismatches found
-print("\nMismatches found:")
-for entry in data:
-    if entry.get('mismatches'):
-        print(f"\nTitle: {entry['title']}")
-        for mismatch in entry['mismatches']:
-            print(f"  {mismatch}") 
+    if len(parsed_authors) != len(matched_authors):
+        mismatches.append(f"Number of parsed authors ({len(parsed_authors)}) does not match number of matched authors ({len(matched_authors)})")
+        return mismatches
+    
+    for i, parsed_author in enumerate(parsed_authors):
+        matched_author = matched_authors[i]
+        
+        # Skip if names already match according to flexible matching
+        if is_name_match(parsed_author, matched_author):
+            continue
+            
+        # Only compare first names if last names match
+        parsed_last = parsed_author['last_name'].lower()
+        matched_last = matched_author['last_name'].lower()
+        
+        if parsed_last != matched_last:
+            continue
+            
+        # Get normalized first names as lists of parts
+        parsed_parts = normalize_text(parsed_author['first_name'])
+        matched_parts = normalize_text(matched_author['first_name'])
+        
+        # Skip if any parts are similar (exact match or edit distance 1)
+        if any(parts_are_similar(p1, p2) for p1 in parsed_parts for p2 in matched_parts):
+            continue
+            
+        # Only report if the names are substantially different
+        if any(len(p) > 1 for p in parsed_parts) and any(len(p) > 1 for p in matched_parts):
+            # Check if first letters match in any parts
+            parsed_firsts = {p[0] for p in parsed_parts if p}
+            matched_firsts = {p[0] for p in matched_parts if p}
+            if not parsed_firsts.intersection(matched_firsts):
+                continue
+                
+            mismatch = (f"Name mismatch: {parsed_author['first_name']} {parsed_last} vs "
+                       f"{matched_author['first_name']} {matched_last}")
+            mismatches.append(mismatch)
+    
+    return mismatches
+
+def analyze_author_matches(input_file: str, output_dir: str) -> None:
+    """
+    Main function to analyze author name matches and differences.
+    
+    Args:
+        input_file: Path to the input JSON file containing author matches
+        output_dir: Directory where output files will be saved
+    """
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Setup logging
+    setup_logging(output_dir)
+    
+    # Load the input JSON file
+    try:
+        with open(input_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        logging.error(f"Input file '{input_file}' not found.")
+        return
+    except json.JSONDecodeError:
+        logging.error(f"Invalid JSON format in '{input_file}'.")
+        return
+
+    # Process each entry
+    first_name_results = []
+    mismatch_results = []
+    
+    logging.info(f"Processing author matches from {input_file}")
+    
+    for entry in data:
+        if not entry.get('matched_authors'):
+            continue
+            
+        # Analyze first name differences for entries with single mismatch
+        if len(entry.get('mismatches', [])) == 1:
+            mismatches = analyze_first_name_differences(
+                entry['parsed_authors'],
+                entry['matched_authors'],
+                entry['title']
+            )
+            if mismatches:
+                first_name_results.append({
+                    'title': entry['title'],
+                    'mismatches': mismatches
+                })
+        
+        # Check for general author list mismatches
+        author_mismatches = check_author_lists(
+            entry['parsed_authors'],
+            entry['matched_authors'],
+            entry['title']
+        )
+        if author_mismatches:
+            mismatch_results.append({
+                'title': entry['title'],
+                'mismatches': author_mismatches
+            })
+
+    # Write results to output files
+    output_files = {
+        'first_name_differences.json': first_name_results,
+        'author_mismatches.json': mismatch_results
+    }
+    
+    for filename, results in output_files.items():
+        output_path = os.path.join(output_dir, filename)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+        logging.info(f"Wrote results to: {output_path}")
+        
+        # Log summary
+        if results:
+            logging.info(f"Found in {filename}:")
+            for result in results:
+                logging.info(f"\nTitle: {result['title']}")
+                for mismatch in result['mismatches']:
+                    logging.info(f"  {mismatch}")
+        else:
+            logging.info(f"No results found for {filename}")
+
+def main():
+    """Parse command line arguments and run the analysis."""
+    parser = argparse.ArgumentParser(description='Analyze author name matches and differences.')
+    parser.add_argument('--input_file', default='author_matches.json', help='Path to the input JSON file containing author matches')
+    parser.add_argument('--output-dir', default='output',
+                      help='Directory where output files will be saved (default: output)')
+    
+    args = parser.parse_args()
+    analyze_author_matches(args.input_file, args.output_dir)
+
+if __name__ == '__main__':
+    main() 

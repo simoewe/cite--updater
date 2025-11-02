@@ -21,11 +21,11 @@ def sample_xml_files(data_dir: str, n: int) -> list:
 
 def main():
     parser = argparse.ArgumentParser(description='Sample and process XML files using citation pipeline')
-    parser.add_argument('--data-dir', type=str, default='data',
+    parser.add_argument('--data-dir', type=str, default='data/outputs',
                        help='Directory containing XML files')
     parser.add_argument('--n-samples', type=int, default=15500,
                        help='Number of XML files to sample')
-    parser.add_argument('--output-dir', type=str, default='outputs',
+    parser.add_argument('--output-dir', type=str, default='data/outputs',
                        help='Directory to store output JSON files')
     parser.add_argument('--threshold', type=int, default=90,
                        help='Title match threshold (0-100)')

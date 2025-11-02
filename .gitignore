@@ -1,10 +1,43 @@
 .venv
-outputs/
-pdfs/
-*.json
+.vscode/
 data/
 dblp/
+arxivs/
 
+# Heavy data files
+*.pdf
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.7z
+*.rar
+
+# Large XML data files (but keep small config/test XML files)
+*.xml
+!config/*.xml
+!tests/*.xml
+!src/**/*.xml
+
+# Large binary/image files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.ico
+# Exception: small icons/logos in docs/ are okay
+!docs/*.png
+!docs/*.jpg
+!docs/*.jpeg
+
+# Log files
+*.log
+logs/
+
+# Archive directories
+archive/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

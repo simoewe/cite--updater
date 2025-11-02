@@ -247,9 +247,10 @@ if __name__ == '__main__':
     
     # Input/Output options
     parser.add_argument('--input', type=str, 
-                       default='pdfs/2024.lrec-main.320.grobid.tei.xml',
+                       default='output/2024.lrec-main.320.grobid.tei.xml',
                        help='Input XML file path')
     parser.add_argument('--output', type=str,
+                       default='author_matches.json',
                        help='Output JSON file path')
     
     # Matching options
