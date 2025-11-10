@@ -66,6 +66,21 @@ python src/run_grobid.py
 python src/citation_pipeline.py --input data/outputs/processed.xml
 ```
 
+### Extract Metadata to CSV
+
+```bash
+# Extract paper metadata (ID, Title, Authors, Affiliations) from GROBID XML files
+python3 src/parse_grobid_to_csv.py
+```
+
+This script processes all GROBID TEI XML files matching the pattern `2025.*.grobid.tei.xml` and creates a tab-separated CSV file with:
+- **ID**: Paper identifier (extracted from filename)
+- **Title**: Main paper title
+- **Authors**: Semicolon-separated list of authors (forename + surname)
+- **Affiliations**: Semicolon-separated list of author affiliations
+
+The output CSV is saved to `data/arxiv_metadata.csv`.
+
 ## Detailed Usage
 
 ### 1. Prepare Your PDFs
@@ -243,6 +258,9 @@ The tool generates a JSON file containing:
 - **`arxiv_download_summary.json`**: Processing statistics and summary
 - **`arxiv_download_progress.log`**: Detailed download progress and error logs
 
+### GROBID Metadata Extractor
+- **`data/arxiv_metadata.csv`**: Tab-separated CSV file with paper metadata (ID, Title, Authors, Affiliations) extracted from GROBID TEI XML files
+
 ## Error Handling
 
 ### Citation Pipeline
@@ -291,3 +309,27 @@ The tool uses the `nameparser` library to handle complex author names, including
 ## License
 
 MIT License
+
+---
+
+## Development Diary
+
+### 2025-11-10 - GROBID Metadata Extraction to CSV
+
+Added a new script `src/parse_grobid_to_csv.py` that extracts structured metadata from GROBID TEI XML files and converts them to CSV format. The script:
+
+- Processes all XML files matching the pattern `2025.*.grobid.tei.xml` in `data/outputs/arxiv_pdfs/`
+- Extracts paper metadata including:
+  - **ID**: Extracted from filename (removes `.grobid.tei.xml` extension)
+  - **Title**: Main paper title from `<title>` elements
+  - **Authors**: Only extracts authors from the `<analytic>` section (main paper authors), not from citations/references
+  - **Affiliations**: Extracts organization names from author affiliations in the analytic section
+- Outputs a tab-separated CSV file to `data/arxiv_metadata.csv`
+
+**Key Implementation Details:**
+- Uses XML namespace-aware parsing (`http://www.tei-c.org/ns/1.0`)
+- Restricts author/affiliation extraction to `<sourceDesc>/<biblStruct>/<analytic>` section to avoid including citation authors
+- Handles missing data gracefully (empty strings for missing titles/authors/affiliations)
+- Processes thousands of XML files efficiently
+
+This tool is useful for creating structured datasets from GROBID-processed academic papers for further analysis or database import.
