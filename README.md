@@ -293,58 +293,47 @@ Converts GROBID XML outputs to structured CSV format.
 Scrapes paper lists from major AI conferences on DBLP.
 
 **Features:**
-- Supports multiple conferences (ICLR, NeurIPS, ICML, AAAI, FACCT, etc.)
-- Fetches conference proceedings in JSON format
-- Organizes data by conference and year
+- Cross-referencing against arXiv, DBLP, Semantic Scholar
+- Fuzzy author name matching
+- Confidence scoring for matches
+- Rate limiting and error handling
 
-**Note:** This is a utility script for gathering DBLP conference metadata. The main workflow uses pre-scraped DBLP data.
+### Multi-Database API Caller (`api_caller.py`)
 
-## Recommended Workflow
+Searches for papers across multiple databases (DBLP, arXiv, Semantic Scholar) with proper rate limiting and Open-Access filtering.
 
-After processing PDFs with GROBID and extracting structured data, follow this validation workflow:
+**Features:**
+- Parallel database searches for efficiency
+- Thread-safe rate limiting (DBLP: 3s, arXiv: 3s, Semantic Scholar: 1s)
+- Open-Access filtering (only returns accessible papers)
+- Fuzzy title matching using Fuzzywuzzy
+- Batch processing support for multiple titles
+- Comprehensive metadata extraction (title, authors, year, DOI, URLs)
 
-### Step 1: Sample Validation (Recommended First)
-```bash
-# Validate a representative sample to test system and estimate results
-source .venv/bin/activate
-python src/validate_citations.py \
-  --input-dir data/parsed_jsons \
-  --output-dir sample_validation_results \
-  --num-files 50 \
-  --title-similarity-threshold 95.0
+**Usage:**
+```python
+from api_caller import search_papers_by_title, search_multiple_titles
+
+# Search for a single paper
+result = search_papers_by_title("Attention Is All You Need", similarity_threshold=80)
+
+# Search for multiple papers in parallel
+titles = ["Paper Title 1", "Paper Title 2"]
+results = search_multiple_titles(titles, max_workers=5)
 ```
 
-### Step 2: Review Categorized Results
-Check the output directory (default: `validation_results/`):
-- Review `results/parsing_errors.json` for systematic parsing issues
-- Check `results/first_names.json` and `results/last_names.json` for name mismatches
-- Examine `results/matched.json` to verify correct matches
-- Check `results/summary.json` for overall statistics
+**Rate Limits:**
+- DBLP: 1 request per 3 seconds
+- arXiv: 1 request per 3 seconds
+- Semantic Scholar: 1 request per second (5 requests per 5 seconds with API key)
 
-### Step 3: Full-Scale Validation (Optional - Time Intensive)
-```bash
-# Process all 100K+ files (may take several hours/days)
-python src/validate_citations.py \
-  --input-dir data/parsed_jsons \
-  --output-dir full_validation_results \
-  --title-similarity-threshold 95.0
-```
+**API Key Configuration (Optional):**
+For higher Semantic Scholar rate limits, configure your API key:
+1. Copy `.env.example` to `.env`: `cp .env.example .env`
+2. Add your API key to `.env`: `SEMANTIC_SCHOLAR_API_KEY=your_key_here`
+3. Get your API key from: https://www.semanticscholar.org/product/api
 
-### Step 4: LLM Classification (Optional)
-```bash
-# Classify mismatches for detailed analysis
-python src/vllm_classifier.py \
-  --input_file validation_results/validation_results.json \
-  --output_file validation_results/classified_results.json \
-  --gpu_memory_utilization 0.7
-```
-
-### Step 5: Improve Based on Results
-Based on validation results, consider:
-- Adjusting title similarity thresholds
-- Improving author name parsing
-- Adding new error classifications
-- Updating the GROBID processing pipeline
+The `.env` file is automatically ignored by git (already in `.gitignore`).
 
 ## Supported Conferences
 
@@ -400,3 +389,160 @@ Deprecated or unused scripts are kept in `src/archive/` for reference. See `src/
 ## License
 
 MIT License
+
+---
+
+## Development Diary
+
+### 2025-01-XX - Multi-Database API Caller with API Key Support
+
+Added comprehensive API caller module for searching papers across multiple databases:
+
+- **New module `api_caller.py`**: Provides unified interface for searching DBLP, arXiv, and Semantic Scholar
+  - Thread-safe rate limiting for each API source
+  - Parallel database searches using ThreadPoolExecutor
+  - Open-Access filtering (arXiv: all papers, Semantic Scholar: openAccessPdf field, DBLP: accessible URLs)
+  - Fuzzy title matching with configurable similarity threshold
+  - Batch processing support for multiple titles
+  - Comprehensive metadata extraction (title, authors, year, DOI, URLs, PDF links)
+
+- **API Key Support**:
+  - Secure API key management via environment variables or `.env` file
+  - Semantic Scholar API key support for higher rate limits (5 requests per 5 seconds with key)
+  - `.env.example` template file for easy configuration
+  - Automatic `.env` file exclusion from git (already in `.gitignore`)
+  - Graceful fallback to public rate limits if no key is provided
+
+- **Key features**:
+  - Respects API rate limits (DBLP: 3s, arXiv: 3s, Semantic Scholar: 1s or 5/5s with key)
+  - Efficient parallel processing for batch searches
+  - Only returns Open-Access papers
+  - Results ranked by title similarity score
+  - JSON export functionality for results
+
+- **Use cases**:
+  - Identifying papers with similar titles across databases
+  - Verifying paper metadata from multiple sources
+  - Finding Open-Access versions of papers
+  - Batch processing of citation lists
+
+The API caller enables efficient cross-database paper searches while respecting rate limits and focusing on Open-Access content. API key support allows for higher throughput when processing large batches of papers.
+
+### 2025-11-13 (5) - Advanced Author Name Matching and Output Organization
+
+Refined citation validation to handle complex name variations and improve result organization:
+
+- **Enhanced Initial Matching**: Fixed initial matching to properly handle accented characters (e.g., "Ł Kaiser" now matches "Lukasz Kaiser")
+- **Improved Accent Detection**: Better detection of accent differences when one name uses initials (e.g., "A Hyvarinen" vs "Aapo Hyvärinen" now classified as accents_missing)
+- **Flexible Initial-Name Matching**: Authors with initials now properly match full names starting with the same letter (e.g., "S Corff" matches "Sylvain Le Corff")
+- **Output Organization**: Parsing errors are now sorted to the bottom of mismatch results for better prioritization
+
+**Technical Changes:**
+- Modified `get_initials()` in `analyze_matches.py` to normalize accented characters before extracting initials
+- Enhanced accent detection logic in validation to handle initial-full name combinations
+- Added initial matching logic for both first and last name comparisons
+- Implemented sorting of mismatch results to prioritize non-parsing errors
+
+**Impact:** More accurate author matching for citations using various naming conventions, better error classification, and improved result organization for easier analysis of validation issues.
+
+### 2025-11-13 (2) - Parsing Error Detection in Citation Validation
+
+Enhanced the citation validation system to detect and flag systematic parsing errors where author names are shifted or mixed up:
+
+- **Added parsing error detection to `src/validate_citations.py`**:
+  - Detects when first names and last names are mixed up between adjacent authors
+  - Checks if reference author's last name matches DBLP author's first name (or vice versa)
+  - Flags entire reference as `parsing_error` when this pattern is detected
+  - Short-circuits further error analysis when parsing error is found (since all other errors are likely consequences of the parsing issue)
+
+- **Reorganized output structure**:
+  - Output JSON now separates `mismatches` (author_mismatch status) and `matches` (matched status) into distinct top-level sections
+  - Mismatches appear first in the output file for easier inspection
+  - Added counts to analysis section: `mismatch_count` and `match_count`
+
+- **Test results** (20 files, 825 references):
+  - **50 parsing errors detected** - systematic name shifting issues
+  - 105 author_not_found errors
+  - 35 first_name_mismatch errors
+  - 27 last_name_mismatch errors
+  - 14 accents_missing errors
+  
+- **Example parsing errors found**:
+  - BERT paper: "Kenton", "Lee Kristina" parsed instead of "Kenton Lee", "Kristina Toutanova"
+  - "William Yang", "Wang" split instead of "William Yang Wang"
+  - "Christophe Hoa T Le" parsed instead of "Hoa T. Le" (first author's first name becoming previous author's last name)
+
+The parsing error detection helps identify systematic issues in PDF parsing that affect entire reference lists, making it easier to prioritize which citation extraction errors need fixing at the parser level vs. minor variations in author name formatting.
+
+### 2025-11-13 (1) - Enhanced Citation Validation System
+
+Improved the citation validation system with better error detection and classification:
+
+- **Enhanced `src/validate_citations.py`** with new features:
+  - **Title similarity filtering**: Only considers DBLP matches if string similarity >= 90% (configurable via `--title-similarity-threshold`)
+  - **Minimum author list comparison**: Compares only the minimum length of reference and DBLP author lists, handling cases where authors don't include full author lists
+  - **Error classification**: Categorizes mismatches into specific types:
+    - `first_name_mismatch`: First names differ
+    - `last_name_mismatch`: Last names differ
+    - `accents_missing`: Names differ only by accents/diacritics
+    - `author_order_wrong`: Authors match but order differs
+    - `author_not_found`: Author not found in DBLP list
+  - Uses `rapidfuzz` for accurate title similarity calculation
+  - Tracks title similarity scores in results for analysis
+
+- **Enhanced `src/analyze_validation_results.py`**:
+  - Analyzes error classifications and patterns
+  - Identifies common mistakes (low title similarity, order issues, accent problems)
+  - Provides statistics on author list length differences
+  - Generates detailed analysis JSON with examples
+
+- **Key improvements**:
+  - More accurate matching by filtering low-similarity titles
+  - Better handling of partial author lists (common in citations)
+  - Detailed error classification for easier debugging
+  - Comprehensive analysis tools for understanding validation results
+
+The enhanced validation system provides more accurate citation validation and better insights into citation errors.
+
+### 2025-01-11 - Citation Validation System
+
+Added a comprehensive citation validation system to check author citations in parsed JSON files against DBLP database:
+
+- **New script `src/validate_citations.py`**: Processes JSON files from `data/parsed_jsons/` and validates each reference by:
+  - Querying DBLP database using paper titles
+  - Comparing author lists between references and DBLP entries
+  - Using existing name matching logic from `analyze_matches.py` to handle variations (initials, reversed names, etc.)
+  - Flagging incorrect citations with detailed mismatch information
+
+- **Analysis tool `src/analyze_validation_results.py`**: Provides detailed statistics and insights:
+  - Overall match/mismatch rates
+  - Categorization of mismatch types (missing authors, extra authors, list differences)
+  - Examples of problematic citations
+  - Files with most mismatches
+
+- **Key features**:
+  - Processes multiple JSON files (default: 20 files for testing)
+  - Uses DBLP parser with BM25 search for efficient title matching
+  - Leverages existing author name normalization and matching functions
+  - Generates comprehensive JSON output with validation results
+  - Handles edge cases (missing titles, parsing errors, etc.)
+
+- **Initial test results** (20 files, 952 references):
+  - 53.2% match rate (correct citations)
+  - 46.8% mismatch rate (potential errors or variations)
+  - Detects real errors (e.g., wrong author names) as well as minor variations (abbreviations, middle initials)
+
+The validation system helps identify citation errors in academic papers, enabling quality control and data cleaning workflows.
+
+### 2025-11-11 - README Organization and Cleanup
+
+Completely reorganized and cleaned up the README to reflect the current state of the project:
+
+- **Removed outdated content**: Eliminated redundant sections, confusing explanations, and outdated file paths
+- **Simplified structure**: Streamlined from verbose documentation to clear, actionable information
+- **Updated data organization**: Documented the current clean folder structure with `parsed_jsons/`, organized outputs, etc.
+- **Focused on core functionality**: Emphasized the main workflows (PDF downloading, GROBID processing, metadata extraction)
+- **Added clear data structure diagram**: Shows how files are organized across the project
+- **Removed development diary**: Consolidated into a single, clean document rather than maintaining separate diary entries
+
+The README now serves as a clear guide for users to understand and use the toolkit effectively.

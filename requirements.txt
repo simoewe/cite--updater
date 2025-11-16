@@ -1,11 +1,8 @@
-arxiv==1.4.8
+arxiv>=2.3.1
 nameparser==1.1.3
 fuzzywuzzy==0.18.0
 requests>=2.31.0
 python-Levenshtein==0.23.0  # Optional but recommended for better fuzzywuzzy performance
 backoff==2.2.1  # For retry logic
 tqdm>=4.66.0
-vllm>=0.4.0  # For efficient LLM inference
-transformers>=4.35.0  # For model loading
-accelerate>=0.24.0  # For model acceleration
-torch>=2.1.0  # PyTorch for model inference
+python-dotenv>=1.0.0  # For loading environment variables from .env file

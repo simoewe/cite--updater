@@ -236,7 +236,12 @@ def query_arxiv_by_title(title: str, match_threshold: int = 85) -> Optional[Dict
         Dictionary with arXiv paper info if match found, None otherwise
     """
     try:
-        client = arxiv.Client()
+        # Configure client to handle redirects properly (fixes HTTP 301 issues)
+        client = arxiv.Client(
+            page_size=5,
+            delay_seconds=3.0,
+            num_retries=3
+        )
         search = arxiv.Search(
             query=title,
             max_results=5,  # Get a few results to find the best match
