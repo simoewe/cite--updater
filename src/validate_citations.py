@@ -24,6 +24,7 @@ from typing import List, Dict, Optional, Any
 from pathlib import Path
 from collections import Counter, defaultdict
 import random
+from tqdm import tqdm
 
 # Setup logging BEFORE importing other modules
 logging.basicConfig(
@@ -609,7 +610,16 @@ def check_author_with_minimum_lists(ref_authors: List[Dict[str, str]],
         else:
             # All authors match and order is correct
             result['matches'] = True
-    
+
+    # Heuristic: if there are 3 or more errors, classify as parsing error
+    if len(result['error_classifications']) >= 3:
+        result['error_classifications'] = ['parsing_error']
+        # Update mismatches description to indicate this is likely a parsing error
+        result['mismatches'] = [
+            f"Multiple errors detected ({len(result['mismatches'])} issues) - likely parsing error: " +
+            '; '.join(result['mismatches'][:3]) + ('...' if len(result['mismatches']) > 3 else '')
+        ]
+
     return result
 
 
@@ -1187,17 +1197,16 @@ def reorganize_results(data: Dict[str, Any], output_dir: str) -> None:
     
     categories = categorize_results(all_results)
     
-    # Write category files
-    for category_name, results in categories.items():
+    # Write category files with progress bar
+    for category_name, results in tqdm(categories.items(), desc="Writing result files"):
         if category_name == 'summary':
             filename = 'summary.json'
         else:
             filename = f'{category_name}.json'
-        
+
         filepath = os.path.join(results_dir, filename)
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
-        logger.info(f"Wrote {len(results)} results to {filename}")
     
     # Create README
     readme_path = os.path.join(results_dir, 'README.md')
@@ -1235,8 +1244,8 @@ This folder contains citation validation results organized by category.
     
     with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(readme_content)
-    
-    logger.info(f"Successfully reorganized results into: {results_dir}")
+
+    print(f"Successfully reorganized results into: {results_dir}")
 
 
 if __name__ == '__main__':

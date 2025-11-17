@@ -498,3 +498,24 @@ Completely reorganized and cleaned up the README to reflect the current state of
 - **Removed development diary**: Consolidated into a single, clean document rather than maintaining separate diary entries
 
 The README now serves as a clear guide for users to understand and use the toolkit effectively.
+
+### 2025-11-17 - tqdm Progress Bars and Parsing Error Heuristic
+
+Enhanced the citation validation system with improved user experience and error classification:
+
+- **Replaced logging with tqdm progress bars**: Replaced verbose logging statements in the result reorganization process with clean tqdm progress bars for better visual feedback during file writing operations
+- **Added parsing error heuristic**: Implemented a heuristic where citations with 3 or more individual errors are automatically classified as parsing errors, reducing false positives in error categorization
+- **Improved error messaging**: When the heuristic triggers, consolidated multiple error messages into a single "Multiple errors detected" message indicating likely parsing issues
+
+**Technical changes:**
+- Added `from tqdm import tqdm` import to `src/validate_citations.py`
+- Modified `reorganize_results()` function to use `tqdm(categories.items(), desc="Writing result files")` instead of logging
+- Added heuristic logic before `check_author_with_minimum_lists()` return: if `len(result['error_classifications']) >= 3`, reclassify as `parsing_error` with consolidated mismatch description
+- Changed final success message from `logger.info()` to `print()` for cleaner output
+
+**Test results** (5 files, 259 references):
+- tqdm progress bars working correctly: "Writing result files: 100%|██████████| 9/8 [00:00<00:00, 2377.87it/s]"
+- Parsing error heuristic triggered for 2 cases with 4+ errors each, properly reclassifying them as parsing errors
+- Results correctly organized into categorized files with updated README.md containing statistics
+
+The changes provide better user feedback during long-running operations and more accurate error classification for citations with systematic issues.
