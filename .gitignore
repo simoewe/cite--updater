@@ -6,7 +6,7 @@ data/
 dblp/
 arxivs/
 pdfs/
-results/
+validation_results/
 
 # Heavy data files
 *.pdf
