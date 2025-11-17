@@ -11,7 +11,6 @@ from retriv import SparseRetriever
 from retriv.paths import sr_state_path
 import numpy as np
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DblpParser:

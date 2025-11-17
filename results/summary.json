@@ -1,0 +1,15 @@
+[
+  {
+    "total_results": 2046,
+    "categories": {
+      "matched": 1340,
+      "title_mismatches": 336,
+      "parsing_errors": 189,
+      "last_names": 29,
+      "author_not_found": 120,
+      "errors": 29,
+      "first_names": 17,
+      "no_dblp_match": 2
+    }
+  }
+]

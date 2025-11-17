@@ -89,6 +89,150 @@ data/
 
 ## Core Scripts
 
+### File Organization
+
+The `src/` directory contains the main scripts for the toolkit:
+- **Active scripts**: Core functionality scripts documented below
+- **Archive folder** (`src/archive/`): Deprecated or unused scripts kept for reference
+
+### Citation Validation (`src/validate_citations.py`)
+
+**Purpose:** Validates citations by checking them against DBLP database.
+
+This script performs the actual validation work:
+- Reads parsed JSON files (from GROBID processing) containing citations
+- For each citation, queries DBLP database by paper title
+- Compares author lists between citations and DBLP entries
+- Classifies mismatches (accents_missing, first_name_mismatch, parsing_error, etc.)
+- Filters non-academic references (Wikipedia, etc.)
+- Generates validation results JSON file
+
+**Features:**
+- Cross-references citations with DBLP for accuracy validation
+- Handles complex author name variations (initials, accents, compound names)
+- Classifies mismatch types (accents_missing, first_name_mismatch, parsing_error, etc.)
+- Filters non-academic references (Wikipedia, etc.)
+- Processes thousands of citations efficiently
+
+**Usage:**
+```bash
+# Validate citations from a sample of JSON files
+python src/validate_citations.py --input-dir data/parsed_jsons --dblp-xml data/dblp.xml --output citation_validation_results.json --num-files 50
+
+# For full-scale validation (time-intensive)
+python src/validate_citations.py --input-dir data/parsed_jsons --dblp-xml data/dblp.xml --output full_validation_results.json
+```
+
+**Output:** `citation_validation_results.json` - Detailed JSON file with validation status, error classifications, and mismatch analysis for each citation.
+
+---
+
+### Citation Analysis (`src/analyze_citations.py`)
+
+**Purpose:** Analyzes the validation results produced by `validate_citations.py`.
+
+This script takes the OUTPUT from `validate_citations.py` and performs analysis:
+- Reads the validation results JSON file
+- Performs statistical analysis (error counts, title similarities, etc.)
+- Detects parsing errors (cascading names, split multi-part names)
+- Reorganizes results into categorized files (matched.json, parsing_errors.json, etc.)
+
+**Features:**
+- Statistical analysis: error classifications, title similarities, author list lengths
+- Parsing error detection: identifies cascading names, split multi-part names
+- Result reorganization: organizes results into categorized JSON files
+
+**Usage:**
+```bash
+# Analyze validation results (statistical analysis)
+python src/analyze_citations.py --input citation_validation_results.json --mode stats --output validation_analysis.json
+
+# Run all analyses
+python src/analyze_citations.py --input citation_validation_results.json --mode all
+
+# Reorganize results into categories
+python src/analyze_citations.py --input citation_validation_results.json --mode reorganize --output-dir .
+```
+
+**Output:** 
+- `validation_analysis.json` (stats mode) - Statistical analysis report
+- `parsing_errors_analysis.json` (parsing mode) - Parsing error detection report
+- `results/` folder (reorganize mode) - Categorized JSON files (matched.json, parsing_errors.json, etc.)
+
+---
+
+**Key Difference:**
+- **`validate_citations.py`** = **VALIDATION** (checks citations against DBLP, produces validation results)
+- **`analyze_citations.py`** = **ANALYSIS** (analyzes validation results, produces reports)
+
+#### Result Organization
+
+Organizes validation results into a structured folder with categorized JSON files:
+
+**Features:**
+- Separates citations by validation status and error types
+- Creates organized folder structure with individual category files
+- Generates summary statistics and documentation
+- Supports all error classifications from validation system
+
+**Usage:**
+```bash
+# Reorganize validation results into categorized files
+python src/analyze_citations.py --input citation_validation_results.json --mode reorganize --output-dir .
+
+# Creates results/ folder with files like:
+# - matched.json (correctly matched citations)
+# - parsing_errors.json (parsing issues)
+# - first_names.json (first name mismatches)
+# - last_names.json (last name mismatches)
+# - accents_missing.json (accent/diacritic issues)
+# - etc.
+```
+
+**Output:** `results/` folder with categorized JSON files and README documentation.
+
+### Recommended Workflow
+
+After processing PDFs with GROBID and extracting structured data, follow this validation workflow:
+
+#### Step 1: Sample Validation (Recommended First)
+```bash
+# Validate a representative sample to test system and estimate results
+source .venv/bin/activate
+python src/validate_citations.py \
+  --input-dir data/parsed_jsons \
+  --dblp-xml data/dblp.xml \
+  --output sample_validation_results.json \
+  --num-files 50 \
+  --title-similarity-threshold 95.0
+```
+
+#### Step 2: Analyze Results
+```bash
+# Generate detailed analysis of validation results
+python src/analyze_citations.py \
+  --input sample_validation_results.json \
+  --mode stats \
+  --output validation_analysis.json
+```
+
+#### Step 3: Full-Scale Validation (Optional - Time Intensive)
+```bash
+# Process all 100K+ files (may take several hours/days)
+python src/validate_citations.py \
+  --input-dir data/parsed_jsons \
+  --dblp-xml data/dblp.xml \
+  --output full_validation_results.json \
+  --title-similarity-threshold 95.0
+```
+
+#### Step 4: Review and Improve
+Based on analysis results, consider:
+- Adjusting title similarity thresholds
+- Improving author name parsing
+- Adding new error classifications
+- Updating the GROBID processing pipeline
+
 ### PDF Downloader (`src/download_arxiv_pdfs.py`)
 
 Downloads conference papers from arXiv using DBLP conference metadata.
@@ -133,15 +277,16 @@ Converts GROBID XML outputs to structured CSV format.
 
 **Output:** `data/arxiv_metadata.csv` (tab-separated)
 
-### Citation Analysis (`src/citation_pipeline.py`)
+### DBLP Conference Scraper (`src/scrape_dblp_conferences.py`)
 
-Validates and cross-references citation authors against multiple databases.
+Scrapes paper lists from major AI conferences on DBLP.
 
 **Features:**
-- Cross-referencing against arXiv, DBLP, Semantic Scholar
-- Fuzzy author name matching
-- Confidence scoring for matches
-- Rate limiting and error handling
+- Supports multiple conferences (ICLR, NeurIPS, ICML, AAAI, FACCT, etc.)
+- Fetches conference proceedings in JSON format
+- Organizes data by conference and year
+
+**Note:** This is a utility script for gathering DBLP conference metadata. The main workflow uses pre-scraped DBLP data.
 
 ## Supported Conferences
 
@@ -188,7 +333,70 @@ MIT License
 
 ---
 
+## Archive
+
+Deprecated or unused scripts are kept in `src/archive/` for reference. See `src/archive/README.md` for details about archived files.
+
+**Note:** Archived scripts should not be used in new workflows. Use the current scripts documented above instead.
+
 ## Development Diary
+
+### 2025-01-XX - Source Code Reorganization
+
+Reorganized the `src/` directory to improve clarity and remove unused files:
+
+- **Created `src/archive/` folder** for deprecated/unused scripts:
+  - Moved `citation_pipeline.py` (superseded by `validate_citations.py`)
+  - Moved `sample_and_process.py` and `sample_analysis.py` (test scripts)
+  - Moved `parse_citations.py` (unused, redundant functionality)
+  - Moved `download_pdf.py` (ACL Anthology downloader, not part of main workflow)
+
+- **Active scripts remain in `src/`:**
+  - `validate_citations.py` - Main citation validation system
+  - `analyze_citations.py` - Citation analysis tool
+  - `analyze_matches.py` - Author name matching utilities (used by validate_citations.py)
+  - `download_arxiv_pdfs.py` - arXiv PDF downloader
+  - `run_grobid.py` - GROBID processing
+  - `parse_grobid_to_csv.py` - Metadata extraction
+  - `scrape_dblp_conferences.py` - DBLP conference scraper utility
+
+- **Benefits:**
+  - Cleaner `src/` directory with only active scripts
+  - Clear separation between current and deprecated code
+  - Easier to understand the main workflow
+  - Archived scripts preserved for reference
+
+### 2025-11-17 - Citation Results Reorganization System
+
+Added a comprehensive system to reorganize citation validation results into a structured folder format:
+
+- **Result reorganization** (via `src/analyze_citations.py --mode reorganize`): Takes large validation JSON files and splits them into categorized files:
+  - `matched.json` - Citations that matched correctly with DBLP (1,210 results)
+  - `parsing_errors.json` - Citations with parsing errors in author names (167 results)
+  - `first_names.json` - Citations with first name mismatches (59 results)
+  - `last_names.json` - Citations with last name mismatches (42 results)
+  - `accents_missing.json` - Citations with missing accents/diacritics (40 results)
+  - `author_not_found.json` - Citations where authors were not found in DBLP (68 results)
+  - `author_order_wrong.json` - Citations with correct authors but wrong order (2 results)
+  - `title_mismatches.json` - Citations with title similarity below threshold (352 results)
+  - `no_dblp_match.json` - Citations not found in DBLP database (2 results)
+  - `errors.json` - Citations that caused processing errors (25 results)
+  - `skipped.json` - Citations that were skipped (8 results)
+  - `summary.json` - Summary statistics for all categories
+
+- **Features implemented**:
+  - Automatic creation of `results/` folder structure
+  - Deduplication of results based on reference ID and title
+  - Comprehensive error type categorization
+  - Auto-generated README.md with file descriptions and statistics
+  - Support for all validation status types and error classifications
+
+- **Test results** (sample validation results with 1,948 unique citations):
+  - Successfully categorized all citations into appropriate files
+  - Generated comprehensive documentation with statistics table
+  - Maintained data integrity and proper JSON formatting
+
+This reorganization makes it much easier to analyze specific types of citation errors and understand validation patterns across large datasets.
 
 ### 2025-11-13 (5) - Advanced Author Name Matching and Output Organization
 
@@ -252,11 +460,10 @@ Improved the citation validation system with better error detection and classifi
   - Uses `rapidfuzz` for accurate title similarity calculation
   - Tracks title similarity scores in results for analysis
 
-- **Enhanced `src/analyze_validation_results.py`**:
-  - Analyzes error classifications and patterns
-  - Identifies common mistakes (low title similarity, order issues, accent problems)
-  - Provides statistics on author list length differences
-  - Generates detailed analysis JSON with examples
+- **Enhanced analysis tool** (`src/analyze_citations.py`):
+  - Statistical analysis: error classifications, title similarities, author list lengths, common mistakes
+  - Parsing error detection: identifies cascading names, split multi-part names, name swapping
+  - Result reorganization: organizes results into categorized files
 
 - **Key improvements**:
   - More accurate matching by filtering low-similarity titles
@@ -276,7 +483,7 @@ Added a comprehensive citation validation system to check author citations in pa
   - Using existing name matching logic from `analyze_matches.py` to handle variations (initials, reversed names, etc.)
   - Flagging incorrect citations with detailed mismatch information
 
-- **Analysis tool `src/analyze_validation_results.py`**: Provides detailed statistics and insights:
+- **Analysis tool `src/analyze_citations.py`**: Provides comprehensive analysis with multiple modes:
   - Overall match/mismatch rates
   - Categorization of mismatch types (missing authors, extra authors, list differences)
   - Examples of problematic citations
@@ -296,6 +503,42 @@ Added a comprehensive citation validation system to check author citations in pa
 
 The validation system helps identify citation errors in academic papers, enabling quality control and data cleaning workflows.
 
+#### Citation Analysis Tool
+
+The `src/analyze_citations.py` script provides comprehensive analysis of citation validation results. It consolidates three analysis functions:
+
+1. **Statistical Analysis** (`--mode stats`): Analyzes validation results for patterns and statistics:
+   - Error classification counts and examples
+   - Title similarity distributions
+   - Author list length differences
+   - Common mistake patterns
+
+2. **Parsing Error Detection** (`--mode parsing`): Identifies when author name mismatches are due to parsing errors:
+   - **Cascading Last Names**: When author names are shifted/mixed up (e.g., ref author i's last name matches DBLP author i-1's last name)
+   - **Split Multi-part Last Names**: When multi-part last names (e.g., "van den Berg", "Costa-jussà") are incorrectly split
+   - **Name Swapping**: When first and last names appear to be swapped
+
+3. **Result Reorganization** (`--mode reorganize`): Organizes validation results into categorized files in a `results/` folder.
+
+**Usage:**
+```bash
+source .venv/bin/activate
+
+# Run all analyses
+python src/analyze_citations.py --input FILE --mode all
+
+# Run only statistical analysis
+python src/analyze_citations.py --input FILE --mode stats --output validation_analysis.json
+
+# Run only parsing error detection
+python src/analyze_citations.py --input FILE --mode parsing --output parsing_errors_analysis.json
+
+# Reorganize results into categories
+python src/analyze_citations.py --input FILE --mode reorganize --output-dir .
+```
+
+This consolidated tool helps distinguish between actual citation errors and parsing issues, and provides comprehensive insights into validation results.
+
 ### 2025-11-11 - README Organization and Cleanup
 
 Completely reorganized and cleaned up the README to reflect the current state of the project:
@@ -308,3 +551,25 @@ Completely reorganized and cleaned up the README to reflect the current state of
 - **Removed development diary**: Consolidated into a single, clean document rather than maintaining separate diary entries
 
 The README now serves as a clear guide for users to understand and use the toolkit effectively.
+
+### 2025-01-XX - Consolidated Citation Analysis Tool
+
+Streamlined citation analysis by consolidating three separate scripts into a single `src/analyze_citations.py` tool:
+
+**Consolidated Scripts:**
+- `analyze_validation_results.py` → Statistical analysis functions
+- `detect_parsing_errors.py` → Parsing error detection functions  
+- `reorganize_results.py` → Result reorganization functions
+
+**Key Features:**
+- **Statistical Analysis**: Error classifications, title similarities, author list lengths, common mistakes
+- **Parsing Error Detection**: Identifies cascading last names, split multi-part names, and name swapping issues
+- **Result Reorganization**: Organizes results into categorized JSON files
+
+**Benefits:**
+- Reduced from 3 files to 1, making the codebase cleaner and easier to maintain
+- Unified interface with `--mode` flag to run specific analyses
+- Consistent data handling across all analysis functions
+- Better code reuse and organization
+
+This consolidation makes citation analysis more streamlined while maintaining all functionality.

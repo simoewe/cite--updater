@@ -1,0 +1,262 @@
+{
+  "total_entries": 29,
+  "entries_with_parsing_errors": 4,
+  "error_statistics": {
+    "split_multipart_lastname": 1,
+    "cascading_last_names": 3
+  },
+  "parsing_errors": [
+    {
+      "entry_index": 9,
+      "reference_id": "b1",
+      "title": "Structured denoising diffusion models in discrete state-spaces",
+      "ref_authors": [
+        "Jacob Austin",
+        "Jonathan Daniel D Johnson",
+        "Daniel Ho",
+        "Rianne Tarlow",
+        "Van Den",
+        "Berg"
+      ],
+      "dblp_authors": [
+        "Jacob Austin",
+        "Daniel D. Johnson 0001",
+        "Jonathan Ho",
+        "Daniel Tarlow",
+        "Rianne van den Berg"
+      ],
+      "original_mismatches": [
+        "last_name_mismatch: Jonathan Johnson vs Jonathan Ho",
+        "last_name_mismatch: Daniel Ho vs Daniel Tarlow",
+        "last_name_mismatch: Rianne Tarlow vs Rianne van den Berg",
+        "Author not found in DBLP: Van Den",
+        "Author not found in DBLP: Berg "
+      ],
+      "parsing_error_analysis": {
+        "has_parsing_error": true,
+        "error_types": [
+          "split_multipart_lastname"
+        ],
+        "error_details": [
+          "Multi-part last name 'Rianne van den Berg' appears split: 'Berg' is part of it"
+        ],
+        "suggested_fix": null
+      }
+    },
+    {
+      "entry_index": 10,
+      "reference_id": "b31",
+      "title": "Findings of the 2014 workshop on statistical machine translation",
+      "ref_authors": [
+        "Christian Buck",
+        "Ondrej Bojar",
+        "Barry Haddow Christian Federmann",
+        "Johannes Leveling Philipp Koehn",
+        "Pavel Pecina",
+        "Christof Monz",
+        "Herve Saint-Amand",
+        "Matt Post",
+        "Lucia Specia Radu",
+        "Ale Soricut",
+        "Tamchyna"
+      ],
+      "dblp_authors": [
+        "Ondrej Bojar",
+        "Christian Buck",
+        "Christian Federmann",
+        "Barry Haddow",
+        "Philipp Koehn",
+        "Johannes Leveling",
+        "Christof Monz",
+        "Pavel Pecina",
+        "Matt Post",
+        "Herve Saint-Amand",
+        "Radu Soricut",
+        "Lucia Specia",
+        "Ales Tamchyna"
+      ],
+      "original_mismatches": [
+        "last_name_mismatch: Barry Federmann vs Barry Haddow",
+        "last_name_mismatch: Johannes Koehn vs Johannes Leveling",
+        "Author not found in DBLP: Lucia Radu",
+        "Author not found in DBLP: Ale Soricut"
+      ],
+      "parsing_error_analysis": {
+        "has_parsing_error": true,
+        "error_types": [
+          "cascading_last_names"
+        ],
+        "error_details": [
+          "Last names appear to be cascading/shifted across authors"
+        ],
+        "suggested_fix": null
+      }
+    },
+    {
+      "entry_index": 15,
+      "reference_id": "b36",
+      "title": "No language left behind: Scaling humancentered machine translation",
+      "ref_authors": [
+        "Marta Nllb Team",
+        "James Costa-Jussà",
+        "Onur Cross",
+        "Maha Çelebi",
+        "Kenneth Elbayad",
+        "Kevin Heafield",
+        "Elahe Heffernan",
+        "Janice Kalbassi",
+        "Daniel Lam",
+        "Jean Licht",
+        "Anna Maillard",
+        "Skyler Sun",
+        "Guillaume Wang",
+        "Al Wenzek",
+        "Bapi Youngblood",
+        "Loic Akula",
+        "Gabriel Barrault",
+        "Prangthip Mejia-Gonzalez",
+        "John Hansanti",
+        "Semarley Hoffman",
+        "Jarrett",
+        "Ram Kaushik",
+        "Dirk Sadagopan",
+        "Shannon Rowe",
+        "Chau Spruit",
+        "Pierre Tran",
+        "Necip Andrews",
+        "Shruti Fazil Ayan",
+        "Sergey Bhosale",
+        "Angela Edunov",
+        "Cynthia Fan",
+        "Vedanuj Gao",
+        "Francisco Goswami",
+        "Philipp Guzmán",
+        "Alexandre Koehn",
+        "Christophe Mourachko",
+        "Safiyyah Ropers",
+        "Holger Saleem",
+        "Jeff Schwenk",
+        "Wang"
+      ],
+      "dblp_authors": [
+        "Marta R. Costa-jussà",
+        "James Cross 0003",
+        "Onur Çelebi",
+        "Maha Elbayad",
+        "Kenneth Heafield",
+        "Kevin Heffernan",
+        "Elahe Kalbassi",
+        "Janice Lam",
+        "Daniel Licht",
+        "Jean Maillard",
+        "Anna Y. Sun",
+        "Skyler Wang",
+        "Guillaume Wenzek",
+        "Al Youngblood",
+        "Bapi Akula",
+        "Loïc Barrault",
+        "Gabriel Mejia Gonzalez",
+        "Prangthip Hansanti",
+        "John Hoffman",
+        "Semarley Jarrett",
+        "Kaushik Ram Sadagopan",
+        "Dirk Rowe",
+        "Shannon Spruit",
+        "Chau Tran",
+        "Pierre Andrews",
+        "Necip Fazil Ayan",
+        "Shruti Bhosale",
+        "Sergey Edunov",
+        "Angela Fan",
+        "Cynthia Gao",
+        "Vedanuj Goswami",
+        "Francisco Guzmán",
+        "Philipp Koehn",
+        "Alexandre Mourachko",
+        "Christophe Ropers",
+        "Safiyyah Saleem",
+        "Holger Schwenk",
+        "Jeff Wang"
+      ],
+      "original_mismatches": [
+        "last_name_mismatch: Marta Team vs Marta Costa-jussà",
+        "last_name_mismatch: James Costa-Jussà vs James Cross",
+        "last_name_mismatch: Onur Cross vs Onur Çelebi",
+        "last_name_mismatch: Maha Çelebi vs Maha Elbayad",
+        "last_name_mismatch: Kenneth Elbayad vs Kenneth Heafield",
+        "last_name_mismatch: Kevin Heafield vs Kevin Heffernan",
+        "last_name_mismatch: Elahe Heffernan vs Elahe Kalbassi",
+        "last_name_mismatch: Janice Kalbassi vs Janice Lam",
+        "last_name_mismatch: Daniel Lam vs Daniel Licht",
+        "last_name_mismatch: Jean Licht vs Jean Maillard"
+      ],
+      "parsing_error_analysis": {
+        "has_parsing_error": true,
+        "error_types": [
+          "cascading_last_names"
+        ],
+        "error_details": [
+          "Consecutive last name mismatches show cascading pattern (7 matches)"
+        ],
+        "suggested_fix": null
+      }
+    },
+    {
+      "entry_index": 26,
+      "reference_id": "b35",
+      "title": "Specinfer: Accelerating large language model serving with tree-based speculative inference and verification",
+      "ref_authors": [
+        "Gabriele Xupeng ; Miao",
+        "Zhihao Oliaro",
+        "Xinhao Zhang",
+        "Zeyu Cheng",
+        "Zhengxin Wang",
+        "Rae Zhang",
+        "Yee Ying",
+        "Alan Wong",
+        "Lijie Zhu",
+        "Xiaoxiang Yang",
+        "Shi"
+      ],
+      "dblp_authors": [
+        "Xupeng Miao",
+        "Gabriele Oliaro",
+        "Zhihao Zhang 0001",
+        "Xinhao Cheng",
+        "Zeyu Wang",
+        "Zhengxin Zhang",
+        "Rae Ying Yee Wong",
+        "Alan Zhu 0001",
+        "Lijie Yang 0003",
+        "Xiaoxiang Shi",
+        "Chunan Shi",
+        "Zhuoming Chen",
+        "Daiyaan Arfeen",
+        "Reyna Abhyankar",
+        "Zhihao Jia"
+      ],
+      "original_mismatches": [
+        "last_name_mismatch: Gabriele Miao vs Gabriele Oliaro",
+        "last_name_mismatch: Zhihao Oliaro vs Zhihao Zhang",
+        "first_name_mismatch: Xinhao Zhang vs Zhengxin Zhang",
+        "last_name_mismatch: Zeyu Cheng vs Zeyu Wang",
+        "Author not found in DBLP: Zhengxin Wang",
+        "last_name_mismatch: Rae Zhang vs Rae Wong",
+        "Author not found in DBLP: Yee Ying",
+        "last_name_mismatch: Alan Wong vs Alan Zhu",
+        "last_name_mismatch: Lijie Zhu vs Lijie Yang",
+        "last_name_mismatch: Xiaoxiang Yang vs Xiaoxiang Shi"
+      ],
+      "parsing_error_analysis": {
+        "has_parsing_error": true,
+        "error_types": [
+          "cascading_last_names"
+        ],
+        "error_details": [
+          "Consecutive last name mismatches show cascading pattern (4 matches)"
+        ],
+        "suggested_fix": null
+      }
+    }
+  ]
+}

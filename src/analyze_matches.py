@@ -85,10 +85,16 @@ def find_closest_match(name: str, name_list: List[str]) -> Optional[tuple[str, f
     return None
 
 def get_initials(name: str) -> str:
-    """Extract initials from a name string, handling multiple words and accents."""
+    """
+    Extract initials from a name string, handling multiple words, hyphens, and accents.
+    Handles patterns like "K.-T" (compound initials) and "Kwang-Ting" (compound names).
+    """
     initials = []
-    for word in name.split():
-        cleaned = word.replace('.', '').strip()
+    # First, handle compound initials like "K.-T" by splitting on periods and hyphens
+    # Replace periods and hyphens with spaces, then split
+    normalized = name.replace('.', ' ').replace('-', ' ').strip()
+    for word in normalized.split():
+        cleaned = word.strip()
         if cleaned:
             # Normalize accents before taking first character
             normalized_first = unidecode(cleaned[0].lower())
@@ -98,6 +104,20 @@ def get_initials(name: str) -> str:
 def is_initial(name: str) -> bool:
     """Check if a name component is an initial (single letter possibly with period)."""
     return len(name.replace('.', '').strip()) == 1
+
+def is_compound_initial(name: str) -> bool:
+    """
+    Check if a name component is a compound initial pattern like "K.-T", "X.-S", "C.-J".
+    These are initials separated by hyphens and periods.
+    """
+    # Remove periods and hyphens, check if all remaining characters are single letters
+    cleaned = name.replace('.', '').replace('-', '').strip()
+    # Check if it's a pattern like "KT" (2-3 letters) or matches compound initial pattern
+    if len(cleaned) <= 3 and cleaned.isalpha():
+        # Check if original has the pattern of initials separated by punctuation
+        if '-' in name or ('.' in name and len(name.replace('.', '').replace('-', '').strip()) <= 3):
+            return True
+    return False
 
 def normalize_compound_name(name: str) -> str:
     """Normalize compound names by removing spaces and hyphens."""
@@ -156,9 +176,10 @@ def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
         if n1_first == n2_first:
             return True
             
-        # Case 2: Initial matches full name
-        if is_initial(n1_first) or is_initial(n2_first):
-            if initial_matches(n1_first, n2_first):
+        # Case 2: Initial matches full name (including compound initials like "K.-T" matching "Kwang-Ting")
+        # Check if one is an initial (single or compound) and initials match
+        if is_initial(n1_first) or is_initial(n2_first) or is_compound_initial(name1['first_name']) or is_compound_initial(name2['first_name']):
+            if initial_matches(name1['first_name'], name2['first_name']):
                 return True
                 
         # Case 3: Reversed first/middle names

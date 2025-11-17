@@ -1,0 +1,93 @@
+[
+  {
+    "reference": {
+      "id": "b47",
+      "target": "b46",
+      "title": "Transtrack: Multiple-object tracking with transformer",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "Peize Sun",
+        "Jinkun Cao",
+        "Yi Jiang",
+        "Rufeng Zhang",
+        "Enze Xie",
+        "Zehuan Yuan",
+        "Changhu Wang",
+        "Ping Luo"
+      ],
+      "publication_date": "2020",
+      "year": 2020,
+      "arxiv": "arXiv:2012.15460"
+    },
+    "dblp_match": {
+      "title": "TransTrack: Multiple-Object Tracking with Transformer.",
+      "authors": [
+        "Peize Sun",
+        "Yi Jiang 0004",
+        "Rufeng Zhang",
+        "Enze Xie",
+        "Jinkun Cao",
+        "Xinting Hu",
+        "Tao Kong",
+        "Zehuan Yuan",
+        "Changhu Wang",
+        "Ping Luo 0002"
+      ],
+      "year": "2020",
+      "venue": "CoRR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "Authors match but order differs"
+    ],
+    "error_classifications": [
+      "author_order_wrong"
+    ],
+    "title_similarity": 99.06542056074767,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b18",
+      "target": "b17",
+      "title": "Good examples make a faster learner: Simple demonstrationbased learning for low-resource ner",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "Dong-Ho Lee",
+        "Mahak Agarwal",
+        "Akshen Kadakia",
+        "Jay Pujara",
+        "Xiang Ren"
+      ],
+      "publication_date": "2021",
+      "year": 2021,
+      "arxiv": "arXiv:2110.08454"
+    },
+    "dblp_match": {
+      "title": "Good Examples Make A Faster Learner: Simple Demonstration-based Learning for Low-resource NER.",
+      "authors": [
+        "Dong-Ho Lee",
+        "Akshen Kadakia",
+        "Kangmin Tan",
+        "Mahak Agarwal",
+        "Xinyu Feng",
+        "Takashi Shibuya 0001",
+        "Ryosuke Mitani",
+        "Toshiyuki Sekiya",
+        "Jay Pujara",
+        "Xiang Ren 0001"
+      ],
+      "year": "2022",
+      "venue": "ACL (1)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "Authors match but order differs"
+    ],
+    "error_classifications": [
+      "author_order_wrong"
+    ],
+    "title_similarity": 98.9247311827957,
+    "validation_status": "author_mismatch"
+  }
+]

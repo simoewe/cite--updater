@@ -25,13 +25,31 @@ from pathlib import Path
 from collections import Counter
 import random
 
+# Setup logging BEFORE importing other modules
+logging.basicConfig(
+    level=logging.WARNING,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('citation_validation.log'),
+        logging.StreamHandler()
+    ]
+)
+
+# Reduce verbosity of external libraries BEFORE importing them
+logging.getLogger('retriv').setLevel(logging.ERROR)
+logging.getLogger('dblp_parser').setLevel(logging.ERROR)
+# Also try to suppress all logging from retriv submodules
+logging.getLogger('retriv.SparseRetriever').setLevel(logging.ERROR)
+
 # Import existing matching functions
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from analyze_matches import (
     is_name_match,
-    check_author_lists
+    check_author_lists,
+    initial_matches,
+    is_compound_initial
 )
 from parser.dblp_parser import DblpParser
 from nameparser import HumanName
@@ -39,16 +57,8 @@ from rapidfuzz import fuzz
 from unidecode import unidecode
 import re
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('citation_validation.log'),
-        logging.StreamHandler()
-    ]
-)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def calculate_title_similarity(title1: str, title2: str) -> float:
@@ -226,17 +236,27 @@ def check_author_with_minimum_lists(ref_authors: List[Dict[str, str]],
             # Last name matches but first name differs
             if ref_last == dblp_last or ref_last_no_accents == dblp_last_no_accents:
                 if ref_first != dblp_first:
-                    # Check if first names match by initials (one is initial, other starts with same letter)
+                    # Check if first names match by initials (including compound initials like "K.-T" matching "Kwang-Ting")
+                    # Use the enhanced initial_matches function that handles compound initials
+                    initials_match = initial_matches(ref_author['first_name'], dblp_author['first_name'])
+                    
+                    # Also check simple initial match for backward compatibility
                     ref_first_initial = unidecode(ref_first.lower().replace('.', '').strip())
                     dblp_first_initial = unidecode(dblp_first.lower().replace('.', '').strip())
-                    initials_match = (len(ref_first_initial) == 1 and len(dblp_first_initial) >= 1 and
-                                    ref_first_initial[0] == dblp_first_initial[0])
+                    simple_initials_match = (len(ref_first_initial) == 1 and len(dblp_first_initial) >= 1 and
+                                           ref_first_initial[0] == dblp_first_initial[0])
+                    
+                    # If initials match (compound or simple), consider them matched and skip mismatch reporting
+                    if initials_match or simple_initials_match:
+                        # Mark this DBLP author as matched and break to skip adding as mismatch
+                        matched_dblp_indices.add(j)
+                        break  # Break out of inner loop, this reference author is matched
 
                     if ref_first_no_accents == dblp_first_no_accents:
                         best_match = dblp_author
                         best_match_idx = j
                         best_match_type = 'accents_missing'
-                    elif initials_match and (unidecode(ref_last) != ref_last or unidecode(dblp_last) != dblp_last):
+                    elif simple_initials_match and (unidecode(ref_last) != ref_last or unidecode(dblp_last) != dblp_last):
                         # Last names have accents, first names match by initials
                         best_match = dblp_author
                         best_match_idx = j

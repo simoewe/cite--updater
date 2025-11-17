@@ -1,0 +1,43 @@
+[
+  {
+    "reference": {
+      "id": "b41",
+      "target": "b40",
+      "title": "Transformerlens",
+      "authors": [
+        "N Nanda",
+        "J Bloom"
+      ],
+      "publication_date": "2022",
+      "year": 2022,
+      "urls": [
+        "https://github.com/TransformerLensOrg/TransformerLens",
+        "https://github.com/TransformerLensOrg/TransformerLens"
+      ]
+    },
+    "dblp_match": null,
+    "authors_match": false,
+    "mismatches": [
+      "No DBLP match found for title: Transformerlens"
+    ],
+    "error_classifications": [],
+    "title_similarity": 0.0,
+    "validation_status": "no_dblp_match"
+  },
+  {
+    "reference": {
+      "id": "b46",
+      "target": "b45",
+      "title": "F08",
+      "notes": "In which year did World War II end?"
+    },
+    "dblp_match": null,
+    "authors_match": false,
+    "mismatches": [
+      "No DBLP match found for title: F08"
+    ],
+    "error_classifications": [],
+    "title_similarity": 0.0,
+    "validation_status": "no_dblp_match"
+  }
+]

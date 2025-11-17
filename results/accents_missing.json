@@ -1,0 +1,1868 @@
+[
+  {
+    "reference": {
+      "id": "b15",
+      "target": "b14",
+      "title": "High-risk learning: acquiring new word vectors from tiny data",
+      "authors": [
+        "Aurelie Herbelot",
+        "Marco Baroni"
+      ],
+      "publisher": "ACL",
+      "publication_date": "2017",
+      "year": 2017,
+      "page_start": "304",
+      "page_end": "309"
+    },
+    "dblp_match": {
+      "title": "High-risk learning: acquiring new word vectors from tiny data.",
+      "authors": [
+        "Aurélie Herbelot",
+        "Marco Baroni"
+      ],
+      "year": "2017",
+      "venue": "EMNLP"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Aurelie Herbelot vs Aurélie Herbelot"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.1869918699187,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b26",
+      "target": "b25",
+      "title": "Efficient estimation of word representations in vector space",
+      "authors": [
+        "Tomas Mikolov",
+        "Kai Chen",
+        "Greg Corrado",
+        "Jeffrey Dean"
+      ],
+      "publication_date": "2013",
+      "year": 2013
+    },
+    "dblp_match": {
+      "title": "Efficient Estimation of Word Representations in Vector Space",
+      "authors": [
+        "Tomás Mikolov",
+        "Kai Chen 0010",
+        "Greg Corrado",
+        "Jeffrey Dean"
+      ],
+      "year": "2013",
+      "venue": "ICLR (Workshop Poster)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Tomas Mikolov vs Tomás Mikolov"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 100.0,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b11",
+      "target": "b10",
+      "title": "Training with quantization noise for extreme model compression",
+      "authors": [
+        "A Fan",
+        "P Stock",
+        "B Graham",
+        "E Grave",
+        "R Gribonval",
+        "H Jegou",
+        "A Joulin"
+      ],
+      "publication_date": "2021",
+      "year": 2021
+    },
+    "dblp_match": {
+      "title": "Training with Quantization Noise for Extreme Model Compression.",
+      "authors": [
+        "Pierre Stock",
+        "Angela Fan",
+        "Benjamin Graham",
+        "Edouard Grave",
+        "Rémi Gribonval",
+        "Hervé Jégou",
+        "Armand Joulin"
+      ],
+      "year": "2021",
+      "venue": "ICLR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: H Jegou vs Hervé Jégou"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.2,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b34",
+      "target": "b33",
+      "title": "Mixed precision dnns: All you need is a good parametrization",
+      "authors": [
+        "S Uhlich",
+        "L Mauch",
+        "F Cardinaux",
+        "K Yoshiyama",
+        "J Garcia",
+        "S Tiedemann",
+        "T Kemp",
+        "A Nakamura"
+      ],
+      "publication_date": "2020",
+      "year": 2020
+    },
+    "dblp_match": {
+      "title": "Mixed Precision DNNs: All you need is a good parametrization.",
+      "authors": [
+        "Stefan Uhlich",
+        "Lukas Mauch",
+        "Fabien Cardinaux",
+        "Kazuki Yoshiyama",
+        "Javier Alonso García",
+        "Stephen Tiedemann",
+        "Thomas Kemp",
+        "Akira Nakamura"
+      ],
+      "year": "2020",
+      "venue": "ICLR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: J Garcia vs Javier García"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.17355371900827,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b90",
+      "target": "b89",
+      "title": "Object detectors emerge in deep scene cnns",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "Bolei Zhou",
+        "Aditya Khosla",
+        "Agata Lapedriza",
+        "Aude Oliva",
+        "Antonio Torralba"
+      ],
+      "publication_date": "2014",
+      "year": 2014,
+      "pages": "7",
+      "arxiv": "arXiv:1412.6856"
+    },
+    "dblp_match": {
+      "title": "Object Detectors Emerge in Deep Scene CNNs.",
+      "authors": [
+        "Bolei Zhou",
+        "Aditya Khosla",
+        "Àgata Lapedriza",
+        "Aude Oliva",
+        "Antonio Torralba 0001"
+      ],
+      "year": "2015",
+      "venue": "ICLR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Agata Lapedriza vs Àgata Lapedriza"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 98.82352941176471,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b22",
+      "target": "b21",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45",
+      "doi": "10.18653/v1/2020.emnlp-demos.6"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b23",
+      "target": "b22",
+      "title": "Machine comprehension by text-to-text neural question generation",
+      "authors": [
+        "Xingdi Yuan",
+        "Tong Wang",
+        "Caglar Gulcehre",
+        "Alessandro Sordoni",
+        "Philip Bachman",
+        "Saizheng Zhang",
+        "Sandeep Subramanian",
+        "Adam Trischler"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2017",
+      "year": 2017,
+      "page_start": "15",
+      "page_end": "25",
+      "doi": "10.18653/v1/W17-2603"
+    },
+    "dblp_match": {
+      "title": "Machine Comprehension by Text-to-Text Neural Question Generation.",
+      "authors": [
+        "Xingdi Yuan",
+        "Tong Wang 0012",
+        "Çaglar Gülçehre",
+        "Alessandro Sordoni",
+        "Philip Bachman",
+        "Saizheng Zhang",
+        "Sandeep Subramanian",
+        "Adam Trischler"
+      ],
+      "year": "2017",
+      "venue": "Rep4NLP@ACL"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Caglar Gulcehre vs Çaglar Gülçehre"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.2248062015504,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b19",
+      "target": "b18",
+      "title": "Efficient estimation of word representations in vector space",
+      "authors": [
+        "Tomas Mikolov",
+        "Kai Chen",
+        "Greg Corrado",
+        "Jeffrey Dean"
+      ],
+      "publication_date": "2013",
+      "year": 2013,
+      "arxiv": "arXiv:1301.3781"
+    },
+    "dblp_match": {
+      "title": "Efficient Estimation of Word Representations in Vector Space",
+      "authors": [
+        "Tomás Mikolov",
+        "Kai Chen 0010",
+        "Greg Corrado",
+        "Jeffrey Dean"
+      ],
+      "year": "2013",
+      "venue": "ICLR (Workshop Poster)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Tomas Mikolov vs Tomás Mikolov"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 100.0,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b37",
+      "target": "b36",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45",
+      "doi": "10.18653/v1/2020.emnlp-demos.6"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b6",
+      "target": "b5",
+      "title": "Evasion attacks against machine learning at test time",
+      "authors": [
+        "B Biggio",
+        "I Corona",
+        "D Maiorca",
+        "B Nelson",
+        "N Šrndić",
+        "P Laskov",
+        "G Giacinto",
+        "F Roli"
+      ],
+      "publication_date": "2013",
+      "year": 2013
+    },
+    "dblp_match": {
+      "title": "Evasion Attacks against Machine Learning at Test Time.",
+      "authors": [
+        "Battista Biggio",
+        "Igino Corona",
+        "Davide Maiorca",
+        "Blaine Nelson",
+        "Nedim Srndic",
+        "Pavel Laskov",
+        "Giorgio Giacinto",
+        "Fabio Roli"
+      ],
+      "year": "2013",
+      "venue": "ECML/PKDD (3)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: N Šrndić vs Nedim Srndic"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.06542056074767,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b8",
+      "target": "b7",
+      "title": "Parseval networks: Improving robustness to adversarial examples",
+      "authors": [
+        "M Cisse",
+        "P Bojanowski",
+        "E Grave",
+        "Y Dauphin",
+        "N Usunier"
+      ],
+      "publication_date": "2017",
+      "year": 2017
+    },
+    "dblp_match": {
+      "title": "Parseval Networks: Improving Robustness to Adversarial Examples.",
+      "authors": [
+        "Moustapha Cissé",
+        "Piotr Bojanowski",
+        "Edouard Grave",
+        "Yann N. Dauphin",
+        "Nicolas Usunier"
+      ],
+      "year": "2017",
+      "venue": "ICML"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: M Cisse vs Moustapha Cissé"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.21259842519686,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b22",
+      "target": "b21",
+      "title": "Are large language models all you need for task-oriented dialogue",
+      "authors": [
+        "Vojtěch Hudeček",
+        "Ondrej Dusek"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2023",
+      "year": 2023,
+      "page_start": "216",
+      "page_end": "228",
+      "doi": "10.18653/v1/2023.sigdial-1.21"
+    },
+    "dblp_match": {
+      "title": "Are Large Language Models All You Need for Task-Oriented Dialogue?",
+      "authors": [
+        "Vojtech Hudecek",
+        "Ondrej Dusek"
+      ],
+      "year": "2023",
+      "venue": "SIGDIAL"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Vojtěch Hudeček vs Vojtech Hudecek"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.23664122137404,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b30",
+      "target": "b29",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b11",
+      "target": "b10",
+      "title": "Distributed representations of words and phrases and their compositionality",
+      "authors": [
+        "Tomas Mikolov",
+        "Ilya Sutskever",
+        "Kai Chen",
+        "Greg Corrado",
+        "Jeff Dean"
+      ],
+      "publication_date": "2013",
+      "year": 2013,
+      "page_start": "3111",
+      "page_end": "3119"
+    },
+    "dblp_match": {
+      "title": "Distributed Representations of Words and Phrases and their Compositionality.",
+      "authors": [
+        "Tomás Mikolov",
+        "Ilya Sutskever",
+        "Kai Chen 0010",
+        "Gregory S. Corrado",
+        "Jeffrey Dean"
+      ],
+      "year": "2013",
+      "venue": "NIPS"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Tomas Mikolov vs Tomás Mikolov",
+      "first_name_mismatch: Greg Corrado vs Gregory Corrado",
+      "first_name_mismatch: Jeff Dean vs Jeffrey Dean"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "first_name_mismatch",
+      "first_name_mismatch"
+    ],
+    "title_similarity": 99.33774834437085,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b16",
+      "target": "b15",
+      "title": "Semeval-2016 task 5: Aspect based sentiment analysis",
+      "authors": [
+        "Maria Pontiki",
+        "Dimitrios Galanis",
+        "Harris Papageorgiou",
+        "Ion Androutsopoulos",
+        "Suresh Manandhar",
+        "Al-Smadi Mohammad",
+        "Mahmoud Al-Ayyoub",
+        "Yanyan Zhao",
+        "Bing Qin",
+        "Orphee De Clercq"
+      ],
+      "publication_date": "2016",
+      "year": 2016,
+      "page_start": "19",
+      "page_end": "30"
+    },
+    "dblp_match": {
+      "title": "SemEval-2016 Task 5: Aspect Based Sentiment Analysis.",
+      "authors": [
+        "Maria Pontiki",
+        "Dimitris Galanis",
+        "Haris Papageorgiou",
+        "Ion Androutsopoulos",
+        "Suresh Manandhar",
+        "Mohammad Al-Smadi",
+        "Mahmoud Al-Ayyoub",
+        "Yanyan Zhao",
+        "Bing Qin 0001",
+        "Orphée De Clercq",
+        "Véronique Hoste",
+        "Marianna Apidianaki",
+        "Xavier Tannier",
+        "Natalia V. Loukachevitch",
+        "Evgeniy V. Kotelnikov",
+        "Núria Bel",
+        "Salud María Jiménez-Zafra",
+        "Gülsen Eryigit"
+      ],
+      "year": "2016",
+      "venue": "SemEval@NAACL-HLT"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "first_name_mismatch: Dimitrios Galanis vs Dimitris Galanis",
+      "first_name_mismatch: Harris Papageorgiou vs Haris Papageorgiou",
+      "accents_missing: Orphee De Clercq vs Orphée De Clercq"
+    ],
+    "error_classifications": [
+      "first_name_mismatch",
+      "first_name_mismatch",
+      "accents_missing"
+    ],
+    "title_similarity": 99.04761904761905,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b23",
+      "target": "b22",
+      "title": "Enhancing BERT for lexical normalization",
+      "authors": [
+        "Benjamin Muller",
+        "Benoit Sagot",
+        "Djamé Seddah"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2019",
+      "year": 2019,
+      "page_start": "297",
+      "page_end": "306",
+      "doi": "10.18653/v1/D19-5539"
+    },
+    "dblp_match": {
+      "title": "Enhancing BERT for Lexical Normalization.",
+      "authors": [
+        "Benjamin Muller",
+        "Benoît Sagot",
+        "Djamé Seddah"
+      ],
+      "year": "2019",
+      "venue": "W-NUT@EMNLP"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Benoit Sagot vs Benoît Sagot"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 98.76543209876543,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b33",
+      "target": "b32",
+      "title": "Modernizing historical slovene words with character-based smt",
+      "authors": [
+        "Yves Scherrer",
+        "Tomaž Erjavec"
+      ],
+      "publication_date": "2013",
+      "year": 2013
+    },
+    "dblp_match": {
+      "title": "Modernizing historical Slovene words with character-based SMT.",
+      "authors": [
+        "Yves Scherrer",
+        "Tomaz Erjavec"
+      ],
+      "year": "2013",
+      "venue": "BSNLP@ACL"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Tomaž Erjavec vs Tomaz Erjavec"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.1869918699187,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b40",
+      "target": "b39",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45",
+      "doi": "10.18653/v1/2020.emnlp-demos.6"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b7",
+      "target": "b6",
+      "title": "Quo vadis, action recognition? a new model and the kinetics dataset",
+      "authors": [
+        "Joao Carreira",
+        "Andrew Zisserman"
+      ],
+      "publication_date": "2017",
+      "year": 2017,
+      "pages": "3"
+    },
+    "dblp_match": {
+      "title": "Quo Vadis, Action Recognition? A New Model and the Kinetics Dataset.",
+      "authors": [
+        "João Carreira 0001",
+        "Andrew Zisserman"
+      ],
+      "year": "2017",
+      "venue": "CVPR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Joao Carreira vs João Carreira"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.25925925925925,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b8",
+      "target": "b7",
+      "title": "Annotating object instances with a polygon-RNN",
+      "authors": [
+        "Lluis Castrejon",
+        "Kaustav Kundu",
+        "Raquel Urtasun",
+        "Sanja Fidler"
+      ],
+      "publication_date": "2017",
+      "year": 2017
+    },
+    "dblp_match": {
+      "title": "Annotating Object Instances with a Polygon-RNN.",
+      "authors": [
+        "Lluís Castrejón",
+        "Kaustav Kundu",
+        "Raquel Urtasun",
+        "Sanja Fidler"
+      ],
+      "year": "2017",
+      "venue": "CVPR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Lluis Castrejon vs Lluís Castrejón"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 98.9247311827957,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b22",
+      "target": "b21",
+      "title": "The AVA-Kinetics localized human actions video dataset",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "Ang Li",
+        "Meghana Thotakuri",
+        "David Ross",
+        "Joao Carreira",
+        "Alexander Vostrikov",
+        "Andrew Zisserman"
+      ],
+      "publication_date": "2020",
+      "year": 2020,
+      "arxiv": "arXiv:2005.00214",
+      "identifiers": {
+        "monograph_identifiers_unknown": ". 1",
+        "biblstruct_identifiers_unknown": ". 1"
+      }
+    },
+    "dblp_match": {
+      "title": "The AVA-Kinetics Localized Human Actions Video Dataset.",
+      "authors": [
+        "Ang Li",
+        "Meghana Thotakuri",
+        "David A. Ross",
+        "João Carreira 0001",
+        "Alexander Vostrikov",
+        "Andrew Zisserman"
+      ],
+      "year": "2020",
+      "venue": "CoRR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Joao Carreira vs João Carreira"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.08256880733946,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b26",
+      "target": "b25",
+      "title": "Deep template-based object instance detection",
+      "authors": [
+        "Jean-Philippe Mercier",
+        "Mathieu Garon",
+        "Philippe Giguere",
+        "Jean-Francois Lalonde"
+      ],
+      "publication_date": "2021-01",
+      "year": 2021,
+      "pages": "9"
+    },
+    "dblp_match": {
+      "title": "Deep Template-based Object Instance Detection.",
+      "authors": [
+        "Jean-Philippe Mercier",
+        "Mathieu Garon",
+        "Philippe Giguère",
+        "Jean-François Lalonde"
+      ],
+      "year": "2021",
+      "venue": "WACV"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "Author not found in DBLP: Philippe Giguere",
+      "accents_missing: Jean-Francois Lalonde vs Jean-François Lalonde"
+    ],
+    "error_classifications": [
+      "author_not_found",
+      "accents_missing"
+    ],
+    "title_similarity": 98.9010989010989,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b3",
+      "target": "b2",
+      "title": "MAGSAC++, a fast, reliable and accurate robust estimator",
+      "authors": [
+        "D Barath",
+        "J Noskova",
+        "M Ivashechkin",
+        "J Matas"
+      ],
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "1304",
+      "page_end": "1312"
+    },
+    "dblp_match": {
+      "title": "MAGSAC++, a Fast, Reliable and Accurate Robust Estimator.",
+      "authors": [
+        "Dániel Baráth",
+        "Jana Noskova",
+        "Maksym Ivashechkin",
+        "Jiri Matas"
+      ],
+      "year": "2020",
+      "venue": "CVPR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: D Barath vs Dániel Baráth"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.11504424778761,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b2",
+      "target": "b1",
+      "title": "Self-supervised multimodal versatile networks",
+      "authors": [
+        "Jean-Baptiste Alayrac",
+        "Adria Recasens",
+        "Rosalia Schneider",
+        "Relja Arandjelović",
+        "Jason Ramapuram",
+        "Jeffrey De Fauw",
+        "Lucas Smaira",
+        "Sander Dieleman",
+        "Andrew Zisserman"
+      ],
+      "journal": "Advances in Neural Information Processing Systems",
+      "publication_date": "2020",
+      "year": 2020,
+      "volume": "33",
+      "page_start": "25",
+      "page_end": "37"
+    },
+    "dblp_match": {
+      "title": "Self-Supervised MultiModal Versatile Networks.",
+      "authors": [
+        "Jean-Baptiste Alayrac",
+        "Adrià Recasens",
+        "Rosalia Schneider",
+        "Relja Arandjelovic",
+        "Jason Ramapuram",
+        "Jeffrey De Fauw",
+        "Lucas Smaira",
+        "Sander Dieleman",
+        "Andrew Zisserman"
+      ],
+      "year": "2020",
+      "venue": "NeurIPS"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Adria Recasens vs Adrià Recasens",
+      "Author not found in DBLP: Relja Arandjelović"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "author_not_found"
+    ],
+    "title_similarity": 98.9010989010989,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b10",
+      "target": "b9",
+      "title": "Visual object tracking performance measures revisited",
+      "authors": [
+        "Luka Čehovin",
+        "Aleš Leonardis",
+        "Matej Kristan"
+      ],
+      "journal": "IEEE Transactions on Image Processing",
+      "publication_date": "2016",
+      "year": 2016,
+      "volume": "25",
+      "issue": "3",
+      "page_start": "1261",
+      "page_end": "1274"
+    },
+    "dblp_match": {
+      "title": "Visual Object Tracking Performance Measures Revisited.",
+      "authors": [
+        "Luka Cehovin",
+        "Ales Leonardis",
+        "Matej Kristan"
+      ],
+      "year": "2016",
+      "venue": "IEEE Trans. Image Process."
+    },
+    "authors_match": false,
+    "mismatches": [
+      "Author not found in DBLP: Luka Čehovin",
+      "accents_missing: Aleš Leonardis vs Ales Leonardis"
+    ],
+    "error_classifications": [
+      "author_not_found",
+      "accents_missing"
+    ],
+    "title_similarity": 99.06542056074767,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b19",
+      "target": "b18",
+      "title": "TAP-vid: A benchmark for tracking any point in a video",
+      "authors": [
+        "Carl Doersch",
+        "Ankush Gupta",
+        "Larisa Markeeva",
+        "Adria Recasens Continente",
+        "Lucas Smaira",
+        "Yusuf Aytar",
+        "Joao Carreira",
+        "Andrew Zisserman",
+        "Yi Yang"
+      ],
+      "publication_date": "2022",
+      "year": 2022,
+      "urls": [
+        "https://openreview.net/forum?id=Zmosb2KfzYd",
+        "https://openreview.net/forum?id=Zmosb2KfzYd"
+      ]
+    },
+    "dblp_match": {
+      "title": "TAP-Vid: A Benchmark for Tracking Any Point in a Video.",
+      "authors": [
+        "Carl Doersch",
+        "Ankush Gupta 0001",
+        "Larisa Markeeva",
+        "Adrià Recasens",
+        "Lucas Smaira",
+        "Yusuf Aytar",
+        "João Carreira 0001",
+        "Andrew Zisserman",
+        "Yi Yang 0007"
+      ],
+      "year": "2022",
+      "venue": "NeurIPS"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "last_name_mismatch: Adria Continente vs Adrià Recasens",
+      "accents_missing: Joao Carreira vs João Carreira"
+    ],
+    "error_classifications": [
+      "last_name_mismatch",
+      "accents_missing"
+    ],
+    "title_similarity": 99.08256880733946,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b36",
+      "target": "b35",
+      "title": "The kinetics human action video dataset",
+      "authors": [
+        "Will Kay",
+        "Joao Carreira",
+        "Karen Simonyan",
+        "Brian Zhang",
+        "Chloe Hillier",
+        "Sudheendra Vijayanarasimhan",
+        "Fabio Viola",
+        "Tim Green",
+        "Trevor Back",
+        "Paul Natsev",
+        "Mustafa Suleyman",
+        "Andrew Zisserman"
+      ],
+      "publication_date": "2017",
+      "year": 2017
+    },
+    "dblp_match": {
+      "title": "The Kinetics Human Action Video Dataset.",
+      "authors": [
+        "Will Kay",
+        "João Carreira 0001",
+        "Karen Simonyan",
+        "Brian Zhang",
+        "Chloe Hillier",
+        "Sudheendra Vijayanarasimhan",
+        "Fabio Viola",
+        "Tim Green",
+        "Trevor Back",
+        "Paul Natsev",
+        "Mustafa Suleyman",
+        "Andrew Zisserman"
+      ],
+      "year": "2017",
+      "venue": "CoRR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Joao Carreira vs João Carreira"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 98.73417721518987,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b35",
+      "target": "b34",
+      "title": "A root of a problem: Optimizing single-root dependency parsing",
+      "authors": [
+        "Miloš Stanojević",
+        "Shay Cohen"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2021",
+      "year": 2021,
+      "page_start": "10540",
+      "page_end": "10557",
+      "doi": "10.18653/v1/2021.emnlp-main.823"
+    },
+    "dblp_match": {
+      "title": "A Root of a Problem: Optimizing Single-Root Dependency Parsing.",
+      "authors": [
+        "Milos Stanojevic",
+        "Shay B. Cohen"
+      ],
+      "year": "2021",
+      "venue": "EMNLP (1)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Miloš Stanojević vs Milos Stanojevic"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.2,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b36",
+      "target": "b35",
+      "title": "Universal Dependencies for Turkish",
+      "authors": [
+        "Umut Sulubacak",
+        "Memduh Gokirmak",
+        "Francis Tyers",
+        "Çagrı Çöltekin",
+        "Joakim Nivre",
+        "Gülşen Eryigit"
+      ],
+      "publication_date": "2016",
+      "year": 2016,
+      "page_start": "3444",
+      "page_end": "3454",
+      "notes": "The COLING 2016 Organizing Committee"
+    },
+    "dblp_match": {
+      "title": "Universal Dependencies for Turkish.",
+      "authors": [
+        "Umut Sulubacak",
+        "Memduh Gokirmak",
+        "Francis M. Tyers",
+        "Çagri Çöltekin",
+        "Joakim Nivre",
+        "Gülsen Eryigit"
+      ],
+      "year": "2016",
+      "venue": "COLING"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Çagrı Çöltekin vs Çagri Çöltekin",
+      "accents_missing: Gülşen Eryigit vs Gülsen Eryigit"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "accents_missing"
+    ],
+    "title_similarity": 98.55072463768117,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b41",
+      "target": "b40",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45",
+      "doi": "10.18653/v1/2020.emnlp-demos.6"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b34",
+      "target": "b33",
+      "title": "Influence functions for machine learning: Nonparametric estimators for entropies, divergences and mutual informations",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "K Kandasamy",
+        "A Krishnamurthy",
+        "B Poczos",
+        "L Wasserman",
+        "J Robins"
+      ],
+      "publication_date": "2014",
+      "year": 2014,
+      "arxiv": "arXiv:1411.4342"
+    },
+    "dblp_match": {
+      "title": "Influence Functions for Machine Learning: Nonparametric Estimators for Entropies, Divergences and Mutual Informations.",
+      "authors": [
+        "Kirthevasan Kandasamy",
+        "Akshay Krishnamurthy",
+        "Barnabás Póczos",
+        "Larry A. Wasserman",
+        "James M. Robins"
+      ],
+      "year": "2014",
+      "venue": "CoRR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: B Poczos vs Barnabás Póczos"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.57446808510639,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b18",
+      "target": "b17",
+      "title": "Billion-scale similarity search with GPUs",
+      "authors": [
+        "Jeff Johnson",
+        "Matthĳs Douze",
+        "Hervé Jégou"
+      ],
+      "journal": "IEEE Transactions on Big Data",
+      "publication_date": "2019",
+      "year": 2019,
+      "volume": "7",
+      "issue": "3",
+      "page_start": "535",
+      "page_end": "547"
+    },
+    "dblp_match": {
+      "title": "Billion-Scale Similarity Search with GPUs.",
+      "authors": [
+        "Jeff Johnson 0004",
+        "Matthijs Douze",
+        "Hervé Jégou"
+      ],
+      "year": "2021",
+      "venue": "IEEE Trans. Big Data"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Matthĳs Douze vs Matthijs Douze"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 98.79518072289156,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b23",
+      "target": "b22",
+      "title": "Mind the gap: Assessing temporal generalization in neural language models",
+      "authors": [
+        "Angeliki Lazaridou",
+        "Adhi Kuncoro",
+        "Elena Gribovskaya",
+        "Devang Agrawal",
+        "Adam Liska",
+        "Tayfun Terzi",
+        "Mai Gimenez",
+        "Cyprien De Masson D'autume",
+        "Tomas Kocisky",
+        "Sebastian Ruder"
+      ],
+      "journal": "Advances in Neural Information Processing Systems",
+      "publication_date": "2021",
+      "year": 2021,
+      "volume": "34",
+      "page_start": "29348",
+      "page_end": "29363"
+    },
+    "dblp_match": {
+      "title": "Mind the Gap: Assessing Temporal Generalization in Neural Language Models.",
+      "authors": [
+        "Angeliki Lazaridou",
+        "Adhiguna Kuncoro",
+        "Elena Gribovskaya",
+        "Devang Agrawal",
+        "Adam Liska",
+        "Tayfun Terzi",
+        "Mai Gimenez",
+        "Cyprien de Masson d'Autume",
+        "Tomás Kociský",
+        "Sebastian Ruder",
+        "Dani Yogatama",
+        "Kris Cao",
+        "Susannah Young",
+        "Phil Blunsom"
+      ],
+      "year": "2021",
+      "venue": "NeurIPS"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "first_name_mismatch: Adhi Kuncoro vs Adhiguna Kuncoro",
+      "accents_missing: Tomas Kocisky vs Tomás Kociský"
+    ],
+    "error_classifications": [
+      "first_name_mismatch",
+      "accents_missing"
+    ],
+    "title_similarity": 99.31972789115646,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b26",
+      "target": "b25",
+      "title": "Streamingqa: A benchmark for adaptation to new knowledge over time in question answering models",
+      "authors": [
+        "Adam Liska",
+        "Tomas Kocisky",
+        "Elena Gribovskaya",
+        "Tayfun Terzi",
+        "Eren Sezener",
+        "Devang Agrawal",
+        "D 'autume Cyprien De Masson",
+        "Tim Scholtes",
+        "Manzil Zaheer",
+        "Susannah Young"
+      ],
+      "publication_date": "2022",
+      "year": 2022,
+      "page_start": "13604",
+      "page_end": "13622"
+    },
+    "dblp_match": {
+      "title": "StreamingQA: A Benchmark for Adaptation to New Knowledge over Time in Question Answering Models.",
+      "authors": [
+        "Adam Liska",
+        "Tomás Kociský",
+        "Elena Gribovskaya",
+        "Tayfun Terzi",
+        "Eren Sezener",
+        "Devang Agrawal",
+        "Cyprien de Masson d'Autume",
+        "Tim Scholtes",
+        "Manzil Zaheer",
+        "Susannah Young",
+        "Ellen Gilsenan-McMahon",
+        "Sophia Austin",
+        "Phil Blunsom",
+        "Angeliki Lazaridou"
+      ],
+      "year": "2022",
+      "venue": "ICML"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Tomas Kocisky vs Tomás Kociský",
+      "Author not found in DBLP: D De Masson"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "author_not_found"
+    ],
+    "title_similarity": 99.47643979057592,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b37",
+      "target": "b36",
+      "title": "Replug: Retrieval-augmented black-box language models",
+      "note_report_type": "arXiv preprint",
+      "authors": [
+        "Weĳia Shi",
+        "Sewon Min",
+        "Michihiro Yasunaga",
+        "Minjoon Seo",
+        "Rich James",
+        "Mike Lewis",
+        "Luke Zettlemoyer",
+        "Wen-Tau Yih"
+      ],
+      "publication_date": "2023",
+      "year": 2023,
+      "arxiv": "arXiv:2301.12652"
+    },
+    "dblp_match": {
+      "title": "REPLUG: Retrieval-Augmented Black-Box Language Models.",
+      "authors": [
+        "Weijia Shi",
+        "Sewon Min",
+        "Michihiro Yasunaga",
+        "Minjoon Seo",
+        "Richard James 0001",
+        "Mike Lewis",
+        "Luke Zettlemoyer",
+        "Wen-tau Yih"
+      ],
+      "year": "2024",
+      "venue": "NAACL-HLT"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Weĳia Shi vs Weijia Shi",
+      "first_name_mismatch: Rich James vs Richard James"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "first_name_mismatch"
+    ],
+    "title_similarity": 99.06542056074767,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b23",
+      "target": "b22",
+      "title": "Temporal convolutional networks for action segmentation and detection",
+      "authors": [
+        "Colin Lea",
+        "Michael Flynn",
+        "Rene Vidal",
+        "Austin Reiter",
+        "Gregory Hager"
+      ],
+      "publication_date": "2017",
+      "year": 2017,
+      "page_start": "156",
+      "page_end": "165"
+    },
+    "dblp_match": {
+      "title": "Temporal Convolutional Networks for Action Segmentation and Detection.",
+      "authors": [
+        "Colin Lea",
+        "Michael D. Flynn",
+        "René Vidal",
+        "Austin Reiter",
+        "Gregory D. Hager"
+      ],
+      "year": "2017",
+      "venue": "CVPR"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Rene Vidal vs René Vidal"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.28057553956835,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b33",
+      "target": "b32",
+      "title": "Transformers: State-of-the-art natural language processing",
+      "authors": [
+        "Thomas Wolf",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Remi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Clara Patrick Von Platen",
+        "Yacine Ma",
+        "Julien Jernite",
+        "Canwen Plu",
+        "Teven Xu",
+        "Sylvain Le Scao",
+        "Mariama Gugger",
+        "Quentin Drame",
+        "Alexander Lhoest",
+        "Rush"
+      ],
+      "publisher": "Association for Computational Linguistics",
+      "publication_date": "2020",
+      "year": 2020,
+      "page_start": "38",
+      "page_end": "45",
+      "doi": "10.18653/v1/2020.emnlp-demos.6"
+    },
+    "dblp_match": {
+      "title": "Transformers: State-of-the-Art Natural Language Processing.",
+      "authors": [
+        "Thomas Wolf 0008",
+        "Lysandre Debut",
+        "Victor Sanh",
+        "Julien Chaumond",
+        "Clement Delangue",
+        "Anthony Moi",
+        "Pierric Cistac",
+        "Tim Rault",
+        "Rémi Louf",
+        "Morgan Funtowicz",
+        "Joe Davison",
+        "Sam Shleifer",
+        "Patrick von Platen",
+        "Clara Ma",
+        "Yacine Jernite",
+        "Julien Plu",
+        "Canwen Xu",
+        "Teven Le Scao",
+        "Sylvain Gugger",
+        "Mariama Drame",
+        "Quentin Lhoest",
+        "Alexander M. Rush"
+      ],
+      "year": "2020",
+      "venue": "EMNLP (Demos)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Remi Louf vs Rémi Louf"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.14529914529915,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b56",
+      "target": "b55",
+      "title": "Ode2vae: Deep generative second order odes with bayesian neural networks",
+      "authors": [
+        "Cagatay Yildiz",
+        "Markus Heinonen",
+        "Harri Lahdesmaki"
+      ],
+      "editors": [
+        "H Wallach",
+        "H Larochelle",
+        "A Beygelzimer",
+        "F Alché-Buc",
+        "E Fox",
+        "R Garnett"
+      ],
+      "volume": "32"
+    },
+    "dblp_match": {
+      "title": "ODE2VAE: Deep generative second order ODEs with Bayesian neural networks.",
+      "authors": [
+        "Çagatay Yildiz",
+        "Markus Heinonen",
+        "Harri Lähdesmäki"
+      ],
+      "year": "2019",
+      "venue": "NeurIPS"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Cagatay Yildiz vs Çagatay Yildiz",
+      "Author not found in DBLP: Harri Lahdesmaki"
+    ],
+    "error_classifications": [
+      "accents_missing",
+      "author_not_found"
+    ],
+    "title_similarity": 99.3103448275862,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b27",
+      "target": "b26",
+      "title": "Uncertainty estimates and multi-hypotheses networks for optical flow",
+      "authors": [
+        "E Ilg",
+        "O Cicek",
+        "S Galesso",
+        "A Klein",
+        "O Makansi",
+        "F Hutter",
+        "T Brox"
+      ],
+      "publication_date": "2018",
+      "year": 2018
+    },
+    "dblp_match": {
+      "title": "Uncertainty Estimates and Multi-hypotheses Networks for Optical Flow.",
+      "authors": [
+        "Eddy Ilg",
+        "Özgün Çiçek",
+        "Silvio Galesso",
+        "Aaron Klein",
+        "Osama Makansi",
+        "Frank Hutter",
+        "Thomas Brox"
+      ],
+      "year": "2018",
+      "venue": "ECCV (7)"
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: O Cicek vs Özgün Çiçek"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.27007299270073,
+    "validation_status": "author_mismatch"
+  },
+  {
+    "reference": {
+      "id": "b38",
+      "target": "b37",
+      "title": "Multitasking information seeking and searching processes",
+      "authors": [
+        "Amanda Spink",
+        "Hüseyin Özmutlu",
+        "Seda Özmutlu"
+      ],
+      "journal": "JASIST",
+      "publication_date": "2002",
+      "year": 2002,
+      "volume": "53",
+      "page_start": "639",
+      "page_end": "652",
+      "doi": "10.1002/asi.10124"
+    },
+    "dblp_match": {
+      "title": "Multitasking information seeking and searching processes.",
+      "authors": [
+        "Amanda Spink",
+        "Huseyin Cenk Özmutlu",
+        "Seda Özmutlu"
+      ],
+      "year": "2002",
+      "venue": "J. Assoc. Inf. Sci. Technol."
+    },
+    "authors_match": false,
+    "mismatches": [
+      "accents_missing: Hüseyin Özmutlu vs Huseyin Özmutlu"
+    ],
+    "error_classifications": [
+      "accents_missing"
+    ],
+    "title_similarity": 99.11504424778761,
+    "validation_status": "author_mismatch"
+  }
+]

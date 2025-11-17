@@ -1,393 +1,423 @@
 {
   "summary": {
-    "files_processed": 20,
-    "total_references": 825,
-    "total_matched": 440,
-    "total_mismatches": 171,
-    "total_no_match": 156,
-    "total_errors": 58
+    "files_processed": 50,
+    "total_references": 1965,
+    "total_matched": 1218,
+    "total_mismatches": 353,
+    "total_no_match": 354,
+    "total_errors": 32,
+    "total_skipped": 8
   },
   "error_classifications": {
     "counts": {
-      "first_name_mismatch": 35,
-      "accents_missing": 14,
-      "author_not_found": 105,
-      "parsing_error": 50,
-      "last_name_mismatch": 27
+      "parsing_error": 168,
+      "accents_missing": 41,
+      "last_name_mismatch": 75,
+      "author_not_found": 114,
+      "first_name_mismatch": 84,
+      "author_order_wrong": 2
     },
     "examples": {
-      "first_name_mismatch": [
+      "parsing_error": [
         {
-          "title": "Tensorflow: Large-scale machine learning on heterogeneous distributed systems",
+          "title": "FLAIR: An easy-to-use framework for state-of-the-art NLP",
           "mismatches": [
-            "first_name_mismatch: Greg Corrado vs Gregory Corrado"
+            "Parsing error detected: author names appear to be shifted or mixed up"
           ]
         },
         {
-          "title": "Hand Avatar: Free-Pose Hand Animation and Rendering from Monocular Video",
+          "title": "Named entity recognition and classification in historical documents: A survey",
           "mismatches": [
-            "first_name_mismatch: H.-Y Shum vs Heung-Yeung Shum"
+            "Parsing error detected: author names appear to be shifted or mixed up"
           ]
         },
         {
-          "title": "Depthsupervised nerf: Fewer views and faster training for free",
+          "title": "Towards reliable named entity recognition in the biomedical domain",
           "mismatches": [
-            "first_name_mismatch: J.-Y Zhu vs Jun-Yan Zhu"
+            "Parsing error detected: author names appear to be shifted or mixed up"
           ]
         },
         {
-          "title": "Weakly-supervised mesh-convolutional hand reconstruction in the wild",
+          "title": "Spanbert: Improving pre-training by representing and predicting spans",
           "mismatches": [
-            "first_name_mismatch: R Guler vs Riza Güler"
+            "Parsing error detected: author names appear to be shifted or mixed up"
           ]
         },
         {
-          "title": "Interhand2.6m: A dataset and baseline for 3d interacting hand pose estimation from a single rgb imag",
+          "title": "Adapting word2vec to named entity recognition",
           "mismatches": [
-            "first_name_mismatch: S.-I Yu vs Shoou-I Yu"
+            "Parsing error detected: author names appear to be shifted or mixed up"
           ]
         }
       ],
       "accents_missing": [
         {
-          "title": "Findings of the 2019 conference on machine translation (WMT19)",
+          "title": "High-risk learning: acquiring new word vectors from tiny data",
           "mismatches": [
-            "accents_missing: Ondřej Bojar vs Ondrej Bojar"
+            "accents_missing: Aurelie Herbelot vs Aurélie Herbelot"
           ]
         },
         {
-          "title": "Enriching word vectors with subword information",
+          "title": "Efficient estimation of word representations in vector space",
           "mismatches": [
             "accents_missing: Tomas Mikolov vs Tomás Mikolov"
           ]
         },
         {
-          "title": "Extensions of recurrent neural network language model",
+          "title": "Training with quantization noise for extreme model compression",
           "mismatches": [
-            "accents_missing: Tomáš Mikolov vs Tomás Mikolov",
-            "accents_missing: Lukáš Burget vs Lukás Burget",
-            "Author not found in DBLP: Jan Černockỳ"
+            "accents_missing: H Jegou vs Hervé Jégou"
           ]
         },
         {
-          "title": "Extensions of recurrent neural network language model",
+          "title": "Mixed precision dnns: All you need is a good parametrization",
           "mismatches": [
-            "accents_missing: Tomáš Mikolov vs Tomás Mikolov",
-            "accents_missing: Lukáš Burget vs Lukás Burget",
-            "Author not found in DBLP: Jan Černockỳ"
+            "accents_missing: J Garcia vs Javier García"
           ]
         },
         {
-          "title": "Convolutional neural network language models",
+          "title": "Object detectors emerge in deep scene cnns",
           "mismatches": [
-            "accents_missing: German Kruszewski vs Germán Kruszewski"
-          ]
-        }
-      ],
-      "author_not_found": [
-        {
-          "title": "Wikipedia",
-          "mismatches": [
-            "Author not found in DBLP: G "
-          ]
-        },
-        {
-          "title": "Language modeling for morphologically rich languages: Character-aware modeling for word-level predic",
-          "mismatches": [
-            "Author not found in DBLP: Ivan Vulić"
-          ]
-        },
-        {
-          "title": "Extensions of recurrent neural network language model",
-          "mismatches": [
-            "accents_missing: Tomáš Mikolov vs Tomás Mikolov",
-            "accents_missing: Lukáš Burget vs Lukás Burget",
-            "Author not found in DBLP: Jan Černockỳ"
-          ]
-        },
-        {
-          "title": "word2vec parameter learning explained",
-          "mismatches": [
-            "Author not found in DBLP: X "
-          ]
-        },
-        {
-          "title": "Synthetic error dataset generation mimicking bengali writing pattern",
-          "mismatches": [
-            "Author not found in DBLP:  Habibur"
-          ]
-        }
-      ],
-      "parsing_error": [
-        {
-          "title": "Bert: Pre-training of deep bidirectional transformers for language understanding",
-          "mismatches": [
-            "Parsing error detected: author names appear to be shifted or mixed up"
-          ]
-        },
-        {
-          "title": "Do convolutional networks need to be deep for text classification",
-          "mismatches": [
-            "Parsing error detected: author names appear to be shifted or mixed up"
-          ]
-        },
-        {
-          "title": "Hate lingo: A target-based linguistic analysis of hate speech in social media",
-          "mismatches": [
-            "Parsing error detected: author names appear to be shifted or mixed up"
-          ]
-        },
-        {
-          "title": "RealToxi-cityPrompts: Evaluating neural toxic degeneration in language models",
-          "mismatches": [
-            "Parsing error detected: author names appear to be shifted or mixed up"
-          ]
-        },
-        {
-          "title": "A Unified Approach to Interpreting Model Predictions",
-          "mismatches": [
-            "Parsing error detected: author names appear to be shifted or mixed up"
+            "accents_missing: Agata Lapedriza vs Àgata Lapedriza"
           ]
         }
       ],
       "last_name_mismatch": [
         {
-          "title": "Latent hatred: A benchmark for understanding implicit hate speech",
+          "title": "Introduction to the conll-2003 shared task: Language-independent named entity recognition",
           "mismatches": [
-            "last_name_mismatch: Munmun Choudhury vs Munmun De Choudhury"
+            "last_name_mismatch: Erik Tjong vs Erik Sang",
+            "Author not found in DBLP: Kim Sang"
           ]
         },
         {
-          "title": "On large-batch training for deep learning: Generalization gap and sharp minima",
+          "title": "Logarithmic unbiased quantization: Practical 4-bit training in deep learning",
           "mismatches": [
-            "last_name_mismatch: Ping Tak vs Ping Tang"
+            "last_name_mismatch: H Yaacov vs Hilla Ben-Yaacov"
           ]
         },
         {
-          "title": "Mixed attention transformer for leveraging wordlevel knowledge to neural cross-lingual information r",
+          "title": "Network quantization with elementwise gradient scaling",
           "mismatches": [
-            "last_name_mismatch: Muhammad Sheikh vs Muhammad Sarwar",
-            "last_name_mismatch: Razieh Sarwar vs Razieh Rahimi",
-            "last_name_mismatch: James Rahimi vs James Allan"
+            "last_name_mismatch: B  vs Bumsub Ham"
           ]
         },
         {
-          "title": "Mixed attention transformer for leveraging wordlevel knowledge to neural cross-lingual information r",
+          "title": "Communication-efficient learning of deep networks from decentralized data",
           "mismatches": [
-            "last_name_mismatch: Muhammad Sheikh vs Muhammad Sarwar",
-            "last_name_mismatch: Razieh Sarwar vs Razieh Rahimi",
-            "last_name_mismatch: James Rahimi vs James Allan"
+            "last_name_mismatch: Blaise Arcas vs Blaise Agüera y Arcas"
           ]
         },
         {
-          "title": "Mixed attention transformer for leveraging wordlevel knowledge to neural cross-lingual information r",
+          "title": "Breaking the data barrier: Towards robust speech translation via adversarial stability training",
           "mismatches": [
-            "last_name_mismatch: Muhammad Sheikh vs Muhammad Sarwar",
-            "last_name_mismatch: Razieh Sarwar vs Razieh Rahimi",
-            "last_name_mismatch: James Rahimi vs James Allan"
+            "last_name_mismatch: Meiyuan Fan vs Meiyuan Fang"
+          ]
+        }
+      ],
+      "author_not_found": [
+        {
+          "title": "Introduction to the conll-2003 shared task: Language-independent named entity recognition",
+          "mismatches": [
+            "last_name_mismatch: Erik Tjong vs Erik Sang",
+            "Author not found in DBLP: Kim Sang"
+          ]
+        },
+        {
+          "title": "Wasserstein Barycenters can be Computed in Polynomial Time in Fixed Dimension",
+          "mismatches": [
+            "Author not found in DBLP: Enric Boix-Adsera"
+          ]
+        },
+        {
+          "title": "Modeling of the question answering task in the yodaqa system",
+          "mismatches": [
+            "Author not found in DBLP: Petr Baudiš",
+            "Author not found in DBLP: Jan Šedivỳ"
+          ]
+        },
+        {
+          "title": "Modeling of the question answering task in the yodaqa system",
+          "mismatches": [
+            "Author not found in DBLP: Petr Baudiš",
+            "Author not found in DBLP: Jan Šedivỳ"
+          ]
+        },
+        {
+          "title": "Neural passage retrieval with improved negative contrast",
+          "mismatches": [
+            "Author not found in DBLP: Gustavo Abrego"
+          ]
+        }
+      ],
+      "first_name_mismatch": [
+        {
+          "title": "Diffusion models beat gans on image synthesis",
+          "mismatches": [
+            "first_name_mismatch: Alex Nichol vs Alexander Nichol"
+          ]
+        },
+        {
+          "title": "Flow matching for generative modeling",
+          "mismatches": [
+            "first_name_mismatch: Matt Le vs Matthew Le"
+          ]
+        },
+        {
+          "title": "On kinetic optimal probability paths for generative models",
+          "mismatches": [
+            "first_name_mismatch: Matt Le vs Matthew Le"
+          ]
+        },
+        {
+          "title": "Latent weights do not exist: Rethinking binarized neural network optimization",
+          "mismatches": [
+            "first_name_mismatch: K.-T Cheng vs Kwang-Ting Cheng"
+          ]
+        },
+        {
+          "title": "Quantization networks",
+          "mismatches": [
+            "first_name_mismatch: X.-S Hua vs Xian-Sheng Hua"
+          ]
+        }
+      ],
+      "author_order_wrong": [
+        {
+          "title": "Transtrack: Multiple-object tracking with transformer",
+          "mismatches": [
+            "Authors match but order differs"
+          ]
+        },
+        {
+          "title": "Good examples make a faster learner: Simple demonstrationbased learning for low-resource ner",
+          "mismatches": [
+            "Authors match but order differs"
           ]
         }
       ]
     }
   },
   "title_similarities": {
-    "count": 763,
-    "min": 9.259259259259256,
+    "count": 1923,
+    "min": 14.925373134328357,
     "max": 100.0,
-    "mean": 89.27866634366667,
-    "median": 99.08256880733946,
-    "p25": 98.30508474576271,
-    "p75": 99.32885906040269,
-    "low_similarity_examples": [
-      {
-        "similarity": 94.73684210526316,
-        "ref_title": "Wikipedia",
-        "dblp_title": "Wikipedia.",
-        "status": "author_mismatch"
-      },
-      {
-        "similarity": 91.66666666666666,
-        "ref_title": "The Pseudo-Dimension of near-Optimal Auctions",
-        "dblp_title": "On the Pseudo-Dimension of Nearly Optimal Auctions.",
-        "status": "matched"
-      },
-      {
-        "similarity": 90.14084507042254,
-        "ref_title": "Adversarial robustness toolbox v1",
-        "dblp_title": "Adversarial Robustness Toolbox v0.2.2.",
-        "status": "author_mismatch"
-      }
-    ]
+    "mean": 91.45336810738743,
+    "median": 99.11504424778761,
+    "p25": 98.4375,
+    "p75": 99.33774834437085,
+    "low_similarity_examples": []
   },
   "author_list_lengths": {
-    "count": 611,
-    "mean_diff": -0.3649754500818331,
-    "min_diff": -21,
-    "max_diff": 58,
-    "positive_diff_count": 22,
-    "negative_diff_count": 80,
-    "zero_diff_count": 509,
+    "count": 1570,
+    "mean_diff": -0.028662420382165606,
+    "min_diff": -22,
+    "max_diff": 90,
+    "positive_diff_count": 62,
+    "negative_diff_count": 196,
+    "zero_diff_count": 1312,
     "examples": [
       {
-        "ref_count": 10,
-        "dblp_count": 40,
-        "diff": 30,
-        "title": "Tensorflow: Large-scale machine learning on heterogeneous distributed systems",
-        "status": "author_mismatch"
-      },
-      {
-        "ref_count": 8,
+        "ref_count": 12,
         "dblp_count": 1,
-        "diff": -7,
-        "title": "word2vec parameter learning explained",
-        "status": "author_mismatch"
-      },
-      {
-        "ref_count": 17,
-        "dblp_count": 1,
-        "diff": -16,
-        "title": "Democracy online: Civility, politeness, and the democratic potential of online political discussion ",
-        "status": "author_mismatch"
-      },
-      {
-        "ref_count": 13,
-        "dblp_count": 1,
-        "diff": -12,
-        "title": "Practical recommendations for gradient-based training of deep architectures",
-        "status": "author_mismatch"
-      },
-      {
-        "ref_count": 15,
-        "dblp_count": 1,
-        "diff": -14,
-        "title": "One weird trick for parallelizing convolutional neural networks",
-        "status": "author_mismatch"
+        "diff": -11,
+        "title": "Biomedical named entity recognition using conditional random fields and rich feature sets",
+        "status": "matched"
       },
       {
         "ref_count": 9,
         "dblp_count": 1,
         "diff": -8,
-        "title": "Xception: Deep learning with depthwise separable convolutions",
-        "status": "author_mismatch"
+        "title": "Rectified flow: A marginal preserving approach to optimal transport",
+        "status": "matched"
       },
       {
-        "ref_count": 8,
+        "ref_count": 11,
         "dblp_count": 1,
-        "diff": -7,
-        "title": "Wordnet: A lexical database for english",
-        "status": "author_mismatch"
+        "diff": -10,
+        "title": "A step toward quantifying independently reproducible machine learning research",
+        "status": "matched"
       },
       {
-        "ref_count": 8,
+        "ref_count": 10,
         "dblp_count": 1,
-        "diff": -7,
-        "title": "Sentiment Analysis and Opinion Mining",
-        "status": "author_mismatch"
+        "diff": -9,
+        "title": "1.1 computing's energy problem (and what we can do about it)",
+        "status": "matched"
       },
       {
-        "ref_count": 12,
+        "ref_count": 16,
         "dblp_count": 1,
-        "diff": -11,
-        "title": "Training with noise is equivalent to Tikhonov regularization",
-        "status": "author_mismatch"
+        "diff": -15,
+        "title": "Quantizing deep convolutional networks for efficient inference: A whitepaper",
+        "status": "matched"
       },
       {
-        "ref_count": 12,
+        "ref_count": 11,
         "dblp_count": 1,
-        "diff": -11,
-        "title": "Three models for the description of language",
-        "status": "author_mismatch"
+        "diff": -10,
+        "title": "Large-scale machine learning with stochastic gradient descent",
+        "status": "matched"
+      },
+      {
+        "ref_count": 15,
+        "dblp_count": 1,
+        "diff": -14,
+        "title": "Principles of risk minimization for learning theory",
+        "status": "matched"
+      },
+      {
+        "ref_count": 10,
+        "dblp_count": 19,
+        "diff": 9,
+        "title": "Wavlm: Large-scale self-supervised pre-training for full stack speech processing",
+        "status": "matched"
+      },
+      {
+        "ref_count": 13,
+        "dblp_count": 1,
+        "diff": -12,
+        "title": "Europarl: A parallel corpus for statistical machine translation",
+        "status": "matched"
+      },
+      {
+        "ref_count": 11,
+        "dblp_count": 1,
+        "diff": -10,
+        "title": "Divergence measures based on the shannon entropy",
+        "status": "matched"
       }
     ]
   },
   "common_mistakes": [
     {
-      "type": "Accent/diacritic mismatches",
-      "count": 13,
-      "description": "Names differ only by accents/diacritics",
+      "type": "Author order mismatches",
+      "count": 2,
+      "description": "Authors match but are in wrong order",
       "examples": [
         {
-          "title": "Findings of the 2019 conference on machine translation (WMT19)",
-          "mismatches": [
-            "accents_missing: Ondřej Bojar vs Ondrej Bojar"
+          "title": "Transtrack: Multiple-object tracking with transformer",
+          "ref_authors": [
+            "Peize Sun",
+            "Jinkun Cao",
+            "Yi Jiang",
+            "Rufeng Zhang",
+            "Enze Xie"
+          ],
+          "dblp_authors": [
+            "Peize Sun",
+            "Yi Jiang 0004",
+            "Rufeng Zhang",
+            "Enze Xie",
+            "Jinkun Cao"
           ]
         },
         {
-          "title": "Enriching word vectors with subword information",
+          "title": "Good examples make a faster learner: Simple demonstrationbased learning for low-resource ner",
+          "ref_authors": [
+            "Dong-Ho Lee",
+            "Mahak Agarwal",
+            "Akshen Kadakia",
+            "Jay Pujara",
+            "Xiang Ren"
+          ],
+          "dblp_authors": [
+            "Dong-Ho Lee",
+            "Akshen Kadakia",
+            "Kangmin Tan",
+            "Mahak Agarwal",
+            "Xinyu Feng"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Accent/diacritic mismatches",
+      "count": 40,
+      "description": "Names differ only by accents/diacritics",
+      "examples": [
+        {
+          "title": "High-risk learning: acquiring new word vectors from tiny data",
+          "mismatches": [
+            "accents_missing: Aurelie Herbelot vs Aurélie Herbelot"
+          ]
+        },
+        {
+          "title": "Efficient estimation of word representations in vector space",
           "mismatches": [
             "accents_missing: Tomas Mikolov vs Tomás Mikolov"
           ]
         },
         {
-          "title": "Extensions of recurrent neural network language model",
+          "title": "Training with quantization noise for extreme model compression",
           "mismatches": [
-            "accents_missing: Tomáš Mikolov vs Tomás Mikolov",
-            "accents_missing: Lukáš Burget vs Lukás Burget",
-            "Author not found in DBLP: Jan Černockỳ"
+            "accents_missing: H Jegou vs Hervé Jégou"
           ]
         },
         {
-          "title": "Convolutional neural network language models",
+          "title": "Mixed precision dnns: All you need is a good parametrization",
           "mismatches": [
-            "accents_missing: German Kruszewski vs Germán Kruszewski"
+            "accents_missing: J Garcia vs Javier García"
           ]
         },
         {
-          "title": "it's not just hate\": A multi-dimensional perspective on detecting harmful speech online",
+          "title": "Object detectors emerge in deep scene cnns",
           "mismatches": [
-            "accents_missing: Patricia Rossini vs Patrícia Rossini"
+            "accents_missing: Agata Lapedriza vs Àgata Lapedriza"
           ]
         }
       ]
     },
     {
       "type": "First/Last name mismatches",
-      "count": 42,
+      "count": 96,
       "description": "Names differ in first or last name components",
       "examples": [
         {
-          "title": "Tensorflow: Large-scale machine learning on heterogeneous distributed systems",
+          "title": "Introduction to the conll-2003 shared task: Language-independent named entity recognition",
+          "classifications": [
+            "last_name_mismatch",
+            "author_not_found"
+          ],
+          "mismatches": [
+            "last_name_mismatch: Erik Tjong vs Erik Sang",
+            "Author not found in DBLP: Kim Sang"
+          ]
+        },
+        {
+          "title": "Diffusion models beat gans on image synthesis",
           "classifications": [
             "first_name_mismatch"
           ],
           "mismatches": [
-            "first_name_mismatch: Greg Corrado vs Gregory Corrado"
+            "first_name_mismatch: Alex Nichol vs Alexander Nichol"
           ]
         },
         {
-          "title": "Latent hatred: A benchmark for understanding implicit hate speech",
+          "title": "Flow matching for generative modeling",
+          "classifications": [
+            "first_name_mismatch"
+          ],
+          "mismatches": [
+            "first_name_mismatch: Matt Le vs Matthew Le"
+          ]
+        },
+        {
+          "title": "On kinetic optimal probability paths for generative models",
+          "classifications": [
+            "first_name_mismatch"
+          ],
+          "mismatches": [
+            "first_name_mismatch: Matt Le vs Matthew Le"
+          ]
+        },
+        {
+          "title": "Logarithmic unbiased quantization: Practical 4-bit training in deep learning",
           "classifications": [
             "last_name_mismatch"
           ],
           "mismatches": [
-            "last_name_mismatch: Munmun Choudhury vs Munmun De Choudhury"
-          ]
-        },
-        {
-          "title": "Hand Avatar: Free-Pose Hand Animation and Rendering from Monocular Video",
-          "classifications": [
-            "first_name_mismatch"
-          ],
-          "mismatches": [
-            "first_name_mismatch: H.-Y Shum vs Heung-Yeung Shum"
-          ]
-        },
-        {
-          "title": "Depthsupervised nerf: Fewer views and faster training for free",
-          "classifications": [
-            "first_name_mismatch"
-          ],
-          "mismatches": [
-            "first_name_mismatch: J.-Y Zhu vs Jun-Yan Zhu"
-          ]
-        },
-        {
-          "title": "Weakly-supervised mesh-convolutional hand reconstruction in the wild",
-          "classifications": [
-            "first_name_mismatch"
-          ],
-          "mismatches": [
-            "first_name_mismatch: R Guler vs Riza Güler"
+            "last_name_mismatch: H Yaacov vs Hilla Ben-Yaacov"
           ]
         }
       ]
