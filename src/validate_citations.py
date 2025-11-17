@@ -61,6 +61,137 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def normalize_last_name_with_prefixes(last_name: str) -> tuple[str, str]:
+    """
+    Normalize last names by removing common prefixes (De, Van, Von, etc.).
+    Returns both the normalized version (without prefix) and the original.
+    
+    Args:
+        last_name: Last name string
+        
+    Returns:
+        Tuple of (normalized_last_name, original_last_name)
+    """
+    if not last_name:
+        return '', ''
+    
+    # Common last name prefixes
+    prefixes = ['de', 'van', 'von', 'del', 'della', 'di', 'da', 'le', 'la', 'el', 'der', 'den', 'du', 'des']
+    
+    last_lower = last_name.lower().strip()
+    parts = last_lower.split()
+    
+    # Check if first part is a prefix
+    if parts and parts[0] in prefixes:
+        # Return name without prefix, but keep original for reference
+        normalized = ' '.join(parts[1:]) if len(parts) > 1 else parts[0]
+        return normalized, last_name
+    
+    return last_lower, last_name
+
+
+def normalize_name_for_comparison(name: str) -> str:
+    """
+    Normalize a name component for comparison by:
+    1. Converting to lowercase
+    2. Removing accents using unidecode
+    3. Removing periods and extra spaces
+    
+    Args:
+        name: Name component string
+        
+    Returns:
+        Normalized string for comparison
+    """
+    if not name:
+        return ''
+    # Convert to lowercase, remove accents, remove periods, strip whitespace
+    normalized = unidecode(name.lower().replace('.', '').strip())
+    return normalized
+
+
+def names_match_with_accents(name1: str, name2: str) -> bool:
+    """
+    Check if two names match, considering accents/diacritics.
+    Uses unidecode to normalize accents.
+    
+    Args:
+        name1: First name string
+        name2: Second name string
+        
+    Returns:
+        True if names match (with or without accents)
+    """
+    if not name1 or not name2:
+        return False
+    
+    # Direct match
+    if name1.lower().strip() == name2.lower().strip():
+        return True
+    
+    # Match after removing accents
+    name1_normalized = normalize_name_for_comparison(name1)
+    name2_normalized = normalize_name_for_comparison(name2)
+    
+    return name1_normalized == name2_normalized
+
+
+def handle_middle_initial_match(ref_author: Dict[str, str], dblp_author: Dict[str, str]) -> bool:
+    """
+    Check if authors match when one has a middle initial and the other doesn't.
+    For example: "Ed Chi" vs "Ed H. Chi" should match.
+    
+    Args:
+        ref_author: Reference author dictionary
+        dblp_author: DBLP author dictionary
+        
+    Returns:
+        True if authors match considering middle initials
+    """
+    ref_first = normalize_name_for_comparison(ref_author.get('first_name', ''))
+    ref_middle = normalize_name_for_comparison(ref_author.get('middle_name', ''))
+    ref_last = normalize_name_for_comparison(ref_author.get('last_name', ''))
+    
+    dblp_first = normalize_name_for_comparison(dblp_author.get('first_name', ''))
+    dblp_middle = normalize_name_for_comparison(dblp_author.get('middle_name', ''))
+    dblp_last = normalize_name_for_comparison(dblp_author.get('last_name', ''))
+    
+    # Last names must match (with accent normalization)
+    if not names_match_with_accents(ref_author.get('last_name', ''), dblp_author.get('last_name', '')):
+        return False
+    
+    # Check if first names match
+    if ref_first == dblp_first:
+        # If first names match exactly, they match (middle initial doesn't matter)
+        return True
+    
+    # Check if one first name is just an initial of the other
+    ref_is_initial = len(ref_first.replace(' ', '')) == 1
+    dblp_is_initial = len(dblp_first.replace(' ', '')) == 1
+    
+    if ref_is_initial and dblp_first:
+        # ref is initial, dblp is full name - check if initial matches
+        return ref_first[0] == dblp_first[0]
+    elif dblp_is_initial and ref_first:
+        # dblp is initial, ref is full name - check if initial matches
+        return dblp_first[0] == ref_first[0]
+    
+    # Check if first name + middle name combination matches
+    ref_full_first = f"{ref_first} {ref_middle}".strip()
+    dblp_full_first = f"{dblp_first} {dblp_middle}".strip()
+    
+    if ref_full_first == dblp_full_first:
+        return True
+    
+    # Check if one is a prefix of the other (e.g., "Ed" vs "Ed H")
+    if ref_first and dblp_full_first.startswith(ref_first):
+        return True
+    if dblp_first and ref_full_first.startswith(dblp_first):
+        return True
+    
+    return False
+
+
 def calculate_title_similarity(title1: str, title2: str) -> float:
     """
     Calculate string similarity between two titles using rapidfuzz.
@@ -114,18 +245,81 @@ def check_author_with_minimum_lists(ref_authors: List[Dict[str, str]],
         result['error_classifications'].append('empty_list')
         return result
 
+    # Check for parsing errors first (names with "*" or other invalid characters)
+    parsing_errors_found = []
+    for i, ref_author in enumerate(ref_subset):
+        if ref_author.get('parsing_error', False):
+            parsing_errors_found.append(f"Reference author {i+1}: {ref_author.get('original', 'Unknown')}")
+        # Also check for names that are likely fragments (very short, single word, no last name)
+        ref_first = ref_author.get('first_name', '').strip()
+        ref_last = ref_author.get('last_name', '').strip()
+        original = ref_author.get('original', '').strip()
+        # Check if name is a fragment: single short word (1-3 chars) with no last name
+        if not ref_last and len(ref_first) <= 3 and len(original) <= 3:
+            parsing_errors_found.append(f"Reference author {i+1}: {original} (likely fragment)")
+        # Check for single-word fragments: if only last name exists without first name, it's likely a parsing error
+        # (unless it's a very common single-name pattern, but we'll flag it anyway)
+        if not ref_first and ref_last and len(original.split()) == 1:
+            parsing_errors_found.append(f"Reference author {i+1}: {original} (single-word fragment)")
+    for j, dblp_author in enumerate(dblp_subset):
+        if dblp_author.get('parsing_error', False):
+            parsing_errors_found.append(f"DBLP author {j+1}: {dblp_author.get('original', 'Unknown')}")
+    
+    if parsing_errors_found:
+        result['error_classifications'].append('parsing_error')
+        result['mismatches'].append(
+            'Parsing error detected: invalid characters or fragments in author names. ' + 
+            '; '.join(parsing_errors_found)
+        )
+        return result
+
     # Try to match authors - allow for order differences and length differences
     matched_ref_indices = set()
     matched_dblp_indices = set()
     matches = []
 
     # First pass: exact matches using is_name_match (handles initials, reversed names, etc.)
+    # Also check for matches with accent normalization and middle initials
     # Compare all reference authors against all DBLP authors (within max_authors limit)
     for i, ref_author in enumerate(ref_subset):
         for j, dblp_author in enumerate(dblp_subset):
             if j in matched_dblp_indices:
                 continue
+            # Try standard name matching first
             if is_name_match(ref_author, dblp_author):
+                matches.append((i, j, ref_author, dblp_author))
+                matched_ref_indices.add(i)
+                matched_dblp_indices.add(j)
+                break
+            
+            # Check for accent-normalized matches (e.g., "Kuebler" vs "Kübler")
+            ref_first = ref_author.get('first_name', '').strip()
+            ref_last = ref_author.get('last_name', '').strip()
+            dblp_first = dblp_author.get('first_name', '').strip()
+            dblp_last = dblp_author.get('last_name', '').strip()
+            
+            # Check if names match after accent normalization
+            if (names_match_with_accents(ref_first, dblp_first) and 
+                names_match_with_accents(ref_last, dblp_last)):
+                matches.append((i, j, ref_author, dblp_author))
+                matched_ref_indices.add(i)
+                matched_dblp_indices.add(j)
+                break
+            
+            # Check for compound last names with prefixes (De Choudhury vs Choudhury)
+            ref_last_base, _ = normalize_last_name_with_prefixes(ref_last)
+            dblp_last_base, _ = normalize_last_name_with_prefixes(dblp_last)
+            if (names_match_with_accents(ref_first, dblp_first) and 
+                (names_match_with_accents(ref_last_base, dblp_last_base) or
+                 names_match_with_accents(ref_last, dblp_last_base) or
+                 names_match_with_accents(ref_last_base, dblp_last))):
+                matches.append((i, j, ref_author, dblp_author))
+                matched_ref_indices.add(i)
+                matched_dblp_indices.add(j)
+                break
+            
+            # Also check for matches with middle initials (e.g., "Ed Chi" vs "Ed H. Chi")
+            if handle_middle_initial_match(ref_author, dblp_author):
                 matches.append((i, j, ref_author, dblp_author))
                 matched_ref_indices.add(i)
                 matched_dblp_indices.add(j)
@@ -144,37 +338,64 @@ def check_author_with_minimum_lists(ref_authors: List[Dict[str, str]],
     parsing_error_detected = False
 
     # Check for names that got split across multiple reference authors
-    for j, dblp_author in enumerate(unmatched_dblp):
-        dblp_full = f"{dblp_author.get('first_name', '')} {dblp_author.get('middle_name', '')} {dblp_author.get('last_name', '')}".strip()
-        dblp_parts = dblp_full.lower().split()
+    # Also check for names that are incorrectly combined (like "Yunpu Volker Tresp")
+    for i, ref_author in enumerate(unmatched_ref):
+        ref_first = ref_author.get('first_name', '').strip()
+        ref_last = ref_author.get('last_name', '').strip()
+        ref_original = ref_author.get('original', '').strip()
+        
+        # Check if a reference author has multiple words in first_name that look like separate names
+        # Example: "Yunpu Volker" as first_name with "Tresp" as last_name
+        if ref_first and ' ' in ref_first:
+            first_parts = ref_first.split()
+            # If first_name has 2+ words and last_name exists, this might be a parsing error
+            # where two names were combined
+            if len(first_parts) >= 2 and ref_last:
+                # Check if this matches a DBLP author when split differently
+                for j, dblp_author in enumerate(unmatched_dblp):
+                    dblp_first = dblp_author.get('first_name', '').strip()
+                    dblp_last = dblp_author.get('last_name', '').strip()
+                    # If last names match and one of the first_name parts matches dblp_first
+                    if ref_last.lower() == dblp_last.lower():
+                        if any(part.lower() == dblp_first.lower() for part in first_parts):
+                            parsing_error_detected = True
+                            break
+                if parsing_error_detected:
+                    break
+    
+    # Check if DBLP author matches parts scattered across consecutive reference authors
+    if not parsing_error_detected:
+        for j, dblp_author in enumerate(unmatched_dblp):
+            dblp_full = f"{dblp_author.get('first_name', '')} {dblp_author.get('middle_name', '')} {dblp_author.get('last_name', '')}".strip()
+            dblp_parts = dblp_full.lower().split()
 
-        # Check if this DBLP author matches parts scattered across consecutive reference authors
-        for i in range(len(unmatched_ref) - 1):
-            ref_author1 = unmatched_ref[i]
-            ref_author2 = unmatched_ref[i + 1]
+            # Check if this DBLP author matches parts scattered across consecutive reference authors
+            for i in range(len(unmatched_ref) - 1):
+                ref_author1 = unmatched_ref[i]
+                ref_author2 = unmatched_ref[i + 1]
 
-            ref1_full = f"{ref_author1.get('first_name', '')} {ref_author1.get('last_name', '')}".strip().lower()
-            ref2_full = f"{ref_author2.get('first_name', '')} {ref_author2.get('last_name', '')}".strip().lower()
+                ref1_full = f"{ref_author1.get('first_name', '')} {ref_author1.get('last_name', '')}".strip().lower()
+                ref2_full = f"{ref_author2.get('first_name', '')} {ref_author2.get('last_name', '')}".strip().lower()
 
-            combined = f"{ref1_full} {ref2_full}".replace('  ', ' ').strip()
+                combined = f"{ref1_full} {ref2_full}".replace('  ', ' ').strip()
 
-            # Check if combined reference authors match the DBLP author
-            if combined and dblp_full.lower() == combined:
-                parsing_error_detected = True
-                break
-
-            # Check if parts of DBLP author are split between reference authors
-            ref1_parts = ref1_full.split()
-            ref2_parts = ref2_full.split()
-
-            # If DBLP has 3+ parts and reference authors together have the same parts
-            if len(dblp_parts) >= 3 and len(ref1_parts + ref2_parts) >= len(dblp_parts):
-                if all(part in ref1_parts + ref2_parts for part in dblp_parts):
+                # Check if combined reference authors match the DBLP author
+                if combined and dblp_full.lower() == combined:
                     parsing_error_detected = True
                     break
 
-        if parsing_error_detected:
-            break
+                # Check if parts of DBLP author are split between reference authors
+                ref1_parts = ref1_full.split()
+                ref2_parts = ref2_full.split()
+
+                # If DBLP has 3+ parts and reference authors together have the same parts
+                if len(dblp_parts) >= 3 and len(ref1_parts + ref2_parts) >= len(dblp_parts):
+                    if all(part in ref1_parts + ref2_parts for part in dblp_parts):
+                        parsing_error_detected = True
+                        break
+
+            if parsing_error_detected:
+                break
 
     # Also check the original parsing error detection
     if not parsing_error_detected:
@@ -221,103 +442,138 @@ def check_author_with_minimum_lists(ref_authors: List[Dict[str, str]],
             # These are created by normalize_author_name() which uses nameparser
             # Location: ref_author['first_name'] and ref_author['last_name'] 
             # (normalized from the original author string)
-            ref_last = ref_author.get('last_name', '').lower().strip()
-            dblp_last = dblp_author.get('last_name', '').lower().strip()
+            ref_last = ref_author.get('last_name', '').strip()
+            dblp_last = dblp_author.get('last_name', '').strip()
             
-            ref_first = ref_author.get('first_name', '').lower().strip()
-            dblp_first = dblp_author.get('first_name', '').lower().strip()
+            ref_first = ref_author.get('first_name', '').strip()
+            dblp_first = dblp_author.get('first_name', '').strip()
             
-            # Check for accent differences (using unidecode)
-            ref_last_no_accents = unidecode(ref_last)
-            dblp_last_no_accents = unidecode(dblp_last)
-            ref_first_no_accents = unidecode(ref_first)
-            dblp_first_no_accents = unidecode(dblp_first)
+            # Normalize names for comparison (handles accents)
+            ref_last_norm = normalize_name_for_comparison(ref_last)
+            dblp_last_norm = normalize_name_for_comparison(dblp_last)
+            ref_first_norm = normalize_name_for_comparison(ref_first)
+            dblp_first_norm = normalize_name_for_comparison(dblp_first)
             
-            # Last name matches but first name differs
-            if ref_last == dblp_last or ref_last_no_accents == dblp_last_no_accents:
-                if ref_first != dblp_first:
+            # Check for compound last names with prefixes (De Choudhury vs Choudhury)
+            ref_last_base, ref_last_orig = normalize_last_name_with_prefixes(ref_last)
+            dblp_last_base, dblp_last_orig = normalize_last_name_with_prefixes(dblp_last)
+            ref_last_base_norm = normalize_name_for_comparison(ref_last_base)
+            dblp_last_base_norm = normalize_name_for_comparison(dblp_last_base)
+            
+            # Last name matches (with accent normalization and prefix handling)
+            last_names_match = (ref_last_norm == dblp_last_norm or 
+                               ref_last_base_norm == dblp_last_base_norm or
+                               names_match_with_accents(ref_last, dblp_last))
+            
+            if last_names_match:
+                # Check if first names match (with accent normalization and middle initial handling)
+                first_names_match = (ref_first_norm == dblp_first_norm or 
+                                    names_match_with_accents(ref_first, dblp_first))
+                
+                # Also check for middle initial matches (e.g., "Ed" vs "Ed H.")
+                if not first_names_match:
+                    first_names_match = handle_middle_initial_match(ref_author, dblp_author)
+                
+                if not first_names_match:
                     # Check if first names match by initials (including compound initials like "K.-T" matching "Kwang-Ting")
                     # Use the enhanced initial_matches function that handles compound initials
+                    # IMPORTANT: initial_matches now only returns True if one is actually an initial
+                    # (single letter) and the other is a full name. It will NOT match different full names
+                    # like "Jeff" vs "Jeffrey" or "Alex" vs "Alexander"
                     initials_match = initial_matches(ref_author['first_name'], dblp_author['first_name'])
                     
-                    # Also check simple initial match for backward compatibility
-                    ref_first_initial = unidecode(ref_first.lower().replace('.', '').strip())
-                    dblp_first_initial = unidecode(dblp_first.lower().replace('.', '').strip())
-                    simple_initials_match = (len(ref_first_initial) == 1 and len(dblp_first_initial) >= 1 and
-                                           ref_first_initial[0] == dblp_first_initial[0])
+                    # Also check simple initial match: only if one is a single letter initial
+                    ref_first_initial = ref_first_norm.replace(' ', '')
+                    dblp_first_initial = dblp_first_norm.replace(' ', '')
+                    # Only match if one is a single letter (actual initial) and the other starts with that letter
+                    ref_is_single_initial = len(ref_first_initial) == 1
+                    dblp_is_single_initial = len(dblp_first_initial) == 1
+                    simple_initials_match = False
+                    if ref_is_single_initial and not dblp_is_single_initial:
+                        # ref is an initial, dblp is full name - match if first letter matches
+                        simple_initials_match = ref_first_initial[0] == dblp_first_initial[0]
+                    elif dblp_is_single_initial and not ref_is_single_initial:
+                        # dblp is an initial, ref is full name - match if first letter matches
+                        simple_initials_match = dblp_first_initial[0] == ref_first_initial[0]
+                    elif ref_is_single_initial and dblp_is_single_initial:
+                        # Both are single letter initials - match if they're the same
+                        simple_initials_match = ref_first_initial[0] == dblp_first_initial[0]
                     
                     # If initials match (compound or simple), consider them matched and skip mismatch reporting
                     if initials_match or simple_initials_match:
                         # Mark this DBLP author as matched and break to skip adding as mismatch
                         matched_dblp_indices.add(j)
                         break  # Break out of inner loop, this reference author is matched
-
-                    if ref_first_no_accents == dblp_first_no_accents:
-                        best_match = dblp_author
-                        best_match_idx = j
-                        best_match_type = 'accents_missing'
-                    elif simple_initials_match and (unidecode(ref_last) != ref_last or unidecode(dblp_last) != dblp_last):
-                        # Last names have accents, first names match by initials
-                        best_match = dblp_author
-                        best_match_idx = j
-                        best_match_type = 'accents_missing'
+                    
+                    # Check if it's just an accent difference
+                    if ref_first_norm == dblp_first_norm:
+                        # Names match after accent normalization - this is not a mismatch
+                        matched_dblp_indices.add(j)
+                        break
                     else:
                         best_match = dblp_author
                         best_match_idx = j
                         best_match_type = 'first_name_mismatch'
-                # Even if first names appear to match, check for accent differences
-                elif ref_first == dblp_first and (unidecode(ref_first) != ref_first or unidecode(dblp_first) != dblp_first):
-                    best_match = dblp_author
-                    best_match_idx = j
-                    best_match_type = 'accents_missing'
+                else:
+                    # First names match (with accents/middle initials) - this is a match
+                    matched_dblp_indices.add(j)
+                    break
                 continue
             
             # First name matches but last name differs
-            if ref_first == dblp_first or ref_first_no_accents == dblp_first_no_accents:
-                if ref_last != dblp_last:
-                    if ref_last_no_accents == dblp_last_no_accents:
-                        best_match = dblp_author
-                        best_match_idx = j
-                        best_match_type = 'accents_missing'
+            first_names_match = (ref_first_norm == dblp_first_norm or 
+                                names_match_with_accents(ref_first, dblp_first))
+            
+            # Also check for middle initial matches
+            if not first_names_match:
+                first_names_match = handle_middle_initial_match(ref_author, dblp_author)
+            
+            if first_names_match:
+                # Check if last names match with accent normalization and prefix handling
+                if not last_names_match:
+                    # Check if it's just an accent difference
+                    if ref_last_norm == dblp_last_norm or ref_last_base_norm == dblp_last_base_norm:
+                        # Names match after accent/prefix normalization - this is not a mismatch
+                        matched_dblp_indices.add(j)
+                        break
                     else:
                         best_match = dblp_author
                         best_match_idx = j
                         best_match_type = 'last_name_mismatch'
-                # Even if last names appear to match, check for accent differences
-                elif ref_last == dblp_last and (unidecode(ref_last) != ref_last or unidecode(dblp_last) != dblp_last):
-                    best_match = dblp_author
-                    best_match_idx = j
-                    best_match_type = 'accents_missing'
+                else:
+                    # Both first and last names match - this is a match
+                    matched_dblp_indices.add(j)
+                    break
                 continue
+            
             # Check if first names match by initials
-            ref_first_initial = unidecode(ref_first.lower().replace('.', '').strip())
-            dblp_first_initial = unidecode(dblp_first.lower().replace('.', '').strip())
+            ref_first_initial = ref_first_norm.replace(' ', '')
+            dblp_first_initial = dblp_first_norm.replace(' ', '')
             first_initials_match = (len(ref_first_initial) == 1 and len(dblp_first_initial) >= 1 and
                                   ref_first_initial[0] == dblp_first_initial[0])
             if first_initials_match:
-                if ref_last != dblp_last:
-                    if ref_last_no_accents == dblp_last_no_accents:
-                        best_match = dblp_author
-                        best_match_idx = j
-                        best_match_type = 'accents_missing'
+                if not last_names_match:
+                    # Check if it's just an accent/prefix difference
+                    if ref_last_norm == dblp_last_norm or ref_last_base_norm == dblp_last_base_norm:
+                        # Names match after accent/prefix normalization - this is not a mismatch
+                        matched_dblp_indices.add(j)
+                        break
                     else:
                         best_match = dblp_author
                         best_match_idx = j
                         best_match_type = 'last_name_mismatch'
-                # Even if last names appear to match, check for accent differences
-                elif ref_last == dblp_last and (unidecode(ref_last) != ref_last or unidecode(dblp_last) != dblp_last):
-                    best_match = dblp_author
-                    best_match_idx = j
-                    best_match_type = 'accents_missing'
+                else:
+                    # Both match - this is a match
+                    matched_dblp_indices.add(j)
+                    break
                 continue
             
             # Check if names match without accents (but have accents in original)
-            if (ref_last_no_accents == dblp_last_no_accents and ref_first_no_accents == dblp_first_no_accents and
+            if (ref_last_norm == dblp_last_norm and ref_first_norm == dblp_first_norm and
                 (ref_last != dblp_last or ref_first != dblp_first)):
-                best_match = dblp_author
-                best_match_idx = j
-                best_match_type = 'accents_missing'
-                continue
+                # Names match after normalization - this is not a mismatch
+                matched_dblp_indices.add(j)
+                break
         
         if best_match:
             matched_dblp_indices.add(best_match_idx)
@@ -361,6 +617,7 @@ def normalize_author_name(name: str) -> Dict[str, str]:
     """
     Normalize author names into a consistent format using nameparser.
     Removes both 4-digit suffixes and DBLP-style numeric suffixes.
+    Detects and handles parsing errors like "*" characters.
     
     This function is copied from citation_pipeline.py to avoid import issues.
     
@@ -375,25 +632,86 @@ def normalize_author_name(name: str) -> Dict[str, str]:
             - suffix: Suffix (e.g., Jr., III)
             - title: Title (e.g., Dr., Prof.)
             - original: Original name string
+            - parsing_error: Boolean flag indicating if parsing error detected
     
     Note: First and last names are extracted and compared in check_author_with_minimum_lists()
           at lines 146-150 (ref_first, ref_last, dblp_first, dblp_last)
     """
+    # Check for invalid characters that indicate parsing errors
+    # Common parsing errors: "*", empty strings, semicolons, or names that are just punctuation
+    has_parsing_error = False
+    original_name = name  # Keep original for error detection
+    
+    if not name or not name.strip():
+        has_parsing_error = True
+    # Check if name contains asterisk (common parsing error marker)
+    elif '*' in name:
+        has_parsing_error = True
+    # Check if name is just an asterisk or starts/ends with asterisk
+    elif name.strip() == '*' or name.strip().startswith('* ') or name.strip().endswith(' *'):
+        has_parsing_error = True
+    # Check if name starts with semicolon (parsing error - name fragment)
+    elif name.strip().startswith(';'):
+        has_parsing_error = True
+    # Check if name is a single letter (likely a parsing fragment, not a valid name)
+    elif len(name.strip()) == 1 and name.strip().isalpha():
+        has_parsing_error = True
+    # Check if name is a single non-alphanumeric character
+    elif len(name.strip()) == 1 and not name.strip().isalnum():
+        has_parsing_error = True
+    # Check if name is very short (1-2 characters) and doesn't look like a valid name
+    elif len(name.strip()) <= 2 and not any(c.isalpha() for c in name.strip()):
+        has_parsing_error = True
+    
     # Remove 4-digit suffixes and DBLP-style numeric suffixes
     cleaned_name = re.sub(r'\s+\d{4}(?:\s|$)', '', name)
     cleaned_name = re.sub(r'\s+\d{4,}$', '', cleaned_name)  # Remove trailing numbers like 0001
     cleaned_name = re.sub(r'\s+\d{4,}\s+', ' ', cleaned_name)  # Remove internal numbers
     
+    # Remove asterisks and other invalid characters for parsing
+    cleaned_name = cleaned_name.replace('*', '').strip()
+    
+    # If after cleaning we have nothing valid, mark as parsing error
+    if not cleaned_name:
+        has_parsing_error = True
+    
     # Parse the cleaned name using nameparser
     parsed = HumanName(cleaned_name)
     
+    # Check if parsing resulted in invalid data (e.g., first_name is "*" or empty)
+    if parsed.first == '*' or parsed.last == '*' or (not parsed.first and not parsed.last):
+        has_parsing_error = True
+    
+    # Fix common nameparser misparsing: when title is a single word that looks like part of a name,
+    # combine it with first_name (e.g., "Se Young Chun" -> title="Se", first="Young" should be first="Se Young")
+    # This handles cases like "Se Young", "Pang Wei", etc. where the first part is misclassified as title
+    first_name = parsed.first or ''
+    middle_name = parsed.middle or ''
+    title = parsed.title or ''
+    
+    # If title is a single word and first_name exists, check if title should be part of first_name
+    # This happens when nameparser incorrectly splits multi-word first names
+    if title and first_name and ' ' not in title:
+        # Combine title with first_name if it looks like part of the name (not a real title like "Dr.")
+        # Real titles are usually short abbreviations or honorifics
+        real_titles = {'dr', 'mr', 'mrs', 'ms', 'prof', 'professor', 'sir', 'madam', 'lord', 'lady'}
+        if title.lower() not in real_titles:
+            # Title is likely part of the first name, combine them
+            first_name = f"{title} {first_name}".strip()
+            title = ''  # Clear title since we've merged it
+    
+    # Also handle middle names - if we have a multi-word first name pattern, combine middle with first
+    # This helps with cases like "Se Young Chun" where middle might be empty but we need "Se Young"
+    # Actually, nameparser handles this differently - let's focus on the title issue above
+    
     return {
-        'first_name': parsed.first or '',
-        'middle_name': parsed.middle or '',
+        'first_name': first_name,
+        'middle_name': middle_name,
         'last_name': parsed.last or '',
         'suffix': parsed.suffix or '',
-        'title': parsed.title or '',
-        'original': name  # Keep original for reference
+        'title': title,
+        'original': name,  # Keep original for reference
+        'parsing_error': has_parsing_error  # Flag for parsing errors
     }
 
 

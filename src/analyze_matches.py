@@ -124,11 +124,55 @@ def normalize_compound_name(name: str) -> str:
     return ''.join(c.lower() for c in name if c.isalnum())
 
 def initial_matches(name1: str, name2: str) -> bool:
-    """Check if names match by initials, handling multiple words."""
+    """
+    Check if names match by initials, handling multiple words.
+    IMPORTANT: Only matches when one is actually an initial (single letter) and the other is a full name.
+    Does NOT match different full names like "Jeff" vs "Jeffrey" or "Alex" vs "Alexander".
+    
+    Handles cases like:
+    - "S" matching "Se Young" (single initial matches first initial of multi-word name)
+    - "K.-T" matching "Kwang-Ting" (compound initials)
+    - "A B" matching "Alexander Benjamin" (multiple initials)
+    
+    Does NOT match:
+    - "Jeff" vs "Jeffrey" (both are full names, not initials)
+    - "Alex" vs "Alexander" (both are full names, not initials)
+    """
+    # Check if name1 is actually an initial (single letter, possibly with period)
+    name1_is_initial = is_initial(name1) or is_compound_initial(name1)
+    # Check if name2 is actually an initial (single letter, possibly with period)
+    name2_is_initial = is_initial(name2) or is_compound_initial(name2)
+    
+    # If both are full names (not initials), don't match them even if they share initials
+    # This prevents matching "Jeff" with "Jeffrey" or "Alex" with "Alexander"
+    if not name1_is_initial and not name2_is_initial:
+        return False
+    
     init1 = get_initials(name1)
     init2 = get_initials(name2)
-    return (init1 and init2 and 
-            (init1.startswith(init2) or init2.startswith(init1)))
+    
+    if not init1 or not init2:
+        return False
+    
+    # If one is a single initial and the other is multi-character, check if single initial
+    # matches the first character of the multi-character initial
+    if len(init1) == 1 and len(init2) > 1:
+        return init1[0] == init2[0]
+    elif len(init2) == 1 and len(init1) > 1:
+        return init2[0] == init1[0]
+    
+    # Both are initials (single or compound): check if they match
+    # For compound initials like "K.-T" vs "Kwang-Ting", check if initials match
+    if name1_is_initial and name2_is_initial:
+        return init1 == init2 or (len(init1) == 1 and init1[0] == init2[0]) or (len(init2) == 1 and init2[0] == init1[0])
+    
+    # One is an initial and the other is a full name: check if initial matches first letter(s)
+    if name1_is_initial and not name2_is_initial:
+        return init1[0] == init2[0] if init1 and init2 else False
+    elif name2_is_initial and not name1_is_initial:
+        return init2[0] == init1[0] if init1 and init2 else False
+    
+    return False
 
 def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
     """
@@ -177,10 +221,10 @@ def is_name_match(name1: Dict[str, str], name2: Dict[str, str]) -> bool:
             return True
             
         # Case 2: Initial matches full name (including compound initials like "K.-T" matching "Kwang-Ting")
-        # Check if one is an initial (single or compound) and initials match
-        if is_initial(n1_first) or is_initial(n2_first) or is_compound_initial(name1['first_name']) or is_compound_initial(name2['first_name']):
-            if initial_matches(name1['first_name'], name2['first_name']):
-                return True
+        # Use initial_matches which checks if one is actually an initial
+        # This handles "S" matching "Swami" correctly
+        if initial_matches(name1['first_name'], name2['first_name']):
+            return True
                 
         # Case 3: Reversed first/middle names
         if n1_middle and n2_first == n1_middle:

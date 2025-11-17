@@ -452,6 +452,40 @@ Added a comprehensive citation validation system to check author citations in pa
 
 The validation system helps identify citation errors in academic papers, enabling quality control and data cleaning workflows.
 
+### 2025-11-17 - Enhanced Name Matching and Validation Fixes
+
+Fixed several validation issues to improve accuracy of citation validation:
+
+- **Accent normalization**: Fixed handling of accented characters (e.g., "Kuebler" vs "Kübler" now correctly identified as the same name)
+  - Added `normalize_name_for_comparison()` function using `unidecode` for consistent accent handling
+  - Added `names_match_with_accents()` helper function for accent-aware matching
+
+- **Middle initial handling**: Fixed matching when one name has a middle initial and the other doesn't (e.g., "Ed Chi" vs "Ed H. Chi" now correctly match)
+  - Added `handle_middle_initial_match()` function to handle middle initial variations
+  - Checks if first names match when middle initials are present/absent
+
+- **Compound last names with prefixes**: Fixed handling of last names with prefixes like "De", "Van", "Von" (e.g., "De Choudhury" vs "Choudhury" now correctly identified as the same)
+  - Added `normalize_last_name_with_prefixes()` function to handle common name prefixes
+  - Normalizes last names by removing prefixes for comparison while preserving originals
+
+- **Improved parsing error detection**: Enhanced detection of single-word fragments and shifted author names
+  - Better detection of single-word fragments (e.g., "Wilson", "Veličković" as last names without first names)
+  - Improved detection of author name shifting/mixing issues
+
+- **Enhanced first-pass matching**: Added accent-aware and prefix-aware matching in the initial matching phase
+  - Checks for accent-normalized matches before error classification
+  - Checks for compound name matches with prefix handling
+  - Reduces false positives in mismatch detection
+
+**Results after fixes** (20 files, 868 references):
+- 517 matched (correct citations)
+- 113 mismatches (down from previous runs)
+- 85 parsing errors detected
+- 8 last name mismatches (many previously false positives now correctly matched)
+- 7 first name mismatches
+
+The validation system now more accurately distinguishes between real citation errors and legitimate name variations. Results are automatically categorized into separate JSON files for easy analysis.
+
 ### 2025-11-11 - README Organization and Cleanup
 
 Completely reorganized and cleaned up the README to reflect the current state of the project:
