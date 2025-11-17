@@ -22,7 +22,7 @@ import logging
 import argparse
 from typing import List, Dict, Optional, Any
 from pathlib import Path
-from collections import Counter
+from collections import Counter, defaultdict
 import random
 
 # Setup logging BEFORE importing other modules
@@ -625,9 +625,9 @@ def main():
     parser.add_argument('--input-dir', type=str, default='data/parsed_jsons',
                        help='Directory containing parsed JSON files')
     parser.add_argument('--dblp-xml', type=str, default='data/dblp.xml',
-                       help='Path to DBLP XML file')
-    parser.add_argument('--output', type=str, default='citation_validation_results.json',
-                       help='Output JSON file path')
+                       help='Path to DBLP XML file (default: data/dblp.xml)')
+    parser.add_argument('--output-dir', type=str, default='validation_results',
+                       help='Output directory for validation results (default: validation_results)')
     parser.add_argument('--num-files', type=int, default=20,
                        help='Number of JSON files to process')
     parser.add_argument('--threshold', type=float, default=5.0,
@@ -754,11 +754,15 @@ def main():
         'files': all_results
     }
     
-    # Write results to file (single JSON file with all data and analysis)
+    # Create output directory
+    os.makedirs(args.output_dir, exist_ok=True)
+    
+    # Write main results JSON file
+    main_json_path = os.path.join(args.output_dir, 'validation_results.json')
     try:
-        with open(args.output, 'w', encoding='utf-8') as f:
+        with open(main_json_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2, ensure_ascii=False)
-        logger.info(f"Results written to: {args.output}")
+        logger.info(f"Main results written to: {main_json_path}")
     except Exception as e:
         logger.error(f"Error writing results to file: {e}")
         return
@@ -775,6 +779,146 @@ def main():
     logger.info(f"Skipped (non-academic): {total_stats['total_skipped']}")
     logger.info(f"Errors: {total_stats['total_errors']}")
     logger.info("="*60)
+    
+    # Always reorganize results into categorized files
+    logger.info("\nReorganizing results into categorized files...")
+    reorganize_results(output_data, args.output_dir)
+
+
+def extract_all_results(data: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Extract all validation results from the output data structure.
+    
+    Args:
+        data: The output data dictionary from validation
+        
+    Returns:
+        List of all validation result dictionaries
+    """
+    all_results = []
+    
+    # Extract from mismatches and matches sections
+    all_results.extend(data.get('mismatches', []))
+    all_results.extend(data.get('matches', []))
+    
+    # Also extract from files section
+    for file_data in data.get('files', []):
+        all_results.extend(file_data.get('results', []))
+    
+    # Remove duplicates based on reference ID and title
+    seen = set()
+    unique_results = []
+    for result in all_results:
+        if isinstance(result, dict):
+            ref = result.get('reference', {})
+            key = (ref.get('id', ''), ref.get('title', ''))
+            if key not in seen:
+                seen.add(key)
+                unique_results.append(result)
+    
+    return unique_results
+
+
+def categorize_results(results: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    """Categorize validation results into different groups."""
+    categories = defaultdict(list)
+    
+    for result in results:
+        status = result.get('validation_status', 'unknown')
+        classifications = result.get('error_classifications', [])
+        
+        if status == 'matched':
+            categories['matched'].append(result)
+        if 'parsing_error' in classifications:
+            categories['parsing_errors'].append(result)
+        if 'first_name_mismatch' in classifications:
+            categories['first_names'].append(result)
+        if 'last_name_mismatch' in classifications:
+            categories['last_names'].append(result)
+        if 'accents_missing' in classifications:
+            categories['accents_missing'].append(result)
+        if 'author_not_found' in classifications:
+            categories['author_not_found'].append(result)
+        if 'author_order_wrong' in classifications:
+            categories['author_order_wrong'].append(result)
+        if 'empty_list' in classifications:
+            categories['empty_list'].append(result)
+        if status == 'title_mismatch':
+            categories['title_mismatches'].append(result)
+        if status == 'no_dblp_match':
+            categories['no_dblp_match'].append(result)
+        if status == 'error':
+            categories['errors'].append(result)
+        if status == 'skipped':
+            categories['skipped'].append(result)
+    
+    categories['summary'] = [{
+        'total_results': len(results),
+        'categories': {cat: len(results) for cat, results in categories.items() if cat != 'summary'}
+    }]
+    
+    return dict(categories)
+
+
+def reorganize_results(data: Dict[str, Any], output_dir: str) -> None:
+    """Reorganize validation results into categorized files."""
+    all_results = extract_all_results(data)
+    
+    results_dir = os.path.join(output_dir, 'results')
+    os.makedirs(results_dir, exist_ok=True)
+    
+    categories = categorize_results(all_results)
+    
+    # Write category files
+    for category_name, results in categories.items():
+        if category_name == 'summary':
+            filename = 'summary.json'
+        else:
+            filename = f'{category_name}.json'
+        
+        filepath = os.path.join(results_dir, filename)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+        logger.info(f"Wrote {len(results)} results to {filename}")
+    
+    # Create README
+    readme_path = os.path.join(results_dir, 'README.md')
+    readme_content = """# Citation Validation Results
+
+This folder contains citation validation results organized by category.
+
+## File Structure
+
+- `matched.json` - Citations that matched correctly with DBLP
+- `parsing_errors.json` - Citations with parsing errors in author names
+- `first_names.json` - Citations with first name mismatches
+- `last_names.json` - Citations with last name mismatches
+- `accents_missing.json` - Citations with missing accents/diacritics
+- `author_not_found.json` - Citations where authors were not found in DBLP
+- `author_order_wrong.json` - Citations with correct authors but wrong order
+- `empty_list.json` - Citations with empty author lists
+- `title_mismatches.json` - Citations with title similarity below threshold
+- `no_dblp_match.json` - Citations not found in DBLP database
+- `errors.json` - Citations that caused processing errors
+- `skipped.json` - Citations that were skipped
+- `summary.json` - Summary statistics for all categories
+
+## Statistics
+
+"""
+    
+    summary = categories.get('summary', [{}])[0]
+    if 'categories' in summary:
+        readme_content += "| Category | Count |\n|----------|-------|\n"
+        for cat, count in sorted(summary['categories'].items()):
+            if cat != 'summary':
+                readme_content += f"| {cat} | {count} |\n"
+        readme_content += f"\n**Total Results:** {summary.get('total_results', 0)}\n"
+    
+    with open(readme_path, 'w', encoding='utf-8') as f:
+        f.write(readme_content)
+    
+    logger.info(f"Successfully reorganized results into: {results_dir}")
 
 
 if __name__ == '__main__':

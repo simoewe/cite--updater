@@ -1,9 +1,12 @@
 .venv
 .vscode/
+.cursor/
+.DS_Store
 data/
 dblp/
 arxivs/
 pdfs/
+results/
 
 # Heavy data files
 *.pdf
