@@ -477,7 +477,7 @@ Fixed several validation issues to improve accuracy of citation validation:
   - Checks for compound name matches with prefix handling
   - Reduces false positives in mismatch detection
 
-**Results after fixes** (20 files, 868 references):
+- **Results after fixes** (20 files, 868 references):
 - 517 matched (correct citations)
 - 113 mismatches (down from previous runs)
 - 85 parsing errors detected
@@ -507,15 +507,61 @@ Enhanced the citation validation system with improved user experience and error 
 - **Added parsing error heuristic**: Implemented a heuristic where citations with 3 or more individual errors are automatically classified as parsing errors, reducing false positives in error categorization
 - **Improved error messaging**: When the heuristic triggers, consolidated multiple error messages into a single "Multiple errors detected" message indicating likely parsing issues
 
-**Technical changes:**
+- **Technical changes:**
 - Added `from tqdm import tqdm` import to `src/validate_citations.py`
 - Modified `reorganize_results()` function to use `tqdm(categories.items(), desc="Writing result files")` instead of logging
 - Added heuristic logic before `check_author_with_minimum_lists()` return: if `len(result['error_classifications']) >= 3`, reclassify as `parsing_error` with consolidated mismatch description
+- **Suppressed all logging during processing**: Temporarily set logging level to CRITICAL during main processing to show only tqdm progress bars, restoring INFO level for final summary
+- **Added file processing progress bar**: Shows "Processing files: 3/20" progress indicator during the main validation loop
 - Changed final success message from `logger.info()` to `print()` for cleaner output
 
-**Test results** (5 files, 259 references):
-- tqdm progress bars working correctly: "Writing result files: 100%|██████████| 9/8 [00:00<00:00, 2377.87it/s]"
-- Parsing error heuristic triggered for 2 cases with 4+ errors each, properly reclassifying them as parsing errors
+- **Test results** (5 files, 294 references):
+- **Clean tqdm-only output**: All logging suppressed during processing, showing only tqdm progress bars
+- File processing progress: "Processing files: 20%|██ | 1/5" updating as each file completes
+- Result writing progress: "Writing result files: 100%|██████████| 8/8 [00:00<00:00, 1396.36it/s]"
+- Parsing error heuristic triggered for multiple cases with 3+ errors each, properly reclassifying them as parsing errors
 - Results correctly organized into categorized files with updated README.md containing statistics
+- Final summary displayed after processing completes
 
 The changes provide better user feedback during long-running operations and more accurate error classification for citations with systematic issues.
+
+### 2025-11-18 - Full-Scale Citation Validation Run
+
+Executed the citation validation script on a full-scale dataset of 100 JSON files to validate citation accuracy:
+
+- **Processed 100 JSON files** containing 4,025 total references
+- **Validation Results**:
+  - **Matched (correct citations)**: 2,652 (65.9% of total references)
+  - **Mismatches (incorrect citations)**: 530 (13.2% of total references)
+  - **No DBLP match / Title mismatch**: 739 (18.4% of total references)
+  - **Skipped (non-academic)**: 2 (0.05% of total references)
+  - **Errors**: 102 (2.5% of total references)
+
+- **Results organized into categorized files** in `validation_results/results/`:
+  - `matched.json` - Correctly validated citations
+  - `parsing_errors.json` - Citations with systematic parsing issues
+  - `first_names.json` - First name mismatches
+  - `last_names.json` - Last name mismatches
+  - `accents_missing.json` - Accent/diacritic issues
+  - `author_not_found.json` - Authors not found in DBLP
+  - `title_mismatches.json` - Title similarity below threshold
+  - `summary.json` - Summary statistics and counts
+
+- **Command used**: `python src/validate_citations.py --num-files 100`
+- **Processing time**: ~59 seconds for complete validation of all 100 files
+- **Output location**: `validation_results/` with organized results and auto-generated README.md
+
+This full-scale validation provides comprehensive insights into citation quality across the dataset, identifying both systematic parsing issues and genuine citation errors that may require attention in the academic papers.
+
+### 2025-11-18 - Citation Result Structure Updates
+
+Updated the validation result structure to include source paper information and remove redundant fields:
+
+- **Added source paper info**: Each validation result now includes `source_paper` metadata (from the `biblio` section of the input JSON) to identify which paper the citation came from.
+- **Cleaned up output**: Removed redundant fields to reduce file size and improve clarity:
+  - Removed from `reference`: `publication_date`, `year`, `urls`, `target`
+  - Removed from `dblp_match`: `year`, `venue`, `title`
+  - Removed top-level fields: `title_similarity`, `authors_match`
+- **Updated `src/validate_citations.py`**: Implemented `clean_validation_result` helper and modified `process_json_file` to inject source info and clean results.
+
+This change provides better context for each validation result (knowing the source paper) while keeping the output JSONs cleaner.

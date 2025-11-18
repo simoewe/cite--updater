@@ -864,6 +864,39 @@ def validate_reference(reference: Dict[str, Any], dblp_parser: DblpParser,
     return result
 
 
+def clean_validation_result(result: Dict[str, Any], source_info: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Clean up validation result by adding source info and removing specified fields.
+    
+    Args:
+        result: Validation result dictionary
+        source_info: Information about the source paper
+        
+    Returns:
+        Cleaned result dictionary
+    """
+    # Add source info
+    result['source_paper'] = source_info
+    
+    # Remove fields from reference
+    if 'reference' in result:
+        ref = result['reference']
+        for field in ['publication_date', 'year', 'urls', 'target']:
+            ref.pop(field, None)
+            
+    # Remove fields from dblp_match
+    if result.get('dblp_match'):
+        dblp = result['dblp_match']
+        for field in ['year', 'venue', 'title']:
+            dblp.pop(field, None)
+            
+    # Remove top level fields
+    for field in ['title_similarity', 'authors_match']:
+        result.pop(field, None)
+        
+    return result
+
+
 def process_json_file(json_path: str, dblp_parser: DblpParser,
                      threshold: float = 5.0, title_similarity_threshold: float = 95.0) -> Dict[str, Any]:
     """
@@ -906,6 +939,11 @@ def process_json_file(json_path: str, dblp_parser: DblpParser,
         references = data.get('references', [])
         file_result['references_count'] = len(references)
         
+        # Extract source paper info
+        source_info = data.get('biblio', {})
+        # Add file path to source info
+        source_info['file_path'] = json_path
+        
         logger.info(f"Found {len(references)} references in {json_path}")
         
         # Validate each reference
@@ -913,7 +951,10 @@ def process_json_file(json_path: str, dblp_parser: DblpParser,
             validation_result = validate_reference(
                 ref, dblp_parser, threshold, title_similarity_threshold
             )
-            file_result['results'].append(validation_result)
+            
+            # Clean result (adds source info and removes unwanted fields)
+            cleaned_result = clean_validation_result(validation_result, source_info)
+            file_result['results'].append(cleaned_result)
             
             # Update counters
             status = validation_result['validation_status']
@@ -972,16 +1013,22 @@ def main():
     if not os.path.exists(args.dblp_xml):
         parser.error(f"DBLP XML file not found: {args.dblp_xml}")
     
+    # Temporarily disable logging for cleaner tqdm output (keep only CRITICAL)
+    original_root_level = logging.getLogger().level
+    original_logger_level = logger.level
+    logging.getLogger().setLevel(logging.CRITICAL)
+    logger.setLevel(logging.CRITICAL)
+
     # Initialize DBLP parser
-    logger.info(f"Initializing DBLP parser with XML file: {args.dblp_xml}")
     try:
         dblp_parser = DblpParser(
             xml_path=args.dblp_xml,
             cache_dir="dblp_cache",
             index_name="dblp_index"
         )
-        logger.info("DBLP parser initialized successfully")
     except Exception as e:
+        logging.getLogger().setLevel(original_root_level)  # Restore logging
+        logger.setLevel(original_logger_level)
         logger.error(f"Failed to initialize DBLP parser: {e}")
         return
     
@@ -1004,12 +1051,12 @@ def main():
         'total_skipped': 0
     }
     
-    for json_file in json_files:
+    for json_file in tqdm(json_files, desc="Processing files"):
         file_result = process_json_file(
             json_file, dblp_parser, args.threshold, args.title_similarity_threshold
         )
         all_results.append(file_result)
-        
+
         # Update total statistics
         total_stats['files_processed'] += 1
         total_stats['total_references'] += file_result['references_count']
@@ -1095,6 +1142,10 @@ def main():
         logger.error(f"Error writing results to file: {e}")
         return
     
+    # Restore logging levels and print summary
+    logging.getLogger().setLevel(original_root_level)
+    logger.setLevel(original_logger_level)
+
     # Print summary
     logger.info("\n" + "="*60)
     logger.info("VALIDATION SUMMARY")
@@ -1109,7 +1160,6 @@ def main():
     logger.info("="*60)
     
     # Always reorganize results into categorized files
-    logger.info("\nReorganizing results into categorized files...")
     reorganize_results(output_data, args.output_dir)
 
 
