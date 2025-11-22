@@ -590,7 +590,7 @@ def main():
                        help='Do not resume from checkpoint (start fresh)')
     parser.add_argument('--log-file', type=str, default='arxiv_download_progress.log',
                        help='Progress log file')
-    parser.add_argument('--metadata-file', type=str, default='arxiv_papers_metadata.json',
+    parser.add_argument('--metadata-file', type=str, default='data/arxiv_papers_metadata.json',
                        help='Metadata file for downloaded papers')
 
     args = parser.parse_args()

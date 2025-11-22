@@ -5,3 +5,7 @@ requests>=2.31.0
 python-Levenshtein==0.23.0  # Optional but recommended for better fuzzywuzzy performance
 backoff==2.2.1  # For retry logic
 tqdm>=4.66.0
+vllm>=0.4.0  # For efficient LLM inference
+transformers>=4.35.0  # For model loading
+accelerate>=0.24.0  # For model acceleration
+torch>=2.1.0  # PyTorch for model inference

@@ -725,29 +725,29 @@ def normalize_author_name(name: str) -> Dict[str, str]:
     }
 
 
-def find_json_files(input_dir: str, num_files: int = 20) -> List[str]:
+def find_json_files(input_dir: str, num_files: Optional[int] = None) -> List[str]:
     """
     Find JSON files in the input directory and return a random sample.
-    
+
     Args:
         input_dir: Root directory containing JSON files
-        num_files: Number of files to return
-        
+        num_files: Number of files to return (None for all files)
+
     Returns:
         List of file paths
     """
     json_files = []
-    
+
     # Walk through directory structure
     for root, dirs, files in os.walk(input_dir):
         for file in files:
             if file.endswith('.json'):
                 json_files.append(os.path.join(root, file))
-    
+
     # Randomly sample if we have more files than requested
-    if len(json_files) > num_files:
+    if num_files is not None and len(json_files) > num_files:
         json_files = random.sample(json_files, num_files)
-    
+
     logger.info(f"Found {len(json_files)} JSON files to process")
     return json_files
 
@@ -997,8 +997,8 @@ def main():
                        help='Path to DBLP XML file (default: data/dblp.xml)')
     parser.add_argument('--output-dir', type=str, default='validation_results',
                        help='Output directory for validation results (default: validation_results)')
-    parser.add_argument('--num-files', type=int, default=20,
-                       help='Number of JSON files to process')
+    parser.add_argument('--num-files', type=int, default=None,
+                       help='Number of JSON files to process (default: all files)')
     parser.add_argument('--threshold', type=float, default=5.0,
                        help='BM25 score threshold for DBLP title matching')
     parser.add_argument('--title-similarity-threshold', type=float, default=95.0,

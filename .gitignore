@@ -16,6 +16,7 @@ validation_results/
 *.tar.xz
 *.7z
 *.rar
+*.json
 
 # Large XML data files (but keep small config/test XML files)
 *.xml
