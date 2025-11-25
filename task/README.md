@@ -227,7 +227,10 @@ You may want to use fuzzy string matching (e.g., `fuzzywuzzy` library) to handle
 
 1. Install required dependencies:
    ```bash
-   pip install arxiv requests fuzzywuzzy python-Levenshtein
+   cd task
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
    ```
 
 2. Read the `citations.json` file to understand the data structure
@@ -235,5 +238,56 @@ You may want to use fuzzy string matching (e.g., `fuzzywuzzy` library) to handle
 3. Start with a simple script that queries arXiv for one citation
 
 4. Gradually build up to handle all citations with proper error handling
+
+## Example Starter Script
+
+The `example_starter.py` script provides a working example implementation that:
+
+- **Loads citations** from `citations.json`
+- **Queries local arXiv metadata** from `arxiv_papers_metadata.json` for title matching
+- **Compares authors** using advanced fuzzy matching that handles:
+  - Initial expansions (F → Filipe)
+  - Middle name variations (ignored as non-discrepancies)
+  - Nickname variations (Nicolas → Nic)
+  - Order changes
+  - Missing/extra authors
+- **Identifies discrepancies** including order changes, name variants, and missing authors
+- **Saves results** to `example_results.json`
+
+### Running the Example Script
+
+```bash
+cd task
+source venv/bin/activate
+python example_starter.py
+```
+
+The script processes the first 100 citations by default (configurable in the `main()` function). Results are saved to `example_results.json` with detailed comparison information for each citation.
+
+### Key Features
+
+- **Title Matching**: Uses fuzzywuzzy for fuzzy string matching (minimum 80% similarity threshold)
+- **Author Comparison**: Sophisticated matching algorithm that:
+  - Normalizes names (removes punctuation, converts to lowercase)
+  - Handles name variations and initials
+  - Ignores middle name differences as non-discrepancies
+  - Uses greedy matching to find optimal author pairings
+- **Discrepancy Classification**:
+  - Order changes (when authors are in different positions)
+  - Name changes (when same person has different name variant)
+  - Missing authors (in original but not in verified)
+  - Extra authors (in verified but not in original)
+
+### Output Format
+
+Each result contains:
+- `original`: The original citation from `citations.json`
+- `verification`: Dictionary with:
+  - `status`: "verified", "discrepancy_found", or "not_found"
+  - `title`: Matched paper title
+  - `source`: "arxiv" or "placeholder_for_dblp_semantic_scholar"
+  - `match_score`: Title similarity score (0-100)
+  - `verified_authors`: List of verified author names
+  - `comparison`: Detailed comparison results with discrepancies
 
 
