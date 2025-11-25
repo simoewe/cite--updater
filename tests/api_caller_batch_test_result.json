@@ -20,12 +20,12 @@
         "pdf_url": "",
         "source": "semantic_scholar",
         "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
-        "citation_count": 154042,
+        "citation_count": 154620,
         "similarity_score": 100
       }
     ],
     "summary": {
-      "total_found": 15,
+      "total_found": 10,
       "total_matching": 1,
       "by_source": {
         "semantic_scholar": 1
@@ -49,7 +49,7 @@
         "pdf_url": "",
         "source": "semantic_scholar",
         "paper_id": "df2b0e26d0599ce3e70df8a9da02e51594e0e992",
-        "citation_count": 105129,
+        "citation_count": 105363,
         "similarity_score": 100
       },
       {
@@ -67,45 +67,14 @@
         "source": "arxiv",
         "arxiv_id": "1810.04805v2",
         "similarity_score": 100
-      },
-      {
-        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.",
-        "authors": [
-          "Jacob Devlin",
-          "Ming-Wei Chang",
-          "Kenton Lee",
-          "Kristina Toutanova"
-        ],
-        "year": "2019",
-        "doi": "",
-        "url": "https://dblp.org/rec/conf/naacl/DevlinCLT19",
-        "source": "dblp",
-        "venue": "NAACL-HLT",
-        "similarity_score": 99
-      },
-      {
-        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.",
-        "authors": [
-          "Jacob Devlin",
-          "Ming-Wei Chang",
-          "Kenton Lee",
-          "Kristina Toutanova"
-        ],
-        "year": "2018",
-        "doi": "",
-        "url": "https://dblp.org/rec/journals/corr/abs-1810-04805",
-        "source": "dblp",
-        "venue": "CoRR",
-        "similarity_score": 99
       }
     ],
     "summary": {
-      "total_found": 12,
-      "total_matching": 4,
+      "total_found": 10,
+      "total_matching": 2,
       "by_source": {
         "semantic_scholar": 1,
-        "arxiv": 1,
-        "dblp": 2
+        "arxiv": 1
       }
     }
   }
