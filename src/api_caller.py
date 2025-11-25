@@ -23,24 +23,39 @@ Usage:
     from api_caller import search_papers_by_title
     
     results = search_papers_by_title("Machine Learning in Computer Vision")
+
+Package Usage:
+- time: Rate limiting delays and timing measurements
+- json: Serialize/deserialize search results to/from JSON format
+- logging: Log API calls, errors, and debug information
+- os: Access environment variables (e.g., API keys)
+- pathlib.Path: Handle file paths for .env file loading
+- typing: Type hints for function parameters and return values
+- urllib.parse.quote: URL-encode search queries for API requests
+- concurrent.futures: Parallel execution of database searches using ThreadPoolExecutor
+- threading.Lock: Thread-safe rate limiting to prevent race conditions
+- requests: HTTP requests to DBLP and Semantic Scholar REST APIs
+- arxiv: Official arXiv API client for searching arXiv papers
+- fuzzywuzzy.fuzz: Calculate title similarity scores using fuzzy string matching
+- dotenv (optional): Load API keys from .env file instead of hardcoding them
 """
 
-import time
-import json
-import logging
-import os
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
-from urllib.parse import quote
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from threading import Lock
-import requests
-import arxiv
-from fuzzywuzzy import fuzz
+import time  # Rate limiting delays and timing measurements
+import json  # Serialize/deserialize search results to/from JSON format
+import logging  # Log API calls, errors, and debug information
+import os  # Access environment variables (e.g., API keys)
+from pathlib import Path  # Handle file paths for .env file loading
+from typing import Dict, List, Optional, Any, Union  # Type hints for function parameters and return values
+from urllib.parse import quote  # URL-encode search queries for API requests
+from concurrent.futures import ThreadPoolExecutor, as_completed  # Parallel execution of database searches using ThreadPoolExecutor
+from threading import Lock  # Thread-safe rate limiting to prevent race conditions
+import requests  # HTTP requests to DBLP and Semantic Scholar REST APIs
+import arxiv  # Official arXiv API client for searching arXiv papers
+from fuzzywuzzy import fuzz  # Calculate title similarity scores using fuzzy string matching
 
 # Try to load python-dotenv for .env file support
 try:
-    from dotenv import load_dotenv
+    from dotenv import load_dotenv  # Load API keys from .env file instead of hardcoding them
     # Load environment variables from .env file if it exists
     load_dotenv()
 except ImportError:
@@ -62,6 +77,7 @@ SEMANTIC_SCHOLAR_RATE_LIMIT = 1.0
 # API endpoints
 DBLP_API_BASE = "https://dblp.org/search/publ/api"
 SEMANTIC_SCHOLAR_API_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
+# For Arxiv just package needed.
 
 # Default similarity threshold for title matching (0-100)
 DEFAULT_SIMILARITY_THRESHOLD = 80

@@ -1,0 +1,112 @@
+[
+  {
+    "original_title": "Attention Is All You Need",
+    "results": [
+      {
+        "title": "Attention is All you Need",
+        "authors": [
+          "Ashish Vaswani",
+          "Noam M. Shazeer",
+          "Niki Parmar",
+          "Jakob Uszkoreit",
+          "Llion Jones",
+          "Aidan N. Gomez",
+          "Lukasz Kaiser",
+          "I. Polosukhin"
+        ],
+        "year": 2017,
+        "doi": "",
+        "url": "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+        "pdf_url": "",
+        "source": "semantic_scholar",
+        "paper_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+        "citation_count": 154042,
+        "similarity_score": 100
+      }
+    ],
+    "summary": {
+      "total_found": 15,
+      "total_matching": 1,
+      "by_source": {
+        "semantic_scholar": 1
+      }
+    }
+  },
+  {
+    "original_title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+    "results": [
+      {
+        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+        "authors": [
+          "Jacob Devlin",
+          "Ming-Wei Chang",
+          "Kenton Lee",
+          "Kristina Toutanova"
+        ],
+        "year": 2019,
+        "doi": "10.18653/v1/N19-1423",
+        "url": "https://www.semanticscholar.org/paper/df2b0e26d0599ce3e70df8a9da02e51594e0e992",
+        "pdf_url": "",
+        "source": "semantic_scholar",
+        "paper_id": "df2b0e26d0599ce3e70df8a9da02e51594e0e992",
+        "citation_count": 105129,
+        "similarity_score": 100
+      },
+      {
+        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+        "authors": [
+          "Jacob Devlin",
+          "Ming-Wei Chang",
+          "Kenton Lee",
+          "Kristina Toutanova"
+        ],
+        "year": 2018,
+        "doi": "",
+        "url": "http://arxiv.org/abs/1810.04805v2",
+        "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+        "source": "arxiv",
+        "arxiv_id": "1810.04805v2",
+        "similarity_score": 100
+      },
+      {
+        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.",
+        "authors": [
+          "Jacob Devlin",
+          "Ming-Wei Chang",
+          "Kenton Lee",
+          "Kristina Toutanova"
+        ],
+        "year": "2019",
+        "doi": "",
+        "url": "https://dblp.org/rec/conf/naacl/DevlinCLT19",
+        "source": "dblp",
+        "venue": "NAACL-HLT",
+        "similarity_score": 99
+      },
+      {
+        "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.",
+        "authors": [
+          "Jacob Devlin",
+          "Ming-Wei Chang",
+          "Kenton Lee",
+          "Kristina Toutanova"
+        ],
+        "year": "2018",
+        "doi": "",
+        "url": "https://dblp.org/rec/journals/corr/abs-1810-04805",
+        "source": "dblp",
+        "venue": "CoRR",
+        "similarity_score": 99
+      }
+    ],
+    "summary": {
+      "total_found": 12,
+      "total_matching": 4,
+      "by_source": {
+        "semantic_scholar": 1,
+        "arxiv": 1,
+        "dblp": 2
+      }
+    }
+  }
+]
