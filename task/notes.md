@@ -18,8 +18,12 @@ Detect parsing errros:
 - Ddflow
 
 2. Integrate simons api_call.py
+2.1. Add Fork as Remote: git remote add simoewe https://github.com/simoewe/cite--updater.git
+2.2. Fetch (Retreieve) Simons Fork: git fetch simoewe
+2.3. Get the api_caller.py from the Simons fork into my current branch: git checkout simoewe/main -- src/api_caller.py
 
-3. Integrate Pranavs code via. AI. prompt cursor read files in src folder and based on that make the changes in my code
+
+3. Integrate Pranavs code via AI. prompt cursor read files in src folder and based on that make the changes in my code
 
 
 Conference / Workshop:
