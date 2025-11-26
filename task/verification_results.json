@@ -1,0 +1,271 @@
+{
+  "summary": {
+    "total": 3,
+    "status_counts": {
+      "discrepancy_found": 1,
+      "verified": 2
+    },
+    "source_counts": {
+      "semantic_scholar": 3
+    },
+    "average_match_score": 99.0,
+    "parsing_errors_detected": 0,
+    "verification_rate": 66.67
+  },
+  "results": [
+    {
+      "original": {
+        "title": "Adversarial examples are a natural consequence of test error in noise",
+        "authors": [
+          "Justin Gilmer",
+          "Nicolas Ford",
+          "Nicholas Carlini",
+          "Ekin Cubuk"
+        ],
+        "proceedings": "the 36th International Conference on Machine Learning",
+        "year": 2019
+      },
+      "verification": {
+        "title": "Adversarial Examples Are a Natural Consequence of Test Error in Noise",
+        "original_title": "Adversarial examples are a natural consequence of test error in noise",
+        "status": "discrepancy_found",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Nic Ford",
+          "J. Gilmer",
+          "Nicholas Carlini",
+          "E. D. Cubuk"
+        ],
+        "original_authors": [
+          "Justin Gilmer",
+          "Nicolas Ford",
+          "Nicholas Carlini",
+          "Ekin Cubuk"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": false,
+          "discrepancies": [
+            {
+              "type": "order_change",
+              "details": "'Nicolas Ford' moved from position 2 to position 1",
+              "original_position": 2,
+              "verified_position": 1,
+              "author_name": "Nicolas Ford",
+              "verified_name": "Nic Ford"
+            },
+            {
+              "type": "name_change",
+              "details": "Name changed: 'Nicolas Ford' → 'Nic Ford' (position 1)",
+              "original_name": "Nicolas Ford",
+              "verified_name": "Nic Ford",
+              "position": 1,
+              "confidence": 0.92,
+              "change_type": "variant"
+            }
+          ],
+          "best_matches": [
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Nicholas Carlini",
+              "verified_name": "Nicholas Carlini",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 0,
+              "verified_idx": 1,
+              "original_name": "Justin Gilmer",
+              "verified_name": "J. Gilmer",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Ekin Cubuk",
+              "verified_name": "E. D. Cubuk",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 0,
+              "original_name": "Nicolas Ford",
+              "verified_name": "Nic Ford",
+              "confidence": 0.92,
+              "match_type": "variant"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2019,
+          "doi": "",
+          "url": "https://www.semanticscholar.org/paper/988a378f640eb7fb681f977d6cb1e0c830c07b4c",
+          "pdf_url": "",
+          "paper_id": "988a378f640eb7fb681f977d6cb1e0c830c07b4c"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "Robustness of classifiers to uniform p and gaussian noise",
+        "authors": [
+          "Jean-Yves Franceschi",
+          "Alhussein Fawzi",
+          "Omar Fawzi"
+        ],
+        "proceedings": "the Twenty-First International Conference on Artificial Intelligence and Statistics",
+        "year": 2018
+      },
+      "verification": {
+        "title": "Robustness of classifiers to uniform ℓ _ p and Gaussian noise",
+        "original_title": "Robustness of classifiers to uniform p and gaussian noise",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Jean-Yves Franceschi",
+          "Alhussein Fawzi",
+          "Omar Fawzi"
+        ],
+        "original_authors": [
+          "Jean-Yves Franceschi",
+          "Alhussein Fawzi",
+          "Omar Fawzi"
+        ],
+        "match_score": 97,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Jean-Yves Franceschi",
+              "verified_name": "Jean-Yves Franceschi",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Alhussein Fawzi",
+              "verified_name": "Alhussein Fawzi",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Omar Fawzi",
+              "verified_name": "Omar Fawzi",
+              "confidence": 1.0,
+              "match_type": "exact"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2022,
+          "doi": "",
+          "url": "https://www.semanticscholar.org/paper/a34d5ea69038c420cf07424072f519744b273678",
+          "pdf_url": "",
+          "paper_id": "a34d5ea69038c420cf07424072f519744b273678"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "Fast and effective robustness certification",
+        "authors": [
+          "Gagandeep Singh",
+          "Timon Gehr",
+          "Matthew Mirman",
+          "Markus Püschel",
+          "Martin Vechev"
+        ],
+        "proceedings": "Advances in Neural Information Processing Systems",
+        "year": null
+      },
+      "verification": {
+        "title": "Fast and Effective Robustness Certification",
+        "original_title": "Fast and effective robustness certification",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Gagandeep Singh",
+          "T. Gehr",
+          "M. Mirman",
+          "Markus Püschel",
+          "Martin T. Vechev"
+        ],
+        "original_authors": [
+          "Gagandeep Singh",
+          "Timon Gehr",
+          "Matthew Mirman",
+          "Markus Püschel",
+          "Martin Vechev"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Gagandeep Singh",
+              "verified_name": "Gagandeep Singh",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Markus Püschel",
+              "verified_name": "Markus Püschel",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Timon Gehr",
+              "verified_name": "T. Gehr",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Matthew Mirman",
+              "verified_name": "M. Mirman",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Martin Vechev",
+              "verified_name": "Martin T. Vechev",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2018,
+          "doi": "",
+          "url": "https://www.semanticscholar.org/paper/bb92676f9ec13783ac664c268191f20944718f95",
+          "pdf_url": "",
+          "paper_id": "bb92676f9ec13783ac664c268191f20944718f95"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "similarity_threshold": 75,
+    "max_results_per_source": 10,
+    "citations_file": "citations.json"
+  }
+}

@@ -59,7 +59,9 @@ def query_arxiv_by_title(title: str, max_results: int = 5) -> Optional[Dict]:
         return s.strip().lower().replace("-", " ").replace("_", " ")
 
     def similarity(a: str, b: str) -> float:
-        return SequenceMatcher(None, normalize(a), normalize(b)).ratio()
+        # Use fuzzywuzzy for title similarity matching
+        # fuzz.ratio returns 0-100, convert to 0-1 scale
+        return fuzz.ratio(normalize(a), normalize(b)) / 100.0
 
     best_match = None
     best_score = 0
@@ -100,13 +102,94 @@ def query_arxiv_by_title(title: str, max_results: int = 5) -> Optional[Dict]:
     }
 
 
-def compare_authors(original_authors: List[str], verified_authors: List[str]) -> Dict:
+def is_valid_author_name(author_name: str, paper_title: str = "") -> bool:
+    """
+    Validate if an author name is likely a real person name and not a parsing error.
+    
+    Detects parsing errors like "ddflow" (method names, technical terms, or words
+    from the paper title that were incorrectly parsed as author names).
+    
+    Args:
+        author_name: The author name string to validate
+        paper_title: Optional paper title to check if author name appears in title
+        
+    Returns:
+        True if the name appears valid, False if it's likely a parsing error
+    """
+    if not isinstance(author_name, str) or not author_name.strip():
+        return False
+    
+    # Normalize the author name for checking
+    normalized_name = author_name.strip()
+    
+    # Check 1: Name too short (< 2 characters) is suspicious
+    if len(normalized_name) < 2:
+        return False
+    
+    # Check 2: Check if name appears in paper title (indicating parsing error)
+    # This catches cases like "ddflow" from "DDFlow: Learning Optical Flow..."
+    if paper_title:
+        title_lower = paper_title.lower()
+        name_lower = normalized_name.lower()
+        # Check if the name (or its significant parts) appears in the title
+        # Split name into words and check if any significant word (>3 chars) appears in title
+        name_words = [w for w in name_lower.split() if len(w) > 3]
+        if name_words:
+            for word in name_words:
+                # If a significant word from the name appears in the title, it's suspicious
+                if word in title_lower:
+                    # Exception: common words that might legitimately appear in both
+                    common_words = {'and', 'the', 'for', 'with', 'from', 'learning', 'deep', 'neural'}
+                    if word not in common_words:
+                        return False
+    
+    # Check 3: Single word, all lowercase, no spaces - suspicious (unless it's a valid single name)
+    name_parts = normalized_name.split()
+    if len(name_parts) == 1:
+        single_word = name_parts[0]
+        # Single lowercase word is suspicious (like "ddflow")
+        if single_word.islower() and len(single_word) > 2:
+            # Exception: Some valid single names are lowercase (like "van", "de", etc.)
+            # But these are usually prefixes, not standalone author names
+            # Check if it looks like a technical term (all lowercase, no capitals)
+            if not any(c.isupper() for c in single_word):
+                # Very suspicious - likely a parsing error
+                return False
+    
+    # Check 4: Check for technical terms/method names patterns
+    # Look for patterns that suggest it's not a person name:
+    # - All lowercase with no spaces (already checked above)
+    # - Contains numbers (very unusual for author names)
+    if any(c.isdigit() for c in normalized_name):
+        return False
+    
+    # Check 5: Names with no letters at all are invalid
+    if not any(c.isalpha() for c in normalized_name):
+        return False
+    
+    # Check 6: Suspicious patterns like repeated characters (e.g., "aaaa", "xxx")
+    # This might indicate corrupted data
+    if len(set(normalized_name.lower().replace(' ', ''))) < 2:
+        return False
+    
+    # If all checks pass, the name is likely valid
+    return True
+
+
+def compare_authors(original_authors: List[str], verified_authors: List[str], paper_title: str = "") -> Dict:
     """
     Compare original authors with verified authors with detailed analysis:
     1. Author order changes (same authors, different order)
     2. Missing/extra authors (different number or completely different people)
     3. Name changes (same person, different name variant)
+    4. Parsing errors (invalid author names like "ddflow" that should be filtered)
+    
     Middle name changes and initial expansions are ignored.
+    
+    Args:
+        original_authors: List of author names from the original citation
+        verified_authors: List of author names from the verified source
+        paper_title: Optional paper title for validating author names (helps detect parsing errors)
     """
     discrepancies = []
     try:
@@ -129,7 +212,8 @@ def compare_authors(original_authors: List[str], verified_authors: List[str]) ->
             """Use fuzzywuzzy for better string matching"""
             a = a or ""
             b = b or ""
-            return SequenceMatcher(None, a, b).ratio()
+            # fuzz.ratio returns 0-100, convert to 0-1 scale for consistency
+            return fuzz.ratio(a, b) / 100.0
 
         def is_initial(token: str) -> bool:
             return isinstance(token, str) and len(token) == 1
@@ -297,17 +381,64 @@ def compare_authors(original_authors: List[str], verified_authors: List[str]) ->
         ============================================================
         Main comparison logic starts here
         ============================================================
-        The comparison is done in three phases:
-        1. Build similarity matrix between all author pairs
-        2. Find optimal matching between original and verified authors
-        3. Classify discrepancies (order changes, name changes, missing/extra authors)
+        The comparison is done in four phases:
+        1. Filter invalid author names (parsing errors like "ddflow")
+        2. Build similarity matrix between all author pairs
+        3. Find optimal matching between original and verified authors
+        4. Classify discrepancies (order changes, name changes, missing/extra authors, parsing errors)
         """
+
+        # Phase 0: Filter invalid author names (parsing errors)
+        # Separate valid and invalid authors to detect parsing errors
+        original_authors_raw = original_authors or []
+        verified_authors_raw = verified_authors or []
+        
+        original_valid = []
+        original_invalid = []
+        verified_valid = []
+        verified_invalid = []
+        
+        # Filter original authors
+        for i, author in enumerate(original_authors_raw):
+            if is_valid_author_name(author, paper_title):
+                original_valid.append(author)
+            else:
+                original_invalid.append((i, author))
+        
+        # Filter verified authors
+        for i, author in enumerate(verified_authors_raw):
+            if is_valid_author_name(author, paper_title):
+                verified_valid.append(author)
+            else:
+                verified_invalid.append((i, author))
+        
+        # Record parsing errors for invalid authors
+        parsing_errors = []
+        for orig_idx, invalid_author in original_invalid:
+            parsing_errors.append({
+                "type": "parsing_error",
+                "details": f"Invalid author name detected in original list: '{invalid_author}' (at position {orig_idx + 1}) - likely a parsing error",
+                "author_name": invalid_author,
+                "original_position": orig_idx + 1,
+                "source": "original"
+            })
+        
+        for verif_idx, invalid_author in verified_invalid:
+            parsing_errors.append({
+                "type": "parsing_error",
+                "details": f"Invalid author name detected in verified list: '{invalid_author}' (at position {verif_idx + 1}) - likely a parsing error",
+                "author_name": invalid_author,
+                "verified_position": verif_idx + 1,
+                "source": "verified"
+            })
+        
+        # Use only valid authors for comparison
+        original_authors = original_valid
+        verified_authors = verified_valid
 
         # Phase 1: Build similarity matrix
         # Compare every original author with every verified author
         # to determine if they refer to the same person
-        original_authors = original_authors or []
-        verified_authors = verified_authors or []
 
         # Create similarity matrix for all author pairs
         # Each cell contains match information (same person? confidence? match type?)
@@ -414,9 +545,11 @@ def compare_authors(original_authors: List[str], verified_authors: List[str]) ->
                 })
 
         # Combine all discrepancies into a single list
-        discrepancies = order_changes + name_changes + missing_extra
+        # Include parsing errors at the beginning as they indicate data quality issues
+        discrepancies = parsing_errors + order_changes + name_changes + missing_extra
 
         # Determine overall match status
+        # If there are parsing errors, the match is considered failed even if names match
         has_any_discrepancy = len(discrepancies) > 0
 
         return {
@@ -475,9 +608,11 @@ def verify_citation(citation: Dict) -> Dict:
 
 
     # Result → Author comparison
+    # Pass paper title to help detect parsing errors
     comparison = compare_authors(
         citation.get("authors", []),
-        arxiv_result["authors"]
+        arxiv_result["authors"],
+        paper_title=citation.get("title", "")
     )
 
     result = {

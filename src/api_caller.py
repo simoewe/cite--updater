@@ -57,7 +57,22 @@ from fuzzywuzzy import fuzz  # Calculate title similarity scores using fuzzy str
 try:
     from dotenv import load_dotenv  # Load API keys from .env file instead of hardcoding them
     # Load environment variables from .env file if it exists
-    load_dotenv()
+    # Try multiple locations: project root, task directory, and current directory
+    env_paths = [
+        Path(__file__).parent.parent / '.env',  # Project root
+        Path(__file__).parent.parent / 'task' / '.env',  # Task directory
+        Path(__file__).parent / '.env',  # src directory
+        Path.cwd() / '.env',  # Current working directory
+    ]
+    loaded = False
+    for env_path in env_paths:
+        if env_path.exists():
+            load_dotenv(env_path)
+            loaded = True
+            break
+    if not loaded:
+        # Try default location (current directory)
+        load_dotenv()
 except ImportError:
     # python-dotenv is optional, continue without it
     pass
@@ -295,12 +310,15 @@ def search_arxiv(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     arxiv_rate_limiter.wait_if_needed()
     
     try:
+        # Create client with appropriate settings
+        # Use built-in delay to respect arXiv rate limits (we also have our own rate limiter)
         client = arxiv.Client(
-            page_size=min(max_results, 10),
-            delay_seconds=0,  # We handle rate limiting ourselves
+            page_size=10,
+            delay_seconds=3.0,
             num_retries=3
         )
         
+        # Search using the title directly - arXiv will search across titles and abstracts
         search = arxiv.Search(
             query=title,
             max_results=max_results,
@@ -308,25 +326,37 @@ def search_arxiv(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
         )
         
         papers = []
-        for result in client.results(search):
-            # All arXiv papers are Open-Access
-            authors = [author.name for author in result.authors]
-            
-            # Extract DOI if available
-            doi = ""
-            if result.doi:
-                doi = result.doi
-            
-            papers.append({
-                'title': result.title,
-                'authors': authors,
-                'year': result.published.year if result.published else None,
-                'doi': doi,
-                'url': result.entry_id,  # arXiv entry URL
-                'pdf_url': result.pdf_url,
-                'source': 'arxiv',
-                'arxiv_id': result.get_short_id()
-            })
+        try:
+            for result in client.results(search):
+                # All arXiv papers are Open-Access
+                authors = [author.name for author in result.authors]
+                
+                # Extract DOI if available
+                doi = ""
+                if result.doi:
+                    doi = result.doi
+                
+                papers.append({
+                    'title': result.title,
+                    'authors': authors,
+                    'year': result.published.year if result.published else None,
+                    'doi': doi,
+                    'url': result.entry_id,  # arXiv entry URL
+                    'pdf_url': result.pdf_url,
+                    'source': 'arxiv',
+                    'arxiv_id': result.get_short_id()
+                })
+        except arxiv.UnexpectedEmptyPageError:
+            # Sometimes arXiv returns empty pages, this is not a critical error
+            logger.debug(f"arXiv returned empty page for '{title[:60]}...', continuing")
+        except Exception as e:
+            # Handle various errors (HTTP errors, connection issues, etc.)
+            # Check if it's a redirect or connection error - these are often transient
+            error_msg = str(e).lower()
+            if '301' in error_msg or 'redirect' in error_msg or 'connection' in error_msg:
+                logger.debug(f"arXiv connection/redirect error for '{title[:60]}...': {e}")
+            else:
+                logger.warning(f"arXiv query error for '{title[:60]}...': {e}")
         
         logger.debug(f"arXiv search for '{title[:60]}...' returned {len(papers)} papers")
         return papers
@@ -536,6 +566,81 @@ def search_papers_by_title(
         'results': filtered_results,
         'summary': summary
     }
+
+
+def get_best_match_from_search_results(
+    search_results: Dict[str, Any],
+    min_similarity: int = DEFAULT_SIMILARITY_THRESHOLD
+) -> Optional[Dict[str, Any]]:
+    """
+    Extract the best matching paper from search results.
+    
+    This helper function takes the results from search_papers_by_title() and returns
+    the single best match in a format compatible with citation verification pipelines.
+    
+    Args:
+        search_results: Dictionary returned by search_papers_by_title() containing:
+            - 'original_title': The searched title
+            - 'results': List of matching papers (already sorted by similarity_score)
+            - 'summary': Summary statistics
+        min_similarity: Minimum similarity score (0-100) required for a valid match
+        
+    Returns:
+        Dictionary with paper information if a good match is found, None otherwise.
+        Format:
+            {
+                'title': str,
+                'authors': List[str],
+                'year': int or None,
+                'doi': str or None,
+                'url': str or None,
+                'pdf_url': str or None,
+                'source': str ('dblp', 'arxiv', or 'semantic_scholar'),
+                'match_score': float (0-100),
+                'similarity_score': float (same as match_score for compatibility),
+                'arxiv_id': str or None (if from arXiv),
+                'venue': str or None (if from DBLP),
+                'paper_id': str or None (if from Semantic Scholar)
+            }
+    """
+    if not search_results or not search_results.get('results'):
+        return None
+    
+    results = search_results.get('results', [])
+    if not results:
+        return None
+    
+    # Results are already sorted by similarity_score (descending) from search_papers_by_title
+    best_match = results[0]
+    
+    # Check if the best match meets the minimum similarity threshold
+    similarity_score = best_match.get('similarity_score', 0)
+    if similarity_score < min_similarity:
+        logger.debug(f"Best match similarity {similarity_score}% below threshold {min_similarity}%")
+        return None
+    
+    # Format the result in a consistent structure for citation verification
+    formatted_result = {
+        'title': best_match.get('title', ''),
+        'authors': best_match.get('authors', []),
+        'year': best_match.get('year'),
+        'doi': best_match.get('doi', ''),
+        'url': best_match.get('url', ''),
+        'pdf_url': best_match.get('pdf_url', ''),
+        'source': best_match.get('source', 'unknown'),
+        'match_score': similarity_score,
+        'similarity_score': similarity_score,  # Keep both for compatibility
+    }
+    
+    # Add source-specific fields
+    if best_match.get('arxiv_id'):
+        formatted_result['arxiv_id'] = best_match['arxiv_id']
+    if best_match.get('venue'):
+        formatted_result['venue'] = best_match['venue']
+    if best_match.get('paper_id'):
+        formatted_result['paper_id'] = best_match['paper_id']
+    
+    return formatted_result
 
 
 def search_multiple_titles(
