@@ -7,9 +7,14 @@ Open-Access filtering. Results are compared using fuzzy string matching to ident
 likely matches.
 
 Rate Limits:
-- DBLP: 1 request per 3 seconds
-- arXiv: 1 request per 3 seconds
-- Semantic Scholar: 1 request per second (5 requests per 5 seconds with API key)
+- DBLP: 1 request per 5 seconds (increased to handle server errors better)
+- arXiv: 1 request per 5 seconds (increased to handle rate limits better)
+- Semantic Scholar: 1 request per 2 seconds (increased to handle rate limits better, 5 requests per 5 seconds with API key)
+
+Retry Logic:
+- All APIs include retry logic with exponential backoff for 429 (rate limit) and 500 (server error) responses
+- Maximum 3 retries per request
+- Initial retry delay: 5 seconds, doubles with each attempt
 
 API Key Configuration:
 To use Semantic Scholar API with higher rate limits, set your API key:
@@ -85,9 +90,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Rate limit constants (in seconds)
-DBLP_RATE_LIMIT = 3.0
-ARXIV_RATE_LIMIT = 3.0
-SEMANTIC_SCHOLAR_RATE_LIMIT = 1.0
+# Increased to handle rate limiting better
+DBLP_RATE_LIMIT = 5.0  # Increased from 3.0 to handle 500 errors better
+ARXIV_RATE_LIMIT = 5.0  # Increased from 3.0
+SEMANTIC_SCHOLAR_RATE_LIMIT = 2.0  # Increased from 1.0 to handle 429 errors better
+
+# Retry configuration
+MAX_RETRIES = 3
+INITIAL_RETRY_DELAY = 5.0  # Initial delay in seconds for exponential backoff
 
 # API endpoints
 DBLP_API_BASE = "https://dblp.org/search/publ/api"
@@ -201,6 +211,7 @@ def search_dblp(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     """
     Search DBLP database for papers matching the given title.
     Only returns Open-Access papers (papers with accessible URLs).
+    Includes retry logic with exponential backoff for 429 and 500 errors.
     
     Args:
         title: Paper title to search for
@@ -211,88 +222,116 @@ def search_dblp(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     """
     dblp_rate_limiter.wait_if_needed()
     
-    try:
-        # URL encode the title for the query
-        encoded_title = quote(title)
-        url = f"{DBLP_API_BASE}?q={encoded_title}&format=json&h={max_results}"
-        
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-        
-        papers = []
-        hits = data.get('result', {}).get('hits', {})
-        hit_list = hits.get('hit', [])
-        
-        # Handle both single hit (dict) and multiple hits (list) cases
-        if isinstance(hit_list, dict):
-            hit_list = [hit_list]
-        elif not isinstance(hit_list, list):
-            hit_list = []
-        
-        for hit in hit_list:
-            info = hit.get('info', {})
-            paper_title = info.get('title', '')
+    # Retry logic with exponential backoff
+    for attempt in range(MAX_RETRIES):
+        try:
+            # URL encode the title for the query
+            encoded_title = quote(title)
+            url = f"{DBLP_API_BASE}?q={encoded_title}&format=json&h={max_results}"
             
-            # DBLP doesn't have explicit Open-Access flag, but we check for accessible URLs
-            # Papers with URLs are considered accessible
-            url = info.get('url', '')
-            ee_links = info.get('ee', [])
+            response = requests.get(url, timeout=30)
             
-            # Consider paper accessible if it has a URL or EE link
-            is_accessible = bool(url) or bool(ee_links)
+            # Handle rate limiting and server errors with retry
+            if response.status_code == 429:
+                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                logger.warning(f"DBLP rate limit (429) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                time.sleep(wait_time)
+                dblp_rate_limiter.wait_if_needed()
+                continue
+            elif response.status_code == 500:
+                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                logger.warning(f"DBLP server error (500) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                time.sleep(wait_time)
+                dblp_rate_limiter.wait_if_needed()
+                continue
             
-            if is_accessible:
-                # Extract authors
-                authors = []
-                authors_data = info.get('authors', {})
-                if isinstance(authors_data, dict):
-                    author_list = authors_data.get('author', [])
-                    if isinstance(author_list, dict):
-                        author_list = [author_list]
-                    for author in author_list:
-                        if isinstance(author, dict):
-                            authors.append(author.get('text', ''))
-                        else:
-                            authors.append(str(author))
+            response.raise_for_status()
+            data = response.json()
+            
+            papers = []
+            hits = data.get('result', {}).get('hits', {})
+            hit_list = hits.get('hit', [])
+            
+            # Handle both single hit (dict) and multiple hits (list) cases
+            if isinstance(hit_list, dict):
+                hit_list = [hit_list]
+            elif not isinstance(hit_list, list):
+                hit_list = []
+            
+            for hit in hit_list:
+                info = hit.get('info', {})
+                paper_title = info.get('title', '')
                 
-                # Extract DOI from EE links
-                doi = ""
-                if isinstance(ee_links, list):
-                    for link in ee_links:
-                        if isinstance(link, dict) and 'doi.org' in link.get('text', ''):
-                            doi = link.get('text', '')
-                            break
-                elif isinstance(ee_links, dict) and 'doi.org' in ee_links.get('text', ''):
-                    doi = ee_links.get('text', '')
+                # DBLP doesn't have explicit Open-Access flag, but we check for accessible URLs
+                # Papers with URLs are considered accessible
+                url = info.get('url', '')
+                ee_links = info.get('ee', [])
                 
-                # Get primary URL
-                paper_url = url
-                if not paper_url and ee_links:
-                    if isinstance(ee_links, list) and ee_links:
-                        paper_url = ee_links[0].get('text', '') if isinstance(ee_links[0], dict) else str(ee_links[0])
-                    elif isinstance(ee_links, dict):
-                        paper_url = ee_links.get('text', '')
+                # Consider paper accessible if it has a URL or EE link
+                is_accessible = bool(url) or bool(ee_links)
                 
-                papers.append({
-                    'title': paper_title,
-                    'authors': authors,
-                    'year': info.get('year', ''),
-                    'doi': doi,
-                    'url': paper_url,
-                    'source': 'dblp',
-                    'venue': info.get('venue', '')
-                })
-        
-        logger.debug(f"DBLP search for '{title[:60]}...' returned {len(papers)} accessible papers")
-        return papers
-        
-    except requests.exceptions.RequestException as e:
-        logger.error(f"DBLP API error for title '{title[:60]}...': {e}")
-        return []
-    except Exception as e:
-        logger.error(f"Unexpected error querying DBLP for '{title[:60]}...': {e}")
-        return []
+                if is_accessible:
+                    # Extract authors
+                    authors = []
+                    authors_data = info.get('authors', {})
+                    if isinstance(authors_data, dict):
+                        author_list = authors_data.get('author', [])
+                        if isinstance(author_list, dict):
+                            author_list = [author_list]
+                        for author in author_list:
+                            if isinstance(author, dict):
+                                authors.append(author.get('text', ''))
+                            else:
+                                authors.append(str(author))
+                    
+                    # Extract DOI from EE links
+                    doi = ""
+                    if isinstance(ee_links, list):
+                        for link in ee_links:
+                            if isinstance(link, dict) and 'doi.org' in link.get('text', ''):
+                                doi = link.get('text', '')
+                                break
+                    elif isinstance(ee_links, dict) and 'doi.org' in ee_links.get('text', ''):
+                        doi = ee_links.get('text', '')
+                    
+                    # Get primary URL
+                    paper_url = url
+                    if not paper_url and ee_links:
+                        if isinstance(ee_links, list) and ee_links:
+                            paper_url = ee_links[0].get('text', '') if isinstance(ee_links[0], dict) else str(ee_links[0])
+                        elif isinstance(ee_links, dict):
+                            paper_url = ee_links.get('text', '')
+                    
+                    papers.append({
+                        'title': paper_title,
+                        'authors': authors,
+                        'year': info.get('year', ''),
+                        'doi': doi,
+                        'url': paper_url,
+                        'source': 'dblp',
+                        'venue': info.get('venue', '')
+                    })
+            
+            logger.debug(f"DBLP search for '{title[:60]}...' returned {len(papers)} accessible papers")
+            return papers
+            
+        except requests.exceptions.RequestException as e:
+            # If this was the last attempt, log error and return empty list
+            if attempt == MAX_RETRIES - 1:
+                logger.error(f"DBLP API error for title '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                return []
+            # Otherwise, wait and retry
+            wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+            logger.warning(f"DBLP request exception for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+            time.sleep(wait_time)
+            dblp_rate_limiter.wait_if_needed()
+        except Exception as e:
+            logger.error(f"Unexpected error querying DBLP for '{title[:60]}...': {e}")
+            return []
+    
+    # If we exhausted all retries, return empty list
+    logger.error(f"DBLP search failed for '{title[:60]}...' after {MAX_RETRIES} attempts")
+    return []
 
 
 def search_arxiv(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
@@ -370,6 +409,7 @@ def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str,
     """
     Search Semantic Scholar database for papers matching the given title.
     Only returns Open-Access papers (papers with openAccessPdf field).
+    Includes retry logic with exponential backoff for 429 and 500 errors.
     
     Uses API key if available (set via SEMANTIC_SCHOLAR_API_KEY environment variable
     or .env file) for higher rate limits.
@@ -383,73 +423,101 @@ def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str,
     """
     semantic_scholar_rate_limiter.wait_if_needed()
     
-    try:
-        params = {
-            "query": title,
-            "limit": max_results,
-            "fields": "title,authors,year,externalIds,url,openAccessPdf,citationCount"
-        }
-        
-        # Add API key to headers if available
-        headers = {}
-        if SEMANTIC_SCHOLAR_API_KEY:
-            headers['x-api-key'] = SEMANTIC_SCHOLAR_API_KEY
-            logger.debug("Using Semantic Scholar API key for authentication")
-        else:
-            logger.debug("No API key provided, using public rate limits")
-        
-        response = requests.get(
-            SEMANTIC_SCHOLAR_API_BASE,
-            params=params,
-            headers=headers,
-            timeout=30
-        )
-        response.raise_for_status()
-        data = response.json()
-        
-        papers = []
-        paper_list = data.get('data', [])
-        
-        for paper in paper_list:
-            # Only include papers with Open-Access PDF
-            open_access_pdf = paper.get('openAccessPdf')
-            if not open_access_pdf:
+    params = {
+        "query": title,
+        "limit": max_results,
+        "fields": "title,authors,year,externalIds,url,openAccessPdf,citationCount"
+    }
+    
+    # Add API key to headers if available
+    headers = {}
+    if SEMANTIC_SCHOLAR_API_KEY:
+        headers['x-api-key'] = SEMANTIC_SCHOLAR_API_KEY
+        logger.debug("Using Semantic Scholar API key for authentication")
+    else:
+        logger.debug("No API key provided, using public rate limits")
+    
+    # Retry logic with exponential backoff
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = requests.get(
+                SEMANTIC_SCHOLAR_API_BASE,
+                params=params,
+                headers=headers,
+                timeout=30
+            )
+            
+            # Handle rate limiting and server errors with retry
+            if response.status_code == 429:
+                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                logger.warning(f"Semantic Scholar rate limit (429) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                time.sleep(wait_time)
+                semantic_scholar_rate_limiter.wait_if_needed()
+                continue
+            elif response.status_code == 500:
+                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                logger.warning(f"Semantic Scholar server error (500) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                time.sleep(wait_time)
+                semantic_scholar_rate_limiter.wait_if_needed()
                 continue
             
-            # Extract authors
-            authors = []
-            for author in paper.get('authors', []):
-                author_name = author.get('name', '')
-                if author_name:
-                    authors.append(author_name)
+            response.raise_for_status()
+            data = response.json()
             
-            # Extract DOI
-            doi = ""
-            external_ids = paper.get('externalIds', {})
-            if external_ids:
-                doi = external_ids.get('DOI', '')
+            papers = []
+            paper_list = data.get('data', [])
             
-            papers.append({
-                'title': paper.get('title', ''),
-                'authors': authors,
-                'year': paper.get('year'),
-                'doi': doi,
-                'url': paper.get('url', ''),
-                'pdf_url': open_access_pdf.get('url', '') if isinstance(open_access_pdf, dict) else '',
-                'source': 'semantic_scholar',
-                'paper_id': paper.get('paperId', ''),
-                'citation_count': paper.get('citationCount', 0)
-            })
-        
-        logger.debug(f"Semantic Scholar search for '{title[:60]}...' returned {len(papers)} Open-Access papers")
-        return papers
-        
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Semantic Scholar API error for title '{title[:60]}...': {e}")
-        return []
-    except Exception as e:
-        logger.error(f"Unexpected error querying Semantic Scholar for '{title[:60]}...': {e}")
-        return []
+            for paper in paper_list:
+                # Only include papers with Open-Access PDF
+                open_access_pdf = paper.get('openAccessPdf')
+                if not open_access_pdf:
+                    continue
+                
+                # Extract authors
+                authors = []
+                for author in paper.get('authors', []):
+                    author_name = author.get('name', '')
+                    if author_name:
+                        authors.append(author_name)
+                
+                # Extract DOI
+                doi = ""
+                external_ids = paper.get('externalIds', {})
+                if external_ids:
+                    doi = external_ids.get('DOI', '')
+                
+                papers.append({
+                    'title': paper.get('title', ''),
+                    'authors': authors,
+                    'year': paper.get('year'),
+                    'doi': doi,
+                    'url': paper.get('url', ''),
+                    'pdf_url': open_access_pdf.get('url', '') if isinstance(open_access_pdf, dict) else '',
+                    'source': 'semantic_scholar',
+                    'paper_id': paper.get('paperId', ''),
+                    'citation_count': paper.get('citationCount', 0)
+                })
+            
+            logger.debug(f"Semantic Scholar search for '{title[:60]}...' returned {len(papers)} Open-Access papers")
+            return papers
+            
+        except requests.exceptions.RequestException as e:
+            # If this was the last attempt, log error and return empty list
+            if attempt == MAX_RETRIES - 1:
+                logger.error(f"Semantic Scholar API error for title '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                return []
+            # Otherwise, wait and retry
+            wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+            logger.warning(f"Semantic Scholar request exception for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+            time.sleep(wait_time)
+            semantic_scholar_rate_limiter.wait_if_needed()
+        except Exception as e:
+            logger.error(f"Unexpected error querying Semantic Scholar for '{title[:60]}...': {e}")
+            return []
+    
+    # If we exhausted all retries, return empty list
+    logger.error(f"Semantic Scholar search failed for '{title[:60]}...' after {MAX_RETRIES} attempts")
+    return []
 
 
 def check_database_status() -> Dict[str, Dict[str, Any]]:
