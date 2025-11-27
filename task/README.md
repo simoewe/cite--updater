@@ -290,4 +290,118 @@ Each result contains:
   - `verified_authors`: List of verified author names
   - `comparison`: Detailed comparison results with discrepancies
 
+## Main Pipeline (Main_Pipeline.py)
+
+Die `Main_Pipeline.py` ist die zentrale Ausführungsdatei für die Citation Verification Pipeline. Sie verwendet die moderne API-Caller-Architektur und durchsucht automatisch DBLP, arXiv und Semantic Scholar.
+
+### Ausführung
+
+1. **Virtual Environment aktivieren** (falls noch nicht aktiv):
+   ```bash
+   cd "/Users/mowe/Library/CloudStorage/GoogleDrive-derdersimon@gmx.net/Andere Computer/MOEWEsTower/Uni WI/3. Semester/Studie/Pranav Studie/cite--updater/cite--updater-1"
+   source .venv/bin/activate
+   ```
+
+2. **In das task-Verzeichnis wechseln**:
+   ```bash
+   cd task
+   ```
+
+3. **Pipeline ausführen**:
+   ```bash
+   python Main_Pipeline.py
+   ```
+
+### Konfiguration
+
+Die Pipeline kann über Konfigurationsvariablen am Anfang der `Main_Pipeline.py` angepasst werden:
+
+- **`CITATIONS_FILE`**: Pfad zur Eingabe-JSON-Datei (Standard: `'citations.json'`)
+- **`OUTPUT_FILE`**: Pfad zur Ausgabe-JSON-Datei (Standard: `'verification_results.json'`)
+- **`CITATION_LIMIT`**: Anzahl der zu verarbeitenden Zitate (Standard: `None` = alle)
+  - Beispiel: `CITATION_LIMIT = 100` verarbeitet nur die ersten 100 Zitate
+- **`SIMILARITY_THRESHOLD`**: Mindest-Ähnlichkeitsschwelle für Titel-Matching (0-100, Standard: 80)
+- **`MAX_RESULTS_PER_SOURCE`**: Maximale Anzahl Ergebnisse pro Datenquelle (Standard: 10)
+
+### Ausgabe
+
+Die Pipeline erstellt:
+- **`verification_results.json`**: Vollständige Verifikationsergebnisse mit allen Details
+- **`citation_verification.log`**: Log-Datei mit detaillierten Informationen über den Verarbeitungsprozess
+
+### Beispiel-Ausgabe
+
+Die Pipeline gibt während der Ausführung Fortschrittsinformationen aus:
+- Verarbeitete Zitate (z.B. `[1/100] Processing citation 1`)
+- Gefundene Matches mit Ähnlichkeitsscore
+- Zusammenfassung am Ende mit Statistiken:
+  - Anzahl verifizierter Zitate
+  - Anzahl gefundener Diskrepanzen
+  - Anzahl nicht gefundener Zitate
+  - Durchschnittlicher Match-Score
+  - Verwendete Datenquellen
+
+### Tipps
+
+- **Testlauf**: Setze `CITATION_LIMIT = 10` für einen schnellen Test
+- **Interrupt**: Die Pipeline kann mit `Ctrl+C` unterbrochen werden
+- **Logs**: Prüfe `citation_verification.log` für detaillierte Informationen
+
+## Testing
+
+Die Pipeline verfügt über eine umfassende Test-Suite in `test_Main_Pipeline.py`, die alle Funktionen und Edge Cases abdeckt.
+
+### Tests ausführen
+
+```bash
+# Alle Tests ausführen
+python test_Main_Pipeline.py
+
+# Mit pytest (falls installiert)
+pytest test_Main_Pipeline.py -v
+```
+
+### Test-Abdeckung
+
+Die Test-Suite umfasst:
+
+- **`verify_citation()` Tests**:
+  - Erfolgreiche Verifikation mit übereinstimmenden Autoren
+  - Diskrepanzen gefunden
+  - Kein Match gefunden
+  - Leerer Titel
+  - Fehlerbehandlung
+  - Verschiedene Datenquellen (arXiv, DBLP, Semantic Scholar)
+  - Verschiedene Ähnlichkeitsschwellen
+
+- **`process_citations()` Tests**:
+  - Basis-Verarbeitung mehrerer Zitate
+  - Verarbeitung mit Limit
+  - Leere Liste
+  - Einzelnes Zitat
+  - Fortschritts-Logging
+
+- **`generate_summary()` Tests**:
+  - Leere Ergebnisse
+  - Gemischte Status
+  - Parsing-Fehler
+  - Alle verifiziert
+  - Fehlende Felder
+
+- **`main()` Tests**:
+  - Erfolgreiche Ausführung
+  - Fehlende Citations-Datei
+  - Ungültige Ähnlichkeitsschwelle
+
+- **Edge Cases**:
+  - Keine Autoren
+  - Sehr langer Titel
+  - Sonderzeichen im Titel
+  - Limit überschreitet Gesamtanzahl
+
+- **Integration Tests**:
+  - Vollständige Pipeline-Szenarien
+
+Die Tests verwenden Mocking, um echte API-Calls zu vermeiden und können daher beliebig oft wiederholt werden, ohne externe Abhängigkeiten oder Rate Limits zu beeinträchtigen.
+
 

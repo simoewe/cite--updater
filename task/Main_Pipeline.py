@@ -38,10 +38,12 @@ from api_caller import (
 # these configuration variables.
 
 # Path to the input JSON file containing citations (relative to script directory)
-CITATIONS_FILE = 'citations.json'
+# Resolve path relative to script directory to ensure it works regardless of where script is executed from
+CITATIONS_FILE = str(task_dir / 'citations.json')
 
 # Path to the output JSON file for results (relative to script directory)
-OUTPUT_FILE = 'verification_results.json'
+# Resolve path relative to script directory to ensure it works regardless of where script is executed from
+OUTPUT_FILE = str(task_dir / 'verification_results.json')
 
 # Limit on number of citations to process (None = process all citations)
 # Set to a number to process only the first N citations (e.g., 100)
@@ -51,7 +53,8 @@ CITATION_LIMIT = None
 # Minimum similarity threshold for title matching (0-100)
 # Papers with similarity scores below this threshold will not be considered matches
 # Default: 80 (uses DEFAULT_SIMILARITY_THRESHOLD from api_caller)
-SIMILARITY_THRESHOLD = DEFAULT_SIMILARITY_THRESHOLD
+SIMILARITY_THRESHOLD = 90
+#SIMILARITY_THRESHOLD = DEFAULT_SIMILARITY_THRESHOLD
 
 # Maximum number of results to fetch from each source (DBLP, arXiv, Semantic Scholar)
 # Higher values may improve match quality but increase API calls and processing time

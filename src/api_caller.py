@@ -452,6 +452,96 @@ def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str,
         return []
 
 
+def check_database_status() -> Dict[str, Dict[str, Any]]:
+    """
+    Check the online status of all databases before starting queries.
+    
+    Returns:
+        Dictionary with status information for each database:
+        {
+            'dblp': {'online': bool, 'error': str or None},
+            'arxiv': {'online': bool, 'error': str or None},
+            'semantic_scholar': {'online': bool, 'error': str or None, 'api_key': bool}
+        }
+    """
+    status = {
+        'dblp': {'online': False, 'error': None},
+        'arxiv': {'online': False, 'error': None},
+        'semantic_scholar': {'online': False, 'error': None, 'api_key': bool(SEMANTIC_SCHOLAR_API_KEY)}
+    }
+    
+    # Check DBLP status
+    try:
+        dblp_rate_limiter.wait_if_needed()
+        test_url = f"{DBLP_API_BASE}?q=test&format=json&h=1"
+        response = requests.get(test_url, timeout=10)
+        response.raise_for_status()
+        status['dblp']['online'] = True
+    except Exception as e:
+        status['dblp']['error'] = str(e)
+        status['dblp']['online'] = False
+    
+    # Check arXiv status
+    try:
+        arxiv_rate_limiter.wait_if_needed()
+        client = arxiv.Client(page_size=1, delay_seconds=0, num_retries=1)
+        search = arxiv.Search(query="test", max_results=1, sort_by=arxiv.SortCriterion.Relevance)
+        # Try to get first result (this will fail if arXiv is down)
+        list(client.results(search))
+        status['arxiv']['online'] = True
+    except Exception as e:
+        status['arxiv']['error'] = str(e)
+        status['arxiv']['online'] = False
+    
+    # Check Semantic Scholar status
+    try:
+        semantic_scholar_rate_limiter.wait_if_needed()
+        params = {"query": "test", "limit": 1, "fields": "title"}
+        headers = {}
+        if SEMANTIC_SCHOLAR_API_KEY:
+            headers['x-api-key'] = SEMANTIC_SCHOLAR_API_KEY
+        response = requests.get(SEMANTIC_SCHOLAR_API_BASE, params=params, headers=headers, timeout=10)
+        response.raise_for_status()
+        status['semantic_scholar']['online'] = True
+    except Exception as e:
+        status['semantic_scholar']['error'] = str(e)
+        status['semantic_scholar']['online'] = False
+    
+    return status
+
+
+def print_database_status(status: Dict[str, Dict[str, Any]]):
+    """
+    Print database status in a formatted way.
+    
+    Args:
+        status: Dictionary returned by check_database_status()
+    """
+    # Use both print and logger to ensure visibility
+    status_lines = []
+    status_lines.append("\nStatus:")
+    
+    # DBLP
+    dblp_status = "Online" if status['dblp']['online'] else "Offline"
+    status_lines.append(f"- DBLP: {dblp_status}")
+    
+    # arXiv
+    arxiv_status = "Online" if status['arxiv']['online'] else "Offline"
+    status_lines.append(f"- Arxiv: {arxiv_status}")
+    
+    # Semantic Scholar
+    ss_status = "Online" if status['semantic_scholar']['online'] else "Offline"
+    ss_key_status = "Online" if status['semantic_scholar']['api_key'] else "Offline"
+    status_lines.append(f"- Semantic Scholar: {ss_status} (KEY: {ss_key_status})")
+    
+    status_lines.append("")  # Empty line for readability
+    
+    # Print to stdout and log
+    status_text = "\n".join(status_lines)
+    print(status_text)
+    logger.info("Database status:\n" + status_text)
+
+
 def filter_and_rank_results(
     original_title: str,
     all_results: List[Dict[str, Any]],
@@ -491,7 +581,8 @@ def search_papers_by_title(
     title: str,
     similarity_threshold: int = DEFAULT_SIMILARITY_THRESHOLD,
     max_results_per_source: int = 10,
-    parallel: bool = True
+    parallel: bool = True,
+    check_status: bool = True
 ) -> Dict[str, Any]:
     """
     Search for papers across DBLP, arXiv, and Semantic Scholar databases.
@@ -502,6 +593,7 @@ def search_papers_by_title(
         similarity_threshold: Minimum similarity score (0-100) to consider a match
         max_results_per_source: Maximum results to fetch from each source
         parallel: Whether to search databases in parallel (recommended for efficiency)
+        check_status: Whether to check database status before searching (default: True)
         
     Returns:
         Dictionary containing:
@@ -509,6 +601,12 @@ def search_papers_by_title(
             - 'results': List of matching papers with metadata
             - 'summary': Summary statistics
     """
+    # Check database status before starting queries
+    if check_status:
+        status = check_database_status()
+        print_database_status(status)
+        logger.info("Database status check completed")
+    
     logger.info(f"Searching for papers with title: '{title[:80]}...'")
     
     if parallel:
