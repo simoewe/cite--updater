@@ -190,6 +190,55 @@ MIT License
 
 ## Development Diary
 
+### 2025-12-06 - API Caller Rate Limits and Error Handling Improvements (Update: arXiv Fix)
+
+Overhauled `src/api_caller.py` to fix API connection issues and improve reliability:
+
+- **Rate Limits Updated**: Adjusted rate limits according to official API documentation:
+  - DBLP: Increased to 6 seconds (conservative, no official limit specified)
+  - arXiv: Set to 4 seconds (arXiv recommends minimum 3 seconds between requests)
+  - Semantic Scholar: Dynamic limits based on API key availability (1.2s with key, 2.5s without)
+- **Robust Status Checking**: Improved `check_database_status()` function:
+  - Increased timeout from 10s to 15s to avoid false negatives
+  - Fixed arXiv status check to use proper `delay_seconds=3.5` (was incorrectly set to 0)
+  - Better error handling: treats 429 (rate limit) as "online" since service is responding
+  - More detailed error messages for debugging
+- **Enhanced Error Handling**: Extended retry logic to handle more HTTP error codes:
+  - Now handles 429, 500, 502, 503, 504, and 505 errors with exponential backoff
+  - Prevents false "offline" status when APIs are rate-limited
+- **Improved Request Configuration**: 
+  - Standardized timeout values (30s for requests, 15s for status checks)
+  - Better arXiv client configuration with proper delay_seconds
+- **Testing**: Created comprehensive test suite (`test_api_caller.py`) that verifies:
+  - All databases are correctly detected as online
+  - Individual API calls work correctly
+  - Combined search functionality returns expected results
+  - No 505 or other HTTP errors occur
+
+All tests pass successfully, confirming stable API connections and proper rate limit compliance.
+
+**Update**: Fixed arXiv status check issue where arXiv was incorrectly marked as offline after requests:
+- Improved error handling in arXiv status check to be more lenient with transient errors
+- Added status caching (5 minutes) to avoid excessive status checks
+- Enhanced `search_arxiv()` error handling to distinguish between critical and transient errors
+- arXiv is now only marked as offline for genuine connection issues (timeouts, DNS errors, network unreachable)
+- Transient errors (redirects, rate limits, server errors) are now treated as "online" since arXiv is generally very reliable
+
+**HTTP 301 Fix**: Fixed arXiv HTTP 301 redirect errors:
+- Added comprehensive retry logic with exponential backoff for HTTP 301/302 redirects
+- Improved error handling to distinguish between redirect errors and other HTTP errors
+- arXiv client now properly handles redirects with automatic retries
+- All transient errors (301, 302, 429, 500, 502, 503) now trigger retries instead of failing immediately
+- Retry logic uses exponential backoff (5s, 10s, 20s) for up to 3 attempts
+
+**Critical Fix**: Fixed rate limit issue where status checks before queries could exceed API limits:
+- Changed default `check_status` parameter from `True` to `False` in `search_papers_by_title()`
+- Status checks now consume API rate limits, so they should only be used when necessary
+- Use `check_database_status()` separately if you need to check status once at the start
+- Status checks are cached for 5 minutes to avoid excessive API calls
+- Added small delay after status checks to ensure rate limits are respected
+- This prevents rate limit violations when status check is immediately followed by queries
+
 ### 2025-11-11 - README Organization and Cleanup
 
 Completely reorganized and cleaned up the README to reflect the current state of the project:

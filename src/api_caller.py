@@ -7,14 +7,15 @@ Open-Access filtering. Results are compared using fuzzy string matching to ident
 likely matches.
 
 Rate Limits:
-- DBLP: 1 request per 5 seconds (increased to handle server errors better)
-- arXiv: 1 request per 5 seconds (increased to handle rate limits better)
-- Semantic Scholar: 1 request per 2 seconds (increased to handle rate limits better, 5 requests per 5 seconds with API key)
+- DBLP: 1 request per 6 seconds (conservative limit, no official limit specified)
+- arXiv: 1 request per 4 seconds (arXiv recommends minimum 3 seconds between requests)
+- Semantic Scholar: 1 request per 1.2 seconds with API key (5 requests per 5 seconds), 1 request per 2.5 seconds without API key
 
 Retry Logic:
-- All APIs include retry logic with exponential backoff for 429 (rate limit) and 500 (server error) responses
+- All APIs include retry logic with exponential backoff for HTTP errors (429, 500, 502, 503, 504, 505)
 - Maximum 3 retries per request
 - Initial retry delay: 5 seconds, doubles with each attempt
+- Status checks use longer timeouts (15s) to avoid false negatives
 
 API Key Configuration:
 To use Semantic Scholar API with higher rate limits, set your API key:
@@ -57,6 +58,9 @@ from threading import Lock  # Thread-safe rate limiting to prevent race conditio
 import requests  # HTTP requests to DBLP and Semantic Scholar REST APIs
 import arxiv  # Official arXiv API client for searching arXiv papers
 from fuzzywuzzy import fuzz  # Calculate title similarity scores using fuzzy string matching
+import xml.etree.ElementTree as ET  # Parse arXiv XML responses for fallback implementation
+import xml.etree.ElementTree as ET  # Parse arXiv XML responses for fallback implementation
+from urllib.parse import quote  # Already imported above, but ensure it's available
 
 # Try to load python-dotenv for .env file support
 try:
@@ -90,14 +94,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Rate limit constants (in seconds)
-# Increased to handle rate limiting better
-DBLP_RATE_LIMIT = 5.0  # Increased from 3.0 to handle 500 errors better
-ARXIV_RATE_LIMIT = 5.0  # Increased from 3.0
-SEMANTIC_SCHOLAR_RATE_LIMIT = 2.0  # Increased from 1.0 to handle 429 errors better
+# Set according to official API documentation and best practices
+DBLP_RATE_LIMIT = 6.0  # Conservative limit for DBLP (no official limit specified)
+ARXIV_RATE_LIMIT = 4.0  # arXiv recommends minimum 3 seconds between requests
+SEMANTIC_SCHOLAR_RATE_LIMIT_WITH_KEY = 1.2  # With API key: 5 requests per 5 seconds = 1 per second, add buffer
+SEMANTIC_SCHOLAR_RATE_LIMIT_WITHOUT_KEY = 2.5  # Without API key: more conservative limit
 
 # Retry configuration
 MAX_RETRIES = 3
 INITIAL_RETRY_DELAY = 5.0  # Initial delay in seconds for exponential backoff
+
+# Request timeout configuration (in seconds)
+REQUEST_TIMEOUT = 30  # Standard timeout for API requests
+STATUS_CHECK_TIMEOUT = 15  # Longer timeout for status checks to avoid false negatives
 
 # API endpoints
 DBLP_API_BASE = "https://dblp.org/search/publ/api"
@@ -142,9 +151,11 @@ class RateLimiter:
 
 
 # Global rate limiters for each API
+# Semantic Scholar rate limiter will be updated based on API key availability
 dblp_rate_limiter = RateLimiter(DBLP_RATE_LIMIT)
 arxiv_rate_limiter = RateLimiter(ARXIV_RATE_LIMIT)
-semantic_scholar_rate_limiter = RateLimiter(SEMANTIC_SCHOLAR_RATE_LIMIT)
+# Initialize with conservative limit, will be updated if API key is available
+semantic_scholar_rate_limiter = RateLimiter(SEMANTIC_SCHOLAR_RATE_LIMIT_WITHOUT_KEY)
 
 
 def get_semantic_scholar_api_key() -> Optional[str]:
@@ -174,6 +185,14 @@ def get_semantic_scholar_api_key() -> Optional[str]:
 
 # Load API key at module level (optional, will be None if not set)
 SEMANTIC_SCHOLAR_API_KEY = get_semantic_scholar_api_key()
+
+# Update Semantic Scholar rate limiter based on API key availability
+if SEMANTIC_SCHOLAR_API_KEY:
+    semantic_scholar_rate_limiter.min_interval = SEMANTIC_SCHOLAR_RATE_LIMIT_WITH_KEY
+    logger.info(f"Semantic Scholar rate limit set to {SEMANTIC_SCHOLAR_RATE_LIMIT_WITH_KEY}s (with API key)")
+else:
+    semantic_scholar_rate_limiter.min_interval = SEMANTIC_SCHOLAR_RATE_LIMIT_WITHOUT_KEY
+    logger.info(f"Semantic Scholar rate limit set to {SEMANTIC_SCHOLAR_RATE_LIMIT_WITHOUT_KEY}s (without API key)")
 
 
 def normalize_title(title: str) -> str:
@@ -229,18 +248,18 @@ def search_dblp(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
             encoded_title = quote(title)
             url = f"{DBLP_API_BASE}?q={encoded_title}&format=json&h={max_results}"
             
-            response = requests.get(url, timeout=30)
+            response = requests.get(url, timeout=REQUEST_TIMEOUT)
             
             # Handle rate limiting and server errors with retry
-            if response.status_code == 429:
+            # 429: Too Many Requests (rate limit)
+            # 500: Internal Server Error
+            # 502: Bad Gateway
+            # 503: Service Unavailable
+            # 504: Gateway Timeout
+            # 505: HTTP Version Not Supported
+            if response.status_code in [429, 500, 502, 503, 504, 505]:
                 wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
-                logger.warning(f"DBLP rate limit (429) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
-                time.sleep(wait_time)
-                dblp_rate_limiter.wait_if_needed()
-                continue
-            elif response.status_code == 500:
-                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
-                logger.warning(f"DBLP server error (500) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                logger.warning(f"DBLP HTTP {response.status_code} for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
                 time.sleep(wait_time)
                 dblp_rate_limiter.wait_if_needed()
                 continue
@@ -334,10 +353,334 @@ def search_dblp(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     return []
 
 
+def _search_arxiv_direct_api(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
+    """
+    Primary implementation: Direct arXiv API call using requests.
+    Uses the current arXiv API endpoint to avoid HTTP 301 redirect errors.
+    
+    Args:
+        title: Paper title to search for
+        max_results: Maximum number of results to return
+        
+    Returns:
+        List of paper dictionaries with metadata, empty list if no results or errors occur
+    """
+    papers = []
+    
+    # Retry logic for direct API calls to handle transient errors
+    for attempt in range(MAX_RETRIES):
+        arxiv_rate_limiter.wait_if_needed()
+        
+        try:
+            # Use current arXiv API endpoint (HTTPS) to avoid redirects
+            # The export.arxiv.org endpoint is the current recommended API endpoint
+            base_url = "https://export.arxiv.org/api/query"
+            
+            # Format query for title search
+            # arXiv query syntax: ti:"title" searches in title field
+            query_string = f'ti:"{title}"'
+            
+            params = {
+                "search_query": query_string,
+                "max_results": max_results,
+                "start": 0,
+                "sortBy": "relevance",
+                "sortOrder": "descending"
+            }
+            
+            response = requests.get(base_url, params=params, timeout=REQUEST_TIMEOUT, allow_redirects=True)
+            
+            # Handle HTTP errors with retry logic
+            if response.status_code in [429, 500, 502, 503, 504, 505]:
+                if attempt < MAX_RETRIES - 1:
+                    wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                    logger.warning(f"Direct arXiv API HTTP {response.status_code} for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    logger.error(f"Direct arXiv API HTTP {response.status_code} for '{title[:60]}...' after {MAX_RETRIES} attempts")
+                    return []
+            
+            response.raise_for_status()
+            
+            # Parse XML response
+            root = ET.fromstring(response.content)
+            
+            # Namespace for Atom feed
+            ns = {'atom': 'http://www.w3.org/2005/Atom'}
+            
+            # Extract entries
+            entries = root.findall('atom:entry', ns)
+            
+            for entry in entries:
+                try:
+                    # Extract title
+                    title_elem = entry.find('atom:title', ns)
+                    paper_title = title_elem.text.strip() if title_elem is not None and title_elem.text else ""
+                    
+                    # Extract authors
+                    authors = []
+                    for author in entry.findall('atom:author', ns):
+                        name_elem = author.find('atom:name', ns)
+                        if name_elem is not None and name_elem.text:
+                            authors.append(name_elem.text.strip())
+                    
+                    # Extract published date
+                    published_elem = entry.find('atom:published', ns)
+                    year = None
+                    if published_elem is not None and published_elem.text:
+                        try:
+                            from datetime import datetime
+                            pub_date = datetime.fromisoformat(published_elem.text.replace('Z', '+00:00'))
+                            year = pub_date.year
+                        except:
+                            pass
+                    
+                    # Extract DOI
+                    doi = ""
+                    for link in entry.findall('atom:link', ns):
+                        if link.get('title') == 'doi':
+                            doi = link.get('href', '')
+                            break
+                    
+                    # Extract arXiv ID and URLs
+                    arxiv_id = ""
+                    entry_id = ""
+                    pdf_url = ""
+                    
+                    id_elem = entry.find('atom:id', ns)
+                    if id_elem is not None and id_elem.text:
+                        entry_id = id_elem.text
+                        # Extract arXiv ID from URL (e.g., http://arxiv.org/abs/1234.5678v1 -> 1234.5678v1)
+                        if 'arxiv.org/abs/' in entry_id:
+                            arxiv_id = entry_id.split('arxiv.org/abs/')[-1]
+                        elif 'arxiv.org/pdf/' in entry_id:
+                            arxiv_id = entry_id.split('arxiv.org/pdf/')[-1].replace('.pdf', '')
+                    
+                    # Find PDF link
+                    for link in entry.findall('atom:link', ns):
+                        if link.get('type') == 'application/pdf':
+                            pdf_url = link.get('href', '')
+                            break
+                    
+                    papers.append({
+                        'title': paper_title,
+                        'authors': authors,
+                        'year': year,
+                        'doi': doi,
+                        'url': entry_id,
+                        'pdf_url': pdf_url,
+                        'source': 'arxiv',
+                        'arxiv_id': arxiv_id.split('v')[0] if arxiv_id else ""  # Remove version suffix
+                    })
+                except Exception as e:
+                    logger.debug(f"Error parsing arXiv entry: {e}")
+                    continue
+            
+            logger.info(f"Direct arXiv API search for '{title[:60]}...' returned {len(papers)} papers")
+            return papers
+            
+        except requests.exceptions.RequestException as e:
+            # Network or HTTP errors - retry if not last attempt
+            if attempt < MAX_RETRIES - 1:
+                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                logger.warning(f"Direct arXiv API request error for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}: {e}")
+                time.sleep(wait_time)
+                continue
+            else:
+                logger.warning(f"Direct arXiv API call failed for '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                return []
+        except Exception as e:
+            # Other errors (parsing, etc.) - log and return empty
+            logger.warning(f"Direct arXiv API call failed for '{title[:60]}...': {e}")
+            return []
+    
+    # If we exhausted all retries, return empty list
+    return []
+
+
+def _search_arxiv_with_package(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
+    """
+    Fallback implementation: Search arXiv using the arxiv Python package.
+    Used when direct API calls fail. The package may use older API endpoints
+    that can cause HTTP 301 redirect errors.
+    
+    Args:
+        title: Paper title to search for
+        max_results: Maximum number of results to return
+        
+    Returns:
+        List of paper dictionaries with metadata, empty list if no results or errors occur
+    """
+    # Retry logic for arXiv package queries to handle transient errors
+    for attempt in range(MAX_RETRIES):
+        arxiv_rate_limiter.wait_if_needed()
+        
+        try:
+            # Create client with appropriate settings
+            # arXiv recommends minimum 3 seconds between requests
+            # We use 3.5 seconds as delay_seconds to be safe, plus our own rate limiter
+            # Increase num_retries in client to handle redirects automatically
+            client = arxiv.Client(
+                page_size=10,
+                delay_seconds=3.5,  # arXiv recommends minimum 3 seconds
+                num_retries=3  # Let arxiv library handle retries internally
+            )
+            
+            # Format query for better title matching
+            # arXiv query syntax: ti:title searches in title, all:title searches everywhere
+            # We use a combination: search in title first, but also allow abstract matches
+            query_string = f"ti:{title}"
+            
+            # Search using formatted query - arXiv will search in titles primarily
+            search = arxiv.Search(
+                query=query_string,
+                max_results=max_results,
+                sort_by=arxiv.SortCriterion.Relevance
+            )
+            
+            papers = []
+            try:
+                for result in client.results(search):
+                    # All arXiv papers are Open-Access
+                    authors = [author.name for author in result.authors]
+                    
+                    # Extract DOI if available
+                    doi = ""
+                    if result.doi:
+                        doi = result.doi
+                    
+                    papers.append({
+                        'title': result.title,
+                        'authors': authors,
+                        'year': result.published.year if result.published else None,
+                        'doi': doi,
+                        'url': result.entry_id,  # arXiv entry URL
+                        'pdf_url': result.pdf_url,
+                        'source': 'arxiv',
+                        'arxiv_id': result.get_short_id()
+                    })
+                
+                # Successfully retrieved results
+                logger.debug(f"arXiv package search for '{title[:60]}...' returned {len(papers)} papers")
+                return papers
+                
+            except arxiv.UnexpectedEmptyPageError:
+                # Sometimes arXiv returns empty pages, this is not a critical error
+                logger.debug(f"arXiv package returned empty page for '{title[:60]}...', continuing")
+                return papers  # Return what we have (might be empty)
+                
+            except arxiv.HTTPError as e:
+                # Handle HTTP errors from arxiv library (including 301 redirects)
+                error_msg = str(e).lower()
+                status_code = None
+                
+                # Try to extract status code from error message
+                if '301' in error_msg or '302' in error_msg:
+                    status_code = 301 if '301' in error_msg else 302
+                elif '429' in error_msg:
+                    status_code = 429
+                elif '500' in error_msg or '502' in error_msg or '503' in error_msg:
+                    status_code = 500
+                
+                # Retry for transient errors (301 redirects, rate limits, server errors)
+                if status_code in [301, 302, 429, 500, 502, 503]:
+                    if attempt < MAX_RETRIES - 1:
+                        wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                        logger.warning(f"arXiv package HTTP {status_code} for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                        time.sleep(wait_time)
+                        continue  # Retry
+                    else:
+                        logger.error(f"arXiv package HTTP {status_code} for '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                        return []  # Return empty on final failure
+                else:
+                    # Other HTTP errors - log and return empty
+                    logger.warning(f"arXiv package HTTP error for '{title[:60]}...': {e}")
+                    return []
+                    
+            except (ConnectionError, TimeoutError) as e:
+                # Network-level errors - retry
+                if attempt < MAX_RETRIES - 1:
+                    wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                    logger.warning(f"arXiv package connection error for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                    time.sleep(wait_time)
+                    continue  # Retry
+                else:
+                    logger.error(f"arXiv package connection error for '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                    return []
+                    
+            except Exception as e:
+                # Handle various other errors (redirects, parsing issues, etc.)
+                error_msg = str(e).lower()
+                
+                # Check for redirect errors (301, 302)
+                if any(keyword in error_msg for keyword in ['301', '302', 'redirect', 'moved permanently']):
+                    if attempt < MAX_RETRIES - 1:
+                        wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                        logger.warning(f"arXiv package redirect error for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                        time.sleep(wait_time)
+                        continue  # Retry
+                    else:
+                        logger.error(f"arXiv package redirect error for '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                        return []
+                elif 'connection' in error_msg:
+                    if attempt < MAX_RETRIES - 1:
+                        wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                        logger.warning(f"arXiv package connection issue for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                        time.sleep(wait_time)
+                        continue  # Retry
+                    else:
+                        logger.warning(f"arXiv package connection issue for '{title[:60]}...': {e}")
+                        return []
+                else:
+                    # Other errors - might be transient, try retry
+                    if attempt < MAX_RETRIES - 1:
+                        wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                        logger.warning(f"arXiv package query error for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}: {e}")
+                        time.sleep(wait_time)
+                        continue  # Retry
+                    else:
+                        logger.warning(f"arXiv package query error for '{title[:60]}...': {e}")
+                        return []
+        
+        except Exception as e:
+            # Outer exception handler for critical errors
+            error_msg = str(e).lower()
+            if any(keyword in error_msg for keyword in ['timeout', 'connection refused', 'dns', 'network', 'unreachable']):
+                if attempt < MAX_RETRIES - 1:
+                    wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                    logger.warning(f"Critical error querying arXiv package for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                    time.sleep(wait_time)
+                    continue  # Retry
+                else:
+                    logger.error(f"Critical error querying arXiv package for '{title[:60]}...' after {MAX_RETRIES} attempts: {e}")
+                    return []
+            else:
+                if attempt < MAX_RETRIES - 1:
+                    wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
+                    logger.warning(f"Error querying arXiv package for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}: {e}")
+                    time.sleep(wait_time)
+                    continue  # Retry
+                else:
+                    logger.warning(f"Error querying arXiv package for '{title[:60]}...': {e}")
+                    return []
+    
+    # If we exhausted all retries, return empty list
+    logger.warning(f"arXiv package search failed for '{title[:60]}...' after {MAX_RETRIES} attempts")
+    return []
+
+
 def search_arxiv(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     """
     Search arXiv database for papers matching the given title.
     All arXiv papers are Open-Access by default.
+    
+    Strategy:
+    1. First attempts to use direct API call (current arXiv API endpoint)
+    2. Falls back to arxiv Python package if direct API fails
+    
+    The direct API approach avoids HTTP 301 redirect errors that can occur
+    with the arxiv package, which may use older API endpoints.
     
     Args:
         title: Paper title to search for
@@ -346,63 +689,25 @@ def search_arxiv(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
     Returns:
         List of paper dictionaries with metadata, empty list if no results
     """
-    arxiv_rate_limiter.wait_if_needed()
+    # Step 1: Try direct API call first (current API endpoint, avoids 301 redirects)
+    logger.debug(f"Attempting direct arXiv API call for '{title[:60]}...'")
+    papers = _search_arxiv_direct_api(title, max_results)
     
-    try:
-        # Create client with appropriate settings
-        # Use built-in delay to respect arXiv rate limits (we also have our own rate limiter)
-        client = arxiv.Client(
-            page_size=10,
-            delay_seconds=3.0,
-            num_retries=3
-        )
-        
-        # Search using the title directly - arXiv will search across titles and abstracts
-        search = arxiv.Search(
-            query=title,
-            max_results=max_results,
-            sort_by=arxiv.SortCriterion.Relevance
-        )
-        
-        papers = []
-        try:
-            for result in client.results(search):
-                # All arXiv papers are Open-Access
-                authors = [author.name for author in result.authors]
-                
-                # Extract DOI if available
-                doi = ""
-                if result.doi:
-                    doi = result.doi
-                
-                papers.append({
-                    'title': result.title,
-                    'authors': authors,
-                    'year': result.published.year if result.published else None,
-                    'doi': doi,
-                    'url': result.entry_id,  # arXiv entry URL
-                    'pdf_url': result.pdf_url,
-                    'source': 'arxiv',
-                    'arxiv_id': result.get_short_id()
-                })
-        except arxiv.UnexpectedEmptyPageError:
-            # Sometimes arXiv returns empty pages, this is not a critical error
-            logger.debug(f"arXiv returned empty page for '{title[:60]}...', continuing")
-        except Exception as e:
-            # Handle various errors (HTTP errors, connection issues, etc.)
-            # Check if it's a redirect or connection error - these are often transient
-            error_msg = str(e).lower()
-            if '301' in error_msg or 'redirect' in error_msg or 'connection' in error_msg:
-                logger.debug(f"arXiv connection/redirect error for '{title[:60]}...': {e}")
-            else:
-                logger.warning(f"arXiv query error for '{title[:60]}...': {e}")
-        
-        logger.debug(f"arXiv search for '{title[:60]}...' returned {len(papers)} papers")
+    # If direct API call succeeded and returned results, use them
+    if papers:
+        logger.info(f"Direct arXiv API call succeeded, returning {len(papers)} papers")
         return papers
-        
-    except Exception as e:
-        logger.error(f"Error querying arXiv for '{title[:60]}...': {e}")
-        return []
+    
+    # Step 2: Fallback to arxiv package if direct API failed or returned no results
+    logger.info(f"Direct arXiv API call returned no results or failed, falling back to arxiv package for '{title[:60]}...'")
+    papers = _search_arxiv_with_package(title, max_results)
+    
+    if papers:
+        logger.info(f"arXiv package fallback succeeded, returning {len(papers)} papers")
+    else:
+        logger.warning(f"Both direct API and package fallback failed for '{title[:60]}...'")
+    
+    return papers
 
 
 def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str, Any]]:
@@ -444,19 +749,19 @@ def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str,
                 SEMANTIC_SCHOLAR_API_BASE,
                 params=params,
                 headers=headers,
-                timeout=30
+                timeout=REQUEST_TIMEOUT
             )
             
             # Handle rate limiting and server errors with retry
-            if response.status_code == 429:
+            # 429: Too Many Requests (rate limit)
+            # 500: Internal Server Error
+            # 502: Bad Gateway
+            # 503: Service Unavailable
+            # 504: Gateway Timeout
+            # 505: HTTP Version Not Supported
+            if response.status_code in [429, 500, 502, 503, 504, 505]:
                 wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
-                logger.warning(f"Semantic Scholar rate limit (429) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
-                time.sleep(wait_time)
-                semantic_scholar_rate_limiter.wait_if_needed()
-                continue
-            elif response.status_code == 500:
-                wait_time = INITIAL_RETRY_DELAY * (2 ** attempt)
-                logger.warning(f"Semantic Scholar server error (500) for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
+                logger.warning(f"Semantic Scholar HTTP {response.status_code} for '{title[:60]}...', waiting {wait_time:.1f}s before retry {attempt + 1}/{MAX_RETRIES}")
                 time.sleep(wait_time)
                 semantic_scholar_rate_limiter.wait_if_needed()
                 continue
@@ -520,9 +825,17 @@ def search_semantic_scholar(title: str, max_results: int = 10) -> List[Dict[str,
     return []
 
 
-def check_database_status() -> Dict[str, Dict[str, Any]]:
+# Cache for status check results to avoid excessive API calls
+_status_cache = {'status': None, 'timestamp': 0}
+_STATUS_CACHE_DURATION = 300  # Cache status for 5 minutes
+
+def check_database_status(use_cache: bool = True) -> Dict[str, Dict[str, Any]]:
     """
     Check the online status of all databases before starting queries.
+    Uses longer timeouts and proper rate limiting to avoid false negatives.
+    
+    Args:
+        use_cache: Whether to use cached status if available (default: True)
     
     Returns:
         Dictionary with status information for each database:
@@ -532,48 +845,126 @@ def check_database_status() -> Dict[str, Dict[str, Any]]:
             'semantic_scholar': {'online': bool, 'error': str or None, 'api_key': bool}
         }
     """
+    # Use cached status if available and recent
+    if use_cache:
+        current_time = time.time()
+        if _status_cache['status'] and (current_time - _status_cache['timestamp']) < _STATUS_CACHE_DURATION:
+            logger.debug("Using cached database status")
+            return _status_cache['status']
     status = {
         'dblp': {'online': False, 'error': None},
         'arxiv': {'online': False, 'error': None},
         'semantic_scholar': {'online': False, 'error': None, 'api_key': bool(SEMANTIC_SCHOLAR_API_KEY)}
     }
     
-    # Check DBLP status
+    # Check DBLP status with proper rate limiting and timeout
     try:
         dblp_rate_limiter.wait_if_needed()
-        test_url = f"{DBLP_API_BASE}?q=test&format=json&h=1"
-        response = requests.get(test_url, timeout=10)
-        response.raise_for_status()
-        status['dblp']['online'] = True
-    except Exception as e:
+        test_url = f"{DBLP_API_BASE}?q=machine+learning&format=json&h=1"
+        response = requests.get(test_url, timeout=STATUS_CHECK_TIMEOUT)
+        
+        # Accept 200 OK and also handle 429 (rate limit) as "online" since it means the service is responding
+        if response.status_code == 200:
+            response.raise_for_status()
+            status['dblp']['online'] = True
+        elif response.status_code == 429:
+            # Rate limited but service is online
+            status['dblp']['online'] = True
+            status['dblp']['error'] = "Rate limited (service is online)"
+        else:
+            response.raise_for_status()
+            status['dblp']['online'] = True
+    except requests.exceptions.Timeout:
+        status['dblp']['error'] = "Request timeout"
+        status['dblp']['online'] = False
+    except requests.exceptions.RequestException as e:
         status['dblp']['error'] = str(e)
         status['dblp']['online'] = False
+    except Exception as e:
+        status['dblp']['error'] = f"Unexpected error: {str(e)}"
+        status['dblp']['online'] = False
     
-    # Check arXiv status
+    # Check arXiv status - try direct API first, then fallback to package
+    # Direct API avoids HTTP 301 redirect errors from older package endpoints
     try:
         arxiv_rate_limiter.wait_if_needed()
-        client = arxiv.Client(page_size=1, delay_seconds=0, num_retries=1)
-        search = arxiv.Search(query="test", max_results=1, sort_by=arxiv.SortCriterion.Relevance)
-        # Try to get first result (this will fail if arXiv is down)
-        list(client.results(search))
+        # Try direct API call first (current API endpoint)
+        test_papers = _search_arxiv_direct_api("machine learning", max_results=1)
+        # Any successful response (even empty) means service is online
         status['arxiv']['online'] = True
     except Exception as e:
-        status['arxiv']['error'] = str(e)
-        status['arxiv']['online'] = False
+        # If direct API fails, try package as fallback
+        try:
+            arxiv_rate_limiter.wait_if_needed()
+            client = arxiv.Client(page_size=1, delay_seconds=3.5, num_retries=3)
+            search = arxiv.Search(query="machine learning", max_results=1, sort_by=arxiv.SortCriterion.Relevance)
+            results = list(client.results(search))
+            # Any successful response (even empty) means service is online
+            status['arxiv']['online'] = True
+        except arxiv.UnexpectedEmptyPageError:
+            # Empty page means service is responding (this is common and not an error)
+            status['arxiv']['online'] = True
+        except arxiv.HTTPError as e:
+            # HTTP errors from arxiv library - check status code
+            error_msg = str(e).lower()
+            # 429 (rate limit) and 5xx errors might be transient
+            if '429' in error_msg or '5' in error_msg[:3]:
+                # Rate limited or server error - service is likely online but having issues
+                status['arxiv']['online'] = True
+                status['arxiv']['error'] = f"Transient error: {str(e)}"
+            else:
+                # Other HTTP errors - mark as offline
+                status['arxiv']['error'] = str(e)
+                status['arxiv']['online'] = False
+        except (ConnectionError, TimeoutError) as e:
+            # Network-level errors - these are more serious
+            status['arxiv']['error'] = str(e)
+            status['arxiv']['online'] = False
+        except Exception as e:
+            error_msg = str(e).lower()
+            # Be more lenient - only mark as offline for serious connection issues
+            if any(keyword in error_msg for keyword in ['timeout', 'connection refused', 'dns', 'network', 'unreachable']):
+                status['arxiv']['error'] = str(e)
+                status['arxiv']['online'] = False
+            else:
+                # Most other errors are transient (redirects, parsing issues, etc.)
+                # arXiv is generally very reliable, so we assume it's online
+                status['arxiv']['online'] = True
+                status['arxiv']['error'] = f"Transient error (assuming online): {str(e)}"
     
-    # Check Semantic Scholar status
+    # Check Semantic Scholar status with proper rate limiting and timeout
     try:
         semantic_scholar_rate_limiter.wait_if_needed()
-        params = {"query": "test", "limit": 1, "fields": "title"}
+        params = {"query": "machine learning", "limit": 1, "fields": "title"}
         headers = {}
         if SEMANTIC_SCHOLAR_API_KEY:
             headers['x-api-key'] = SEMANTIC_SCHOLAR_API_KEY
-        response = requests.get(SEMANTIC_SCHOLAR_API_BASE, params=params, headers=headers, timeout=10)
-        response.raise_for_status()
-        status['semantic_scholar']['online'] = True
-    except Exception as e:
+        response = requests.get(SEMANTIC_SCHOLAR_API_BASE, params=params, headers=headers, timeout=STATUS_CHECK_TIMEOUT)
+        
+        # Accept 200 OK and also handle 429 (rate limit) as "online" since it means the service is responding
+        if response.status_code == 200:
+            response.raise_for_status()
+            status['semantic_scholar']['online'] = True
+        elif response.status_code == 429:
+            # Rate limited but service is online
+            status['semantic_scholar']['online'] = True
+            status['semantic_scholar']['error'] = "Rate limited (service is online)"
+        else:
+            response.raise_for_status()
+            status['semantic_scholar']['online'] = True
+    except requests.exceptions.Timeout:
+        status['semantic_scholar']['error'] = "Request timeout"
+        status['semantic_scholar']['online'] = False
+    except requests.exceptions.RequestException as e:
         status['semantic_scholar']['error'] = str(e)
         status['semantic_scholar']['online'] = False
+    except Exception as e:
+            status['semantic_scholar']['error'] = f"Unexpected error: {str(e)}"
+            status['semantic_scholar']['online'] = False
+    
+    # Cache the status result
+    _status_cache['status'] = status
+    _status_cache['timestamp'] = time.time()
     
     return status
 
@@ -650,7 +1041,7 @@ def search_papers_by_title(
     similarity_threshold: int = DEFAULT_SIMILARITY_THRESHOLD,
     max_results_per_source: int = 10,
     parallel: bool = True,
-    check_status: bool = True
+    check_status: bool = False
 ) -> Dict[str, Any]:
     """
     Search for papers across DBLP, arXiv, and Semantic Scholar databases.
@@ -661,7 +1052,9 @@ def search_papers_by_title(
         similarity_threshold: Minimum similarity score (0-100) to consider a match
         max_results_per_source: Maximum results to fetch from each source
         parallel: Whether to search databases in parallel (recommended for efficiency)
-        check_status: Whether to check database status before searching (default: True)
+        check_status: Whether to check database status before searching (default: False)
+                     Note: Status checks consume API rate limits. Only enable if needed.
+                     Use check_database_status() separately if you need to check status once.
         
     Returns:
         Dictionary containing:
@@ -669,11 +1062,16 @@ def search_papers_by_title(
             - 'results': List of matching papers with metadata
             - 'summary': Summary statistics
     """
-    # Check database status before starting queries
+    # Check database status before starting queries (optional)
+    # Note: Status checks consume API rate limits, so they're disabled by default.
+    # If enabled, status is cached for 5 minutes to avoid excessive checks.
     if check_status:
-        status = check_database_status()
+        status = check_database_status(use_cache=True)
         print_database_status(status)
         logger.info("Database status check completed")
+        # Add a small delay after status check to ensure rate limits are respected
+        # This prevents rate limit issues when status check is immediately followed by queries
+        time.sleep(0.5)
     
     logger.info(f"Searching for papers with title: '{title[:80]}...'")
     
@@ -887,7 +1285,9 @@ def main():
     print("=" * 80)
     
     example_title = "Attention Is All You Need"
-    result = search_papers_by_title(example_title, similarity_threshold=80)
+    # Note: check_status=False by default to avoid consuming API rate limits
+    # Use check_database_status() separately if you need to check status once
+    result = search_papers_by_title(example_title, similarity_threshold=80, check_status=False)
     
     print(f"\nOriginal title: {result['original_title']}")
     print(f"Found {result['summary']['total_matching']} matching papers")

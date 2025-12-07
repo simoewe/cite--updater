@@ -1,16 +1,18 @@
 {
   "summary": {
-    "total": 3,
+    "total": 10,
     "status_counts": {
-      "discrepancy_found": 1,
-      "verified": 2
+      "discrepancy_found": 2,
+      "verified": 8
     },
     "source_counts": {
-      "semantic_scholar": 3
+      "arxiv": 4,
+      "dblp": 1,
+      "semantic_scholar": 5
     },
-    "average_match_score": 99.0,
+    "average_match_score": 99.8,
     "parsing_errors_detected": 0,
-    "verification_rate": 66.67
+    "verification_rate": 80.0
   },
   "results": [
     {
@@ -29,12 +31,12 @@
         "title": "Adversarial Examples Are a Natural Consequence of Test Error in Noise",
         "original_title": "Adversarial examples are a natural consequence of test error in noise",
         "status": "discrepancy_found",
-        "source": "semantic_scholar",
+        "source": "arxiv",
         "verified_authors": [
           "Nic Ford",
-          "J. Gilmer",
-          "Nicholas Carlini",
-          "E. D. Cubuk"
+          "Justin Gilmer",
+          "Nicolas Carlini",
+          "Dogus Cubuk"
         ],
         "original_authors": [
           "Justin Gilmer",
@@ -46,6 +48,14 @@
         "comparison": {
           "match": false,
           "discrepancies": [
+            {
+              "type": "order_change",
+              "details": "'Justin Gilmer' moved from position 1 to position 2",
+              "original_position": 1,
+              "verified_position": 2,
+              "author_name": "Justin Gilmer",
+              "verified_name": "Justin Gilmer"
+            },
             {
               "type": "order_change",
               "details": "'Nicolas Ford' moved from position 2 to position 1",
@@ -62,32 +72,34 @@
               "position": 1,
               "confidence": 0.92,
               "change_type": "variant"
+            },
+            {
+              "type": "name_change",
+              "details": "Name changed: 'Nicholas Carlini' → 'Nicolas Carlini' (position 3)",
+              "original_name": "Nicholas Carlini",
+              "verified_name": "Nicolas Carlini",
+              "position": 3,
+              "confidence": 0.9,
+              "change_type": "variant"
+            },
+            {
+              "type": "name_change",
+              "details": "Name changed: 'Ekin Cubuk' → 'Dogus Cubuk' (position 4)",
+              "original_name": "Ekin Cubuk",
+              "verified_name": "Dogus Cubuk",
+              "position": 4,
+              "confidence": 0.75,
+              "change_type": "variant"
             }
           ],
           "best_matches": [
             {
-              "original_idx": 2,
-              "verified_idx": 2,
-              "original_name": "Nicholas Carlini",
-              "verified_name": "Nicholas Carlini",
-              "confidence": 1.0,
-              "match_type": "exact"
-            },
-            {
               "original_idx": 0,
               "verified_idx": 1,
               "original_name": "Justin Gilmer",
-              "verified_name": "J. Gilmer",
-              "confidence": 0.98,
-              "match_type": "initial_or_middlename"
-            },
-            {
-              "original_idx": 3,
-              "verified_idx": 3,
-              "original_name": "Ekin Cubuk",
-              "verified_name": "E. D. Cubuk",
-              "confidence": 0.98,
-              "match_type": "initial_or_middlename"
+              "verified_name": "Justin Gilmer",
+              "confidence": 1.0,
+              "match_type": "exact"
             },
             {
               "original_idx": 1,
@@ -96,15 +108,31 @@
               "verified_name": "Nic Ford",
               "confidence": 0.92,
               "match_type": "variant"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Nicholas Carlini",
+              "verified_name": "Nicolas Carlini",
+              "confidence": 0.9,
+              "match_type": "variant"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Ekin Cubuk",
+              "verified_name": "Dogus Cubuk",
+              "confidence": 0.75,
+              "match_type": "variant"
             }
           ]
         },
         "metadata": {
           "year": 2019,
           "doi": "",
-          "url": "https://www.semanticscholar.org/paper/988a378f640eb7fb681f977d6cb1e0c830c07b4c",
-          "pdf_url": "",
-          "paper_id": "988a378f640eb7fb681f977d6cb1e0c830c07b4c"
+          "url": "http://arxiv.org/abs/1901.10513v1",
+          "pdf_url": "https://arxiv.org/pdf/1901.10513v1",
+          "arxiv_id": "1901.10513"
         }
       }
     },
@@ -120,10 +148,10 @@
         "year": 2018
       },
       "verification": {
-        "title": "Robustness of classifiers to uniform ℓ _ p and Gaussian noise",
+        "title": "Robustness of classifiers to uniform 𝓁p and Gaussian noise.",
         "original_title": "Robustness of classifiers to uniform p and gaussian noise",
         "status": "verified",
-        "source": "semantic_scholar",
+        "source": "dblp",
         "verified_authors": [
           "Jean-Yves Franceschi",
           "Alhussein Fawzi",
@@ -134,7 +162,7 @@
           "Alhussein Fawzi",
           "Omar Fawzi"
         ],
-        "match_score": 97,
+        "match_score": 98,
         "comparison": {
           "match": true,
           "discrepancies": [],
@@ -166,11 +194,11 @@
           ]
         },
         "metadata": {
-          "year": 2022,
+          "year": "2018",
           "doi": "",
-          "url": "https://www.semanticscholar.org/paper/a34d5ea69038c420cf07424072f519744b273678",
+          "url": "https://dblp.org/rec/journals/corr/abs-1802-07971",
           "pdf_url": "",
-          "paper_id": "a34d5ea69038c420cf07424072f519744b273678"
+          "venue": "CoRR"
         }
       }
     },
@@ -261,11 +289,687 @@
           "paper_id": "bb92676f9ec13783ac664c268191f20944718f95"
         }
       }
+    },
+    {
+      "original": {
+        "title": "A statistical approach to assessing neural network robustness",
+        "authors": [
+          "Stefan Webb",
+          "Tom Rainforth",
+          "Yee Whye Teh",
+          "M Pawan Kumar"
+        ],
+        "proceedings": "International Conference on Learning Representations",
+        "year": 2019
+      },
+      "verification": {
+        "title": "A Statistical Approach to Assessing Neural Network Robustness",
+        "original_title": "A statistical approach to assessing neural network robustness",
+        "status": "verified",
+        "source": "arxiv",
+        "verified_authors": [
+          "Stefan Webb",
+          "Tom Rainforth",
+          "Yee Whye Teh",
+          "M. Pawan Kumar"
+        ],
+        "original_authors": [
+          "Stefan Webb",
+          "Tom Rainforth",
+          "Yee Whye Teh",
+          "M Pawan Kumar"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Stefan Webb",
+              "verified_name": "Stefan Webb",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Tom Rainforth",
+              "verified_name": "Tom Rainforth",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Yee Whye Teh",
+              "verified_name": "Yee Whye Teh",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "M Pawan Kumar",
+              "verified_name": "M. Pawan Kumar",
+              "confidence": 1.0,
+              "match_type": "exact"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2018,
+          "doi": "",
+          "url": "http://arxiv.org/abs/1811.07209v4",
+          "pdf_url": "https://arxiv.org/pdf/1811.07209v4",
+          "arxiv_id": "1811.07209"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "Reluplex: An efficient SMT solver for verifying deep neural networks",
+        "authors": [
+          "Guy Katz",
+          "Clark Barrett",
+          "David L Dill",
+          "Kyle Julian",
+          "Mykel J Kochenderfer"
+        ],
+        "proceedings": "Computer Aided Verification",
+        "year": 2017
+      },
+      "verification": {
+        "title": "Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks",
+        "original_title": "Reluplex: An efficient SMT solver for verifying deep neural networks",
+        "status": "verified",
+        "source": "arxiv",
+        "verified_authors": [
+          "Guy Katz",
+          "Clark Barrett",
+          "David Dill",
+          "Kyle Julian",
+          "Mykel Kochenderfer"
+        ],
+        "original_authors": [
+          "Guy Katz",
+          "Clark Barrett",
+          "David L Dill",
+          "Kyle Julian",
+          "Mykel J Kochenderfer"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Guy Katz",
+              "verified_name": "Guy Katz",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Clark Barrett",
+              "verified_name": "Clark Barrett",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Kyle Julian",
+              "verified_name": "Kyle Julian",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "David L Dill",
+              "verified_name": "David Dill",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Mykel J Kochenderfer",
+              "verified_name": "Mykel Kochenderfer",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2017,
+          "doi": "",
+          "url": "http://arxiv.org/abs/1702.01135v2",
+          "pdf_url": "https://arxiv.org/pdf/1702.01135v2",
+          "arxiv_id": "1702.01135"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "An abstract domain for certifying neural networks",
+        "authors": [
+          "Gagandeep Singh",
+          "Timon Gehr",
+          "Markus Püschel",
+          "Martin Vechev"
+        ],
+        "proceedings": "Proc. ACM Program. Lang",
+        "year": 2019
+      },
+      "verification": {
+        "title": "An abstract domain for certifying neural networks",
+        "original_title": "An abstract domain for certifying neural networks",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Gagandeep Singh",
+          "T. Gehr",
+          "Markus Püschel",
+          "Martin T. Vechev"
+        ],
+        "original_authors": [
+          "Gagandeep Singh",
+          "Timon Gehr",
+          "Markus Püschel",
+          "Martin Vechev"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Gagandeep Singh",
+              "verified_name": "Gagandeep Singh",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Markus Püschel",
+              "verified_name": "Markus Püschel",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Timon Gehr",
+              "verified_name": "T. Gehr",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Martin Vechev",
+              "verified_name": "Martin T. Vechev",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2019,
+          "doi": "10.1145/3290354",
+          "url": "https://www.semanticscholar.org/paper/f20de741e2d4ece239261de010d6d9beca3b26b9",
+          "pdf_url": "https://dl.acm.org/doi/pdf/10.1145/3290354",
+          "paper_id": "f20de741e2d4ece239261de010d6d9beca3b26b9"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "Towards fast computation of certified robustness for ReLU networks",
+        "authors": [
+          "Lily Weng",
+          "Huan Zhang",
+          "Hongge Chen",
+          "Zhao Song",
+          "Cho-Jui Hsieh",
+          "Luca Daniel",
+          "Duane Boning",
+          "Inderjit Dhillon"
+        ],
+        "proceedings": "the 35th International Conference on Machine Learning",
+        "year": 2018
+      },
+      "verification": {
+        "title": "Towards Fast Computation of Certified Robustness for ReLU Networks",
+        "original_title": "Towards fast computation of certified robustness for ReLU networks",
+        "status": "discrepancy_found",
+        "source": "arxiv",
+        "verified_authors": [
+          "Tsui-Wei Weng",
+          "Huan Zhang",
+          "Hongge Chen",
+          "Zhao Song",
+          "Cho-Jui Hsieh",
+          "Duane Boning",
+          "Inderjit S. Dhillon",
+          "Luca Daniel"
+        ],
+        "original_authors": [
+          "Lily Weng",
+          "Huan Zhang",
+          "Hongge Chen",
+          "Zhao Song",
+          "Cho-Jui Hsieh",
+          "Luca Daniel",
+          "Duane Boning",
+          "Inderjit Dhillon"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": false,
+          "discrepancies": [
+            {
+              "type": "order_change",
+              "details": "'Luca Daniel' moved from position 6 to position 8",
+              "original_position": 6,
+              "verified_position": 8,
+              "author_name": "Luca Daniel",
+              "verified_name": "Luca Daniel"
+            },
+            {
+              "type": "order_change",
+              "details": "'Duane Boning' moved from position 7 to position 6",
+              "original_position": 7,
+              "verified_position": 6,
+              "author_name": "Duane Boning",
+              "verified_name": "Duane Boning"
+            },
+            {
+              "type": "name_change",
+              "details": "Name changed: 'Lily Weng' → 'Tsui-Wei Weng' (position 1)",
+              "original_name": "Lily Weng",
+              "verified_name": "Tsui-Wei Weng",
+              "position": 1,
+              "confidence": 0.75,
+              "change_type": "variant"
+            }
+          ],
+          "best_matches": [
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Huan Zhang",
+              "verified_name": "Huan Zhang",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Hongge Chen",
+              "verified_name": "Hongge Chen",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Zhao Song",
+              "verified_name": "Zhao Song",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Cho-Jui Hsieh",
+              "verified_name": "Cho-Jui Hsieh",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 5,
+              "verified_idx": 7,
+              "original_name": "Luca Daniel",
+              "verified_name": "Luca Daniel",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 6,
+              "verified_idx": 5,
+              "original_name": "Duane Boning",
+              "verified_name": "Duane Boning",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 7,
+              "verified_idx": 6,
+              "original_name": "Inderjit Dhillon",
+              "verified_name": "Inderjit S. Dhillon",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Lily Weng",
+              "verified_name": "Tsui-Wei Weng",
+              "confidence": 0.75,
+              "match_type": "variant"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2018,
+          "doi": "",
+          "url": "http://arxiv.org/abs/1804.09699v4",
+          "pdf_url": "https://arxiv.org/pdf/1804.09699v4",
+          "arxiv_id": "1804.09699"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "Efficient neural network robustness certification with general activation functions",
+        "authors": [
+          "Huan Zhang",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Cho-Jui Hsieh",
+          "Luca Daniel"
+        ],
+        "proceedings": "Advances in Neural Information Processing Systems (NuerIPS)",
+        "year": 2018
+      },
+      "verification": {
+        "title": "Efficient Neural Network Robustness Certification with General Activation Functions",
+        "original_title": "Efficient neural network robustness certification with general activation functions",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Huan Zhang",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Cho-Jui Hsieh",
+          "L. Daniel"
+        ],
+        "original_authors": [
+          "Huan Zhang",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Cho-Jui Hsieh",
+          "Luca Daniel"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Huan Zhang",
+              "verified_name": "Huan Zhang",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Tsui-Wei Weng",
+              "verified_name": "Tsui-Wei Weng",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Pin-Yu Chen",
+              "verified_name": "Pin-Yu Chen",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Cho-Jui Hsieh",
+              "verified_name": "Cho-Jui Hsieh",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Luca Daniel",
+              "verified_name": "L. Daniel",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2018,
+          "doi": "",
+          "url": "https://www.semanticscholar.org/paper/2a7d19594e07e9f5f40eb39f19b0e5ffa6aa5df9",
+          "pdf_url": "",
+          "paper_id": "2a7d19594e07e9f5f40eb39f19b0e5ffa6aa5df9"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "CNN-Cert: An efficient framework for certifying robustness of convolutional neural networks",
+        "authors": [
+          "Akhilan Boopathy",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Sijia Liu",
+          "Luca Daniel"
+        ],
+        "proceedings": "AAAI",
+        "year": 2019
+      },
+      "verification": {
+        "title": "CNN-Cert: An Efficient Framework for Certifying Robustness of Convolutional Neural Networks",
+        "original_title": "CNN-Cert: An efficient framework for certifying robustness of convolutional neural networks",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Akhilan Boopathy",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Sijia Liu",
+          "L. Daniel"
+        ],
+        "original_authors": [
+          "Akhilan Boopathy",
+          "Tsui-Wei Weng",
+          "Pin-Yu Chen",
+          "Sijia Liu",
+          "Luca Daniel"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Akhilan Boopathy",
+              "verified_name": "Akhilan Boopathy",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Tsui-Wei Weng",
+              "verified_name": "Tsui-Wei Weng",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Pin-Yu Chen",
+              "verified_name": "Pin-Yu Chen",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Sijia Liu",
+              "verified_name": "Sijia Liu",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Luca Daniel",
+              "verified_name": "L. Daniel",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2018,
+          "doi": "10.1609/aaai.v33i01.33013240",
+          "url": "https://www.semanticscholar.org/paper/c6815999b9961a8c2cb5392ac9c76c8322dc4660",
+          "pdf_url": "https://ojs.aaai.org/index.php/AAAI/article/download/4193/4071",
+          "paper_id": "c6815999b9961a8c2cb5392ac9c76c8322dc4660"
+        }
+      }
+    },
+    {
+      "original": {
+        "title": "PROVEN: Verifying robustness of neural networks with a probabilistic approach",
+        "authors": [
+          "Lily Weng",
+          "Pin-Yu Chen",
+          "Lam Nguyen",
+          "Mark Squillante",
+          "Akhilan Boopathy",
+          "Ivan Oseledets",
+          "Luca Daniel"
+        ],
+        "proceedings": "the 36th International Conference on Machine Learning",
+        "year": 2019
+      },
+      "verification": {
+        "title": "PROVEN: Verifying Robustness of Neural Networks with a Probabilistic Approach",
+        "original_title": "PROVEN: Verifying robustness of neural networks with a probabilistic approach",
+        "status": "verified",
+        "source": "semantic_scholar",
+        "verified_authors": [
+          "Lily Weng",
+          "Pin-Yu Chen",
+          "Lam M. Nguyen",
+          "M. Squillante",
+          "Akhilan Boopathy",
+          "Ivan V. Oseledets",
+          "Luca Daniel"
+        ],
+        "original_authors": [
+          "Lily Weng",
+          "Pin-Yu Chen",
+          "Lam Nguyen",
+          "Mark Squillante",
+          "Akhilan Boopathy",
+          "Ivan Oseledets",
+          "Luca Daniel"
+        ],
+        "match_score": 100,
+        "comparison": {
+          "match": true,
+          "discrepancies": [],
+          "best_matches": [
+            {
+              "original_idx": 0,
+              "verified_idx": 0,
+              "original_name": "Lily Weng",
+              "verified_name": "Lily Weng",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 1,
+              "verified_idx": 1,
+              "original_name": "Pin-Yu Chen",
+              "verified_name": "Pin-Yu Chen",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 4,
+              "verified_idx": 4,
+              "original_name": "Akhilan Boopathy",
+              "verified_name": "Akhilan Boopathy",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 6,
+              "verified_idx": 6,
+              "original_name": "Luca Daniel",
+              "verified_name": "Luca Daniel",
+              "confidence": 1.0,
+              "match_type": "exact"
+            },
+            {
+              "original_idx": 3,
+              "verified_idx": 3,
+              "original_name": "Mark Squillante",
+              "verified_name": "M. Squillante",
+              "confidence": 0.98,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 2,
+              "verified_idx": 2,
+              "original_name": "Lam Nguyen",
+              "verified_name": "Lam M. Nguyen",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            },
+            {
+              "original_idx": 5,
+              "verified_idx": 5,
+              "original_name": "Ivan Oseledets",
+              "verified_name": "Ivan V. Oseledets",
+              "confidence": 0.95,
+              "match_type": "initial_or_middlename"
+            }
+          ]
+        },
+        "metadata": {
+          "year": 2019,
+          "doi": "",
+          "url": "https://www.semanticscholar.org/paper/71a658af95c4bc266db0570d4d2793dcf501efb0",
+          "pdf_url": "",
+          "paper_id": "71a658af95c4bc266db0570d4d2793dcf501efb0"
+        }
+      }
     }
   ],
   "configuration": {
-    "similarity_threshold": 75,
-    "max_results_per_source": 10,
-    "citations_file": "citations.json"
+    "similarity_threshold": 90,
+    "max_results_per_source": 5,
+    "citations_file": "/Users/mowe/Library/CloudStorage/GoogleDrive-derdersimon@gmx.net/Andere Computer/MOEWEsTower/Uni WI/3. Semester/Studie/Pranav Studie/cite--updater/cite--updater-1/task/citations.json",
+    "citation_limit": 10
   }
 }

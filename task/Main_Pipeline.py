@@ -48,7 +48,7 @@ OUTPUT_FILE = str(task_dir / 'verification_results.json')
 # Limit on number of citations to process (None = process all citations)
 # Set to a number to process only the first N citations (e.g., 100)
 # Example: CITATION_LIMIT = 100  # Process only first 100 citations
-CITATION_LIMIT = 5  # Process only first 5 citations for testing
+CITATION_LIMIT = 10  # Process only first 5 citations for testing
 
 # Minimum similarity threshold for title matching (0-100)
 # Papers with similarity scores below this threshold will not be considered matches
@@ -58,7 +58,7 @@ SIMILARITY_THRESHOLD = 90
 
 # Maximum number of results to fetch from each source (DBLP, arXiv, Semantic Scholar)
 # Higher values may improve match quality but increase API calls and processing time
-MAX_RESULTS_PER_SOURCE = 10
+MAX_RESULTS_PER_SOURCE = 5
 # ==============================================================================
 
 # Import the improved compare_authors function from example_starter in task directory
